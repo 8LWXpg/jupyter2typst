@@ -1,0 +1,47 @@
+{
+	// 使用 IntelliSense 以得知可用的屬性。
+	// 暫留以檢視現有屬性的描述。
+	// 如需詳細資訊，請瀏覽: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug executable 'jupyter2typst'",
+			"cargo": {
+				"args": [
+					"build",
+					"--bin=jupyter2typst",
+					"--package=jupyter2typst"
+				],
+				"filter": {
+					"name": "jupyter2typst",
+					"kind": "bin"
+				}
+			},
+			"args": [
+				"./test/test1.ipynb"
+			],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug unit tests in executable 'jupyter2typst'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--bin=jupyter2typst",
+					"--package=jupyter2typst"
+				],
+				"filter": {
+					"name": "jupyter2typst",
+					"kind": "bin"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		}
+	]
+}
