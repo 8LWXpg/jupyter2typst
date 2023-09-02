@@ -1,216 +1,70 @@
 #block[
-# Jupyter Notebook files
+# 1.
+## (a)
+]
+#block[
+using Plots
+gr()
 
-You can create content with Jupyter notebooks.
-For example, the content for the current page is contained in {download}`this notebook file <./notebooks.ipynb>`.
+p = 0:0.01:1
 
-```{margin}
-If you'd like to write in plain-text files, but still keep a notebook structure, you can write
-Jupyter notebooks with MyST Markdown, which are then automatically converted to notebooks.
-See [](./myst-notebooks.md) for more details.
-```
+I(p) = -p * log2(p)
+H(p) = I(p) + I(1 - p)
 
-Jupyter Book supports all Markdown that is supported by Jupyter Notebook.
-This is mostly a flavour of Markdown called [CommonMark Markdown](https://commonmark.org/) with minor modifications.
-For more information about writing Jupyter-flavoured Markdown in Jupyter Book, see [](./markdown.md).
+plot(p, [I.(p), I.(1 .- p), H.(p)], label=["I(p)" "I(1-p)" "H(p)"])
+]
+#block[
+#image("././img/985daaaacb50fe430f2a5eae9d74119bb590aea2.svg")
+]
+#block[
+## (b)
+]
+#block[
+p = 0:0.01:1
+I(p) = -p * log2(abs(p))
+H(p1, p2) = I(p1) + I(p2) + I(1 - p1 - p2)
 
-## Code blocks and image outputs
+surface(p, p, H)
+]
+#block[
+#image("././img/e7da6cb820adc923140956e22a8c0d372f812a89.svg")
+]
+#block[
+# 2.
+The derivative image has a lower entropy than the original image, because most of its pixel values are close to zero and have a high probability. This means that the derivative image contains less information per pixel than the original image, and therefore it can be compressed more efficiently.
+]
+#block[
+# 3.
+## (a)
+]
+#block[
+using Optim
 
-Jupyter Book will also embed your code blocks and output in your book.
-For example, here's some sample Matplotlib code:
-]
-#block[
-from matplotlib import rcParams, cycler
-import matplotlib.pyplot as plt
-import numpy as np
-plt.ion()
-]
-#block[
-<contextlib.ExitStack at 0x22bfe5f6610>
-]
-#block[
-# Fixing random state for reproducibility
-np.random.seed(19680801)
+function quantize(f::Function, bits::Int, first::Real, last::Real)
+    min = optimize(f, first, last).minimum
+    max = -optimize(x -> -f(x), first, last).minimum
+    step = (max - min) / (2^bits - 1)
+    # return quantize function and error function
+    return [x -> min + step * round((f(x) - min) / step), x -> f(x) - min - step * round((f(x) - min) / step)]
+end
 
-N = 10
-data = [np.logspace(0, 1, 100) + np.random.randn(100) + ii for ii in range(N)]
-data = np.array(data).T
-cmap = plt.cm.coolwarm
-rcParams['axes.prop_cycle'] = cycler(color=cmap(np.linspace(0, 1, N)))
+bit = 3
 
-
-from matplotlib.lines import Line2D
-custom_lines = [Line2D([0], [0], color=cmap(0.), lw=4),
-                Line2D([0], [0], color=cmap(.5), lw=4),
-                Line2D([0], [0], color=cmap(1.), lw=4)]
-
-fig, ax = plt.subplots(figsize=(10, 5))
-lines = ax.plot(data)
-ax.legend(custom_lines, ['Cold', 'Medium', 'Hot']);
+f(x) = x
+p1 = plot(f, -1, 1, label="f(x)")
+plot!(quantize(f, bit, -1, 1), -1, 1, label=["quantize(f, $bit)" "error"], legend=:topleft)
 ]
 #block[
-#image("././img/b1ef304f4ea8aae062af2e630df9d501694020e5.png")
+#image("././img/c99fc14339dd048ab2beb09d5d14b5bc121b9d0d.svg")
 ]
 #block[
-Note that the image above is captured and displayed in your site.
+## (b)
 ]
 #block[
-# Fixing random state for reproducibility
-np.random.seed(19680801)
-
-N = 10
-data = [np.logspace(0, 1, 100) + .1*np.random.randn(100) + ii for ii in range(N)]
-data = np.array(data).T
-cmap = plt.cm.coolwarm
-rcParams['axes.prop_cycle'] = cycler(color=cmap(np.linspace(0, 1, N)))
-
-
-from matplotlib.lines import Line2D
-custom_lines = [Line2D([0], [0], color=cmap(0.), lw=4),
-                Line2D([0], [0], color=cmap(.5), lw=4),
-                Line2D([0], [0], color=cmap(1.), lw=4)]
-
-fig, ax = plt.subplots(figsize=(10, 5))
-lines = ax.plot(data)
-ax.legend(custom_lines, ['Cold', 'Medium', 'Hot'])
-ax.set(title="Smoother linez")
+f(x) = sin(x)
+p2 = plot(f, 0, 2π, label="f(x)")
+plot!(quantize(f, 3, 0, 2π), 0, 2π, label=["quantize(f, $bit)" "error"])
 ]
 #block[
-[Text(0.5, 1.0, 'Smoother linez')]#image("././img/37953a513550fe20bdf6382bcee49b1b8222e73a.png")
-]
-#block[
-```{margin} **You can also pop out content to the side!**
-For more information on how to do this,
-check out the {ref}`layout/sidebar` section.
-```
-]
-#block[
-## Removing content before publishing
-
-You can also remove some content before publishing your book to the web. 
-For reference, {download}`you can download the notebook content for this page <notebooks.ipynb>`.
-]
-#block[
-thisvariable = "none of this should show up in the textbook"
-
-fig, ax = plt.subplots()
-x = np.random.randn(100)
-y = np.random.randn(100)
-ax.scatter(x, y, s=np.abs(x*100), c=x, cmap=plt.cm.coolwarm)
-ax.text(0, .5, thisvariable, fontsize=20, transform=ax.transAxes)
-ax.set_axis_off()
-]
-#block[
-#image("././img/0f2da86fb745750b416c27db48f2707f5f8e0d1a.png")
-]
-#block[
-You can **remove only the code** so that images and other output still show up.
-]
-#block[
-thisvariable = "this plot *will* show up in the textbook."
-
-fig, ax = plt.subplots()
-x = np.random.randn(100)
-y = np.random.randn(100)
-ax.scatter(x, y, s=np.abs(x*100), c=x, cmap=plt.cm.coolwarm)
-ax.text(0, .5, thisvariable, fontsize=20, transform=ax.transAxes)
-ax.set_axis_off()
-]
-#block[
-#image("././img/eccb32055239502029de5d05428de2aa5de06bf7.png")
-]
-#block[
-Which works well if you'd like to quickly display cell output without cluttering your content with code.
-This works for any cell output, like a Pandas DataFrame.
-]
-#block[
-import pandas as pd
-pd.DataFrame([['hi', 'there'], ['this', 'is'], ['a', 'DataFrame']], columns=['Word A', 'Word B'])
-]
-#block[
-  Word A     Word B
-0     hi      there
-1   this         is
-2      a  DataFrame
-]
-#block[
-See {ref}`hiding/remove-content` for more information about hiding and removing content.
-]
-#block[
-## Interactive outputs
-
-We can do the same for *interactive* material. Below we'll display a map
-using [folium](https://python-visualization.github.io/folium/). When your book is built,
-the code for creating the interactive map is retained.
-
-```{margin}
-**This will only work for some packages.** They need to be able to output standalone
-HTML/Javascript, and not
-depend on an underlying Python kernel to work.
-```
-]
-#block[
-import folium
-m = folium.Map(
-    location=[45.372, -121.6972],
-    zoom_start=12,
-    tiles='Stamen Terrain'
-)
-
-folium.Marker(
-    location=[45.3288, -121.6625],
-    popup='Mt. Hood Meadows',
-    icon=folium.Icon(icon='cloud')
-).add_to(m)
-
-folium.Marker(
-    location=[45.3311, -121.7113],
-    popup='Timberline Lodge',
-    icon=folium.Icon(color='green')
-).add_to(m)
-
-folium.Marker(
-    location=[45.3300, -121.6823],
-    popup='Some Other Location',
-    icon=folium.Icon(color='red', icon='info-sign')
-).add_to(m)
-
-m
-]
-#block[
-<folium.folium.Map at 0x22bff8ea690>
-]
-#block[
-## Rich outputs from notebook cells
-]
-#block[
-Because notebooks have rich text outputs, you can store these in
-your Jupyter Book as well! For example, here is the command line help
-menu, see how it is nicely formatted.
-]
-#block[
-!jupyter-book build --help
-]
-#block[
-'jupyter-book' ���O�����Υ~���R�O�B�i���檺�{���Χ妸�ɡC
-
-]
-#block[
-And here is an error. You can mark notebook cells as "expected to error" by adding a
-`raises-exception` tag to them.
-]
-#block[
-this_will_error
-]
-#block[
-[1;31m---------------------------------------------------------------------------[0m[1;31mNameError[0m                                 Traceback (most recent call last)Cell [1;32mIn[9], line 1[0m
-[1;32m----> 1[0m this_will_error
-[1;31mNameError[0m: name 'this_will_error' is not defined
-]
-#block[
-## More features with Jupyter notebooks
-
-There are many other features of Jupyter notebooks to take advantage of,
-such as automatically generating Binder links for notebooks or connecting your content with a kernel in the cloud.
-For more information browse the pages in this site, and [](content:code-outputs) in particular.
+#image("././img/5b73b52a47ccaa96e7996b317c04e1a15ef968d6.svg")
 ]
