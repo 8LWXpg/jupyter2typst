@@ -44,12 +44,11 @@ pub fn ipynb_parse(json: Value, img_path: &str) -> String {
 }
 
 fn md_to_typst(md: Vec<&str>) -> String {
-    fn latex_to_typst(tex: &str) -> String {
-        // TODO
-        String::new()
-    }
-
-    // TODO
+    // TODO convert basic markdown to typst in test4
+    // TODO download url image
+    // TODO make blockquote function in typst
+    // TODO escape latex by `$$`
+    // TODO escape html by `<` and `>`
 
     md.join("")
 }
