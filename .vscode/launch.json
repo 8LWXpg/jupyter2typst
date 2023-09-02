@@ -20,7 +20,7 @@
 				}
 			},
 			"args": [
-				"./test/test2.ipynb",
+				"./test/test1.ipynb",
 				"out"
 			],
 			"cwd": "${workspaceFolder}"
