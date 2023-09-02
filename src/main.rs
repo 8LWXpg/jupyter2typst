@@ -3,8 +3,10 @@ mod inc;
 use inc::ipynb_parse;
 use serde_json::Value;
 use std::{
+    env::set_current_dir,
     fs::File,
     io::{Read, Write},
+    path::Path,
 };
 
 use argh::FromArgs;
@@ -19,6 +21,10 @@ struct Args {
     /// the output file name (without extension)
     #[argh(positional)]
     output: String,
+
+    /// the output image path
+    #[argh(option, short = 'i', default = "String::from(\"./img\")")]
+    img_path: String,
 }
 
 fn main() {
@@ -40,9 +46,13 @@ fn main() {
         _ => panic!("Invalid file extension"),
     };
 
-    let output = ipynb_parse(json);
+    set_current_dir(Path::new(&args.input).parent().unwrap())
+        .expect("Failed to set current directory");
 
-    let mut file = File::create(&args.output).expect("Failed to create/open file");
+    let output = ipynb_parse(json, &args.img_path);
+
+    let mut file =
+        File::create(format!("{}.typ", args.output)).expect("Failed to create/open file");
     file.write_all(output.as_bytes())
         .expect("Failed to write file");
 }
