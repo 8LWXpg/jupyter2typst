@@ -6,6 +6,8 @@ use std::{
     io::Write,
 };
 
+mod md;
+
 pub fn ipynb_parse(json: Value, img_path: &str) -> String {
     let mut output = String::new();
 
@@ -13,7 +15,7 @@ pub fn ipynb_parse(json: Value, img_path: &str) -> String {
         output.push_str("#block[\n");
         match cell["cell_type"].as_str().unwrap() {
             "markdown" => {
-                output.push_str(&md_to_typst(
+                output.push_str(&&md::md_to_typst(
                     cell["source"]
                         .as_array()
                         .unwrap()
@@ -41,16 +43,6 @@ pub fn ipynb_parse(json: Value, img_path: &str) -> String {
     }
 
     output
-}
-
-fn md_to_typst(md: Vec<&str>) -> String {
-    // TODO convert basic markdown to typst in test4
-    // TODO download url image
-    // TODO make blockquote function in typst
-    // TODO escape latex by `$$`
-    // TODO escape html by `<` and `>`
-
-    md.join("")
 }
 
 fn code_parse(code: Vec<&str>, count: i64) -> String {

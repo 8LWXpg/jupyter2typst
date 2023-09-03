@@ -25,9 +25,9 @@ quote
 + list
 + list
 + list #link("https://www.google.com")[link]
-  #image("https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png")
-  `code` ---
-
+  // #image("https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png")
+  `code`
+#line(length: 100%)
 ```
 code
 block

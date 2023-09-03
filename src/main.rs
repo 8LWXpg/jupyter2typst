@@ -1,6 +1,5 @@
 mod inc;
 
-use inc::ipynb_parse;
 use serde_json::Value;
 use std::{
     env::set_current_dir,
@@ -49,7 +48,7 @@ fn main() {
     set_current_dir(Path::new(&args.input).parent().unwrap())
         .expect("Failed to set current directory");
 
-    let output = ipynb_parse(json, &args.img_path);
+    let output = inc::ipynb_parse(json, &args.img_path);
 
     let mut file =
         File::create(format!("{}.typ", args.output)).expect("Failed to create/open file");
