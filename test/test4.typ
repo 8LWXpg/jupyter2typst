@@ -9,8 +9,12 @@
 <h4>
 ===== h5
 <h5>
-\#\#\#\#\#\# h6 #strong[bold] #emph[italic] #strong[#emph[bold italic]]
-#strike[strike through]
+\#\#\#\#\#\# h6
+
+======= h7
+<h7>
+#strong[bold] #emph[italic] #strong[#emph[bold italic]] #strike[strike
+through]
 
 #block[
 quote
@@ -29,6 +33,13 @@ quote
 + list #link("https://www.google.com")[link]
   // #image("https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png")
   `code` ---
+
+Here is a simple footnote#link("https://example.com")[^1]. With some
+additional text after it.
+
+```
+code
+```
 
 ```
 code
