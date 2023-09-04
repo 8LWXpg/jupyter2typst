@@ -191,6 +191,7 @@ dependencies = [
  "argh",
  "base64",
  "engine",
+ "markdown",
  "regex",
  "serde_json",
  "sha1",
@@ -201,6 +202,15 @@ name = "libc"
 version = "0.2.147"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
+
+[[package]]
+name = "markdown"
+version = "1.0.0-alpha.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "08be37c7b5269bb027f69cdf446c96099d1e8da723c0d5fb78856adc6a50680f"
+dependencies = [
+ "unicode-id",
+]
 
 [[package]]
 name = "memchr"
@@ -366,6 +376,12 @@ name = "typenum"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "497961ef93d974e23eb6f433eb5fe1b7930b659f06d12dec6fc44a8f554c0bba"
+
+[[package]]
+name = "unicode-id"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d70b6494226b36008c8366c288d77190b3fad2eb4c10533139c1c1f461127f1a"
 
 [[package]]
 name = "unicode-ident"
