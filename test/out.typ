@@ -1,70 +1,100 @@
 #block[
-# 1.
-## (a)
-]
-#block[
-using Plots
-gr()
+= h1
+<h1>
+== h2
+<h2>
+=== h3
+<h3>
+==== h4
+<h4>
+===== h5
+<h5>
+====== h6
+<h6>
 
-p = 0:0.01:1
+####### h7
+**bold**
+*italic*
+***bold italic***
+~~strike through~~
+> quote
+- list1
+  - list2
+    - list3
+      - list4
+        - list5
+          - list6
+            - list7
+1. list
+2. list
+3. list
+[link](https://www.google.com)
+![image](https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)
+`code`
+---
+```
+code 
+block
+```
+|table|table|table|
+|---|---|---|
+|table|table|table|
+|table|table|table|
+|table|table|table|
+= Table
+<table>
 
-I(p) = -p * log2(p)
-H(p) = I(p) + I(1 - p)
+| Syntax test | Description | Test | XXX | XXX |
+| ----------- | ----------- | ---- | --- | --- |
+| Header      | Title       | AAAA | XXX | XXX |
+| Header      | Title       | AAAA | XXX | XXX |
+| Paragraph   | Text        | BBBB | XXX | XXX |
+== Pretty table
+<pretty-table>
 
-plot(p, [I.(p), I.(1 .- p), H.(p)], label=["I(p)" "I(1-p)" "H(p)"])
-]
-#block[
-#image("././img/985daaaacb50fe430f2a5eae9d74119bb590aea2.svg")
-]
-#block[
-## (b)
-]
-#block[
-p = 0:0.01:1
-I(p) = -p * log2(abs(p))
-H(p1, p2) = I(p1) + I(p2) + I(1 - p1 - p2)
+|Header 1|Header 2|
+|---|---|
+|![Kitty](https://placekitten.com/200/300 "Kitten")|![Kitty](https://placekitten.com/200/300? "Kitten")|
+=== Lists
+<lists>
 
-surface(p, p, H)
-]
-#block[
-#image("././img/e7da6cb820adc923140956e22a8c0d372f812a89.svg")
-]
-#block[
-# 2.
-The derivative image has a lower entropy than the original image, because most of its pixel values are close to zero and have a high probability. This means that the derivative image contains less information per pixel than the original image, and therefore it can be compressed more efficiently.
-]
-#block[
-# 3.
-## (a)
-]
-#block[
-using Optim
+---
 
-function quantize(f::Function, bits::Int, first::Real, last::Real)
-    min = optimize(f, first, last).minimum
-    max = -optimize(x -> -f(x), first, last).minimum
-    step = (max - min) / (2^bits - 1)
-    # return quantize function and error function
-    return [x -> min + step * round((f(x) - min) / step), x -> f(x) - min - step * round((f(x) - min) / step)]
-end
+- Inline *code* `aaaaz`
+- My **favorite search** engine is ~~not~~ [Duck Duck Go](https://duckduckgo.com "Click me").
+- ~~***Recursive***~~
+- ***~~Recursive reversed~~***
+- Item 4
 
-bit = 3
+1. Item
+2. Item
+3. Item
+4. Item
 
-f(x) = x
-p1 = plot(f, -1, 1, label="f(x)")
-plot!(quantize(f, bit, -1, 1), -1, 1, label=["quantize(f, $bit)" "error"], legend=:topleft)
-]
-#block[
-#image("././img/c99fc14339dd048ab2beb09d5d14b5bc121b9d0d.svg")
-]
-#block[
-## (b)
-]
-#block[
-f(x) = sin(x)
-p2 = plot(f, 0, 2π, label="f(x)")
-plot!(quantize(f, 3, 0, 2π), 0, 2π, label=["quantize(f, $bit)" "error"])
-]
-#block[
-#image("././img/5b73b52a47ccaa96e7996b317c04e1a15ef968d6.svg")
+1. c
+1. c
+==== Multiline code
+<multiline-code>
+
+```
+int method() {
+	return 2137;
+}
+```
+===== Quotes
+<quotes>
+
+> aa
+> aa
+> > bb
+> > bb
+> > > cc
+> > > cc
+> > bb
+> > bb
+> aa
+> aa
+
+> single line
+
 ]
