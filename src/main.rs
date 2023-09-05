@@ -17,7 +17,7 @@ struct Args {
     #[argh(positional)]
     input: String,
 
-    /// the output file name (without extension)
+    /// the output file path (without extension)
     #[argh(positional)]
     output: String,
 

@@ -22,6 +22,7 @@ pub fn ipynb_parse(json: Value, img_path: &str) -> String {
                         .iter()
                         .map(|v| v.as_str().unwrap())
                         .collect::<Vec<&str>>(),
+                    img_path,
                 ));
             }
             "code" => {
@@ -54,15 +55,6 @@ fn code_parse(code: Vec<&str>, count: i64) -> String {
 fn code_output_parse(outputs: Value, img_path: &str) -> String {
     let mut ret = String::new();
 
-    fn sha1(s: &str) -> String {
-        let mut sha1 = Sha1::new();
-        sha1.update(s);
-        sha1.finalize()
-            .iter()
-            .map(|b| format!("{:02x}", b))
-            .collect()
-    }
-
     for output in outputs.as_array().unwrap() {
         match output["output_type"].as_str().unwrap() {
             "stream" => ret.push_str(
@@ -84,14 +76,14 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                         .map(|v| v.as_str().unwrap())
                         .collect::<Vec<&str>>()
                         .join("");
-                    let file_path = format!("{}/{}.svg", img_path, sha1(&content));
+                    let file_path = format!("{}/{}.svg", img_path, md::sha1(&content));
                     let mut file = File::create(file_path.clone()).unwrap();
                     let _ = file.write_all(content.as_bytes());
                     ret.push_str(format!("#image(\"./{}\")", file_path).as_str())
                 } else if let Some(img) = data["image/png"].as_str() {
                     fs::create_dir_all(img_path).unwrap();
                     let content = img;
-                    let file_path = format!("{}/{}.png", img_path, sha1(content));
+                    let file_path = format!("{}/{}.png", img_path, md::sha1(content));
                     let mut file = File::create(file_path.clone()).unwrap();
                     let _ = file.write_all(&STANDARD.decode(img).unwrap());
                     ret.push_str(format!("#image(\"./{}\")", file_path).as_str())
