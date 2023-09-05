@@ -192,12 +192,12 @@ fn escape(s: &str) -> String {
     result
 }
 
-fn html_to_typst(html: &str) -> String {
+pub fn html_to_typst(html: &str) -> String {
     // TODO html to typst
     html.to_string()
 }
 
-fn latex_to_typst(latex: &str) -> String {
+pub fn latex_to_typst(latex: &str) -> String {
     // TODO latex to typst
     latex.to_string()
 }

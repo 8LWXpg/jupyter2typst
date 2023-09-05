@@ -6,6 +6,8 @@ use std::{
     io::Write,
 };
 
+use self::md::{html_to_typst, latex_to_typst};
+
 mod md;
 
 pub fn ipynb_parse(json: Value, img_path: &str) -> String {
@@ -96,21 +98,21 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                             .as_str(),
                     )
                 } else if let Some(text) = data["text/html"].as_array() {
-                    ret.push_str(
+                    ret.push_str(&html_to_typst(
                         text.iter()
                             .map(|v| v.as_str().unwrap())
                             .collect::<Vec<&str>>()
                             .join("")
                             .as_str(),
-                    )
+                    ))
                 } else if let Some(text) = data["text/latex"].as_array() {
-                    ret.push_str(
+                    ret.push_str(&latex_to_typst(
                         text.iter()
                             .map(|v| v.as_str().unwrap())
                             .collect::<Vec<&str>>()
                             .join("")
                             .as_str(),
-                    )
+                    ))
                 }
             }
             "error" => ret.push_str(
