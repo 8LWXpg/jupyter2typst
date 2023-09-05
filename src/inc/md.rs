@@ -35,9 +35,6 @@ fn ast_parse(node: Node, img_path: &str) -> String {
             context.push_str(&node.value);
             context.push_str("\n```\n");
         }
-        Node::Definition(_) => {
-            // TODO wtf is definition
-        }
         Node::Delete(node) => {
             context.push_str("#strike[");
             for child in node.children {
