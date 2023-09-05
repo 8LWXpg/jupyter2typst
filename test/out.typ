@@ -5,7 +5,7 @@
 ==== h4
 ===== h5
 ====== h6
-####### h7
+\#\#\#\#\#\#\# h7
 *bold*
 #emph[italic]
 #emph[*bold italic*]
@@ -13,6 +13,8 @@
 #block_quote[
 quote
 ]
+#line(length: 100%)
+#line(length: 100%)
 Here is a simple footnote. With some additional text after it.
 ```
 code
@@ -68,10 +70,11 @@ block
   align: (auto, auto),
   [Header 1],
   [Header 2],
-  [#image(./imgded905929f9f27d5e6f084b799f4c8f1d145ec72.png)],
-  [#image(./img6e58c2da06fe64145ccd937de4236df64ecb506f.png)],
+  [#image("././img/ded905929f9f27d5e6f084b799f4c8f1d145ec72.png")],
+  [#image("././img/6e58c2da06fe64145ccd937de4236df64ecb506f.png")],
 )
 === Lists
+#line(length: 100%)
 ==== Multiline code
 ```
 int method() {
@@ -98,5 +101,4 @@ aa
 #block_quote[
 single line
 ]
-
 ]

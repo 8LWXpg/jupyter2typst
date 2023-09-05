@@ -40,7 +40,7 @@ pub fn ipynb_parse(json: Value, img_path: &str) -> String {
             }
             _ => {}
         };
-        output.push_str("\n]\n");
+        output.push_str("]\n");
     }
 
     output

@@ -70,10 +70,10 @@ fn ast_parse(node: Node, img_path: &str) -> String {
         }
         Node::Image(node) => match Url::parse(&node.url) {
             Ok(url) => {
-                context.push_str(&format!("#image({})", download_image(url, img_path)));
+                context.push_str(&format!("#image(\"{}\")", download_image(url, img_path)));
             }
             Err(_) => {
-                context.push_str(&format!("#image({})", node.url));
+                context.push_str(&format!("#image(\"{}\")", node.url));
             }
         },
         Node::InlineCode(node) => {
@@ -152,7 +152,12 @@ fn ast_parse(node: Node, img_path: &str) -> String {
         Node::Text(node) => {
             context.push_str(&escape(&node.value));
         }
-        _ => {}
+        Node::ThematicBreak(_) => {
+            context.push_str("#line(length: 100%)\n");
+        }
+        _ => {
+            println!("unhandled node: {:?}", node);
+        }
     }
     return context;
 }
@@ -168,15 +173,26 @@ pub fn sha1(s: &str) -> String {
 
 fn download_image(url: Url, img_path: &str) -> String {
     // TODO download image
-    let mut path = img_path.to_string();
+    let mut path = format!("./{}/", img_path);
     path.push_str(&sha1(url.as_str()));
     path.push_str(".png");
     path
 }
 
 fn escape(s: &str) -> String {
-    // TODO escape special characters
-    s.to_string()
+    // https://typst.app/docs/reference/syntax/#markup
+    let escape = vec![
+        '*', '_', '`', '<', '>', '@', '=', '-', '+', '/', '$', '\\', '\'', '"', '~', '#',
+    ];
+
+    let mut result = String::new();
+    for c in s.chars() {
+        if escape.contains(&c) {
+            result.push('\\');
+        }
+        result.push(c);
+    }
+    result
 }
 
 fn html_to_typst(html: &str) -> String {
