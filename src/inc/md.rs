@@ -20,9 +20,11 @@ fn ast_parse(node: Node, img_path: &str) -> String {
         Node::BlockQuote(node) => {
             context.push_str("#block_quote[\n");
             for child in node.children {
-                context.push_str(&ast_parse(child, img_path));
+                let mut item = ast_parse(child, img_path);
+                item = format!("  {}\n", item.trim_end_matches("\n").replace("\n", "\n  "));
+                context.push_str(&item);
             }
-            context.push_str("]\n");
+            context.push_str("]\n\n");
         }
         Node::Break(_) => {
             context.push_str("\n");
@@ -56,11 +58,16 @@ fn ast_parse(node: Node, img_path: &str) -> String {
             // TODO footnote
         }
         Node::Heading(node) => {
+            let mut item = String::new();
             context.push_str(&format!("{} ", "=".repeat(node.depth as usize)));
             for child in node.children {
-                context.push_str(&ast_parse(child, img_path));
+                item = ast_parse(child, img_path);
             }
-            context.push_str("\n")
+            context.push_str(&item);
+            context.push_str(&format!(
+                "\n<{}>\n\n",
+                &escape(&item, true).replace(" ", "-").to_lowercase()
+            ));
         }
         Node::Html(node) => {
             context.push_str(&html_to_typst(&node.value));
@@ -87,10 +94,22 @@ fn ast_parse(node: Node, img_path: &str) -> String {
             context.push_str("]");
         }
         Node::List(node) => {
-            // TODO List
+            for child in node.children {
+                context.push_str(if node.ordered { "+ " } else { "- " });
+                let mut item = ast_parse(child, img_path);
+                item = item.trim_end_matches("\n").replace("\n", "\n  ") + "\n";
+                context.push_str(&item);
+            }
+            context.push_str("\n");
         }
         Node::ListItem(node) => {
-            // TODO List
+            for child in node.children {
+                context.push_str(&ast_parse(child, img_path));
+            }
+            if node.spread {
+                println!("spread");
+                context.push_str("\n");
+            }
         }
         Node::Math(node) => context.push_str(&latex_to_typst(&node.value)),
         Node::Paragraph(node) => {
@@ -132,7 +151,7 @@ fn ast_parse(node: Node, img_path: &str) -> String {
             for child in node.children {
                 context.push_str(&ast_parse(child, img_path));
             }
-            context.push_str(")\n");
+            context.push_str(")\n\n");
         }
         Node::TableCell(node) => {
             context.push_str("[");
@@ -146,10 +165,11 @@ fn ast_parse(node: Node, img_path: &str) -> String {
             for child in node.children {
                 context.push_str(&ast_parse(child, img_path));
             }
+            context.pop();
             context.push_str("\n");
         }
         Node::Text(node) => {
-            context.push_str(&escape(&node.value));
+            context.push_str(&escape(&node.value, false));
         }
         Node::ThematicBreak(_) => {
             context.push_str("#line(length: 100%)\n");
@@ -178,7 +198,7 @@ fn download_image(url: Url, img_path: &str) -> String {
     path
 }
 
-fn escape(s: &str) -> String {
+fn escape(s: &str, remove: bool) -> String {
     // https://typst.app/docs/reference/syntax/#markup
     const ESCAPE: &[char] = &[
         '*', '_', '`', '<', '>', '@', '=', '-', '+', '/', '$', '\\', '\'', '"', '~', '#',
@@ -187,7 +207,11 @@ fn escape(s: &str) -> String {
     let mut result = String::new();
     for c in s.chars() {
         if ESCAPE.contains(&c) {
-            result.push('\\');
+            if remove {
+                continue;
+            } else {
+                result.push('\\');
+            }
         }
         result.push(c);
     }

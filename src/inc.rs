@@ -1,6 +1,5 @@
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 use serde_json::Value;
-use sha1::{Digest, Sha1};
 use std::{
     fs::{self, File},
     io::Write,
