@@ -1,26 +1,35 @@
 use markdown::{mdast::Node, to_mdast, ParseOptions};
 use sha1::{Digest, Sha1};
-use std::{fs::File, io::Write};
+use std::collections::HashMap;
 use url::Url;
 
-pub fn md_to_typst(md: Vec<&str>, img_path: &str) -> String {
-    // TODO https://github.com/wooorm/markdown-rs
+use crate::IMG_PATH;
+
+use once_cell::sync::OnceCell;
+
+static FOOTNOTE_DEFINITIONS: OnceCell<HashMap<String, String>> = OnceCell::new();
+
+pub fn md_to_typst(md: Vec<&str>) -> String {
     let tree = to_mdast(&md.join(""), &ParseOptions::gfm()).unwrap();
 
     // write tree to debug file
-    let mut file = File::create("debug.txt").unwrap();
-    file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
+    // let mut file = File::create("debug.txt").unwrap();
+    // file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
 
-    ast_parse(tree, img_path)
+    FOOTNOTE_DEFINITIONS
+        .set(footnote_grep(tree.clone()))
+        .unwrap();
+    ast_parse(tree)
 }
 
-fn ast_parse(node: Node, img_path: &str) -> String {
+fn ast_parse(node: Node) -> String {
     let mut context = String::new();
+
     match node {
         Node::BlockQuote(node) => {
             context.push_str("#block_quote[\n");
             for child in node.children {
-                let mut item = ast_parse(child, img_path);
+                let mut item = ast_parse(child);
                 item = format!("  {}\n", item.trim_end_matches("\n").replace("\n", "\n  "));
                 context.push_str(&item);
             }
@@ -40,28 +49,33 @@ fn ast_parse(node: Node, img_path: &str) -> String {
         Node::Delete(node) => {
             context.push_str("#strike[");
             for child in node.children {
-                context.push_str(&ast_parse(child, img_path));
+                context.push_str(&ast_parse(child));
             }
             context.push_str("]");
         }
         Node::Emphasis(node) => {
             context.push_str("#emph[");
             for child in node.children {
-                context.push_str(&ast_parse(child, img_path));
+                context.push_str(&ast_parse(child));
             }
             context.push_str("]");
         }
         Node::FootnoteDefinition(_) => {
-            // TODO footnote
+            // do nothing
         }
-        Node::FootnoteReference(_) => {
-            // TODO footnote
+        Node::FootnoteReference(node) => {
+            let id = node.identifier.as_str();
+            context.push_str(&format!(
+                "#link({})[^{}]",
+                FOOTNOTE_DEFINITIONS.get().unwrap().get(id).unwrap(),
+                id
+            ))
         }
         Node::Heading(node) => {
             let mut item = String::new();
             context.push_str(&format!("{} ", "=".repeat(node.depth as usize)));
             for child in node.children {
-                item = ast_parse(child, img_path);
+                item = ast_parse(child);
             }
             context.push_str(&item);
             context.push_str(&format!(
@@ -74,7 +88,7 @@ fn ast_parse(node: Node, img_path: &str) -> String {
         }
         Node::Image(node) => match Url::parse(&node.url) {
             Ok(url) => {
-                context.push_str(&format!("#image(\"{}\")", download_image(url, img_path)));
+                context.push_str(&format!("#image(\"{}\")", download_image(url)));
             }
             Err(_) => {
                 context.push_str(&format!("#image(\"{}\")", node.url));
@@ -87,16 +101,16 @@ fn ast_parse(node: Node, img_path: &str) -> String {
             context.push_str(&latex_to_typst(&node.value));
         }
         Node::Link(node) => {
-            context.push_str("#link[");
+            context.push_str(&format!("#link(\"{}\")[", node.url));
             for child in node.children {
-                context.push_str(&ast_parse(child, img_path));
+                context.push_str(&ast_parse(child));
             }
             context.push_str("]");
         }
         Node::List(node) => {
             for child in node.children {
                 context.push_str(if node.ordered { "+ " } else { "- " });
-                let mut item = ast_parse(child, img_path);
+                let mut item = ast_parse(child);
                 item = item.trim_end_matches("\n").replace("\n", "\n  ") + "\n";
                 context.push_str(&item);
             }
@@ -104,7 +118,7 @@ fn ast_parse(node: Node, img_path: &str) -> String {
         }
         Node::ListItem(node) => {
             for child in node.children {
-                context.push_str(&ast_parse(child, img_path));
+                context.push_str(&ast_parse(child));
             }
             if node.spread {
                 println!("spread");
@@ -114,19 +128,19 @@ fn ast_parse(node: Node, img_path: &str) -> String {
         Node::Math(node) => context.push_str(&latex_to_typst(&node.value)),
         Node::Paragraph(node) => {
             for child in node.children {
-                context.push_str(&ast_parse(child, img_path));
+                context.push_str(&ast_parse(child));
             }
             context.push_str("\n");
         }
         Node::Root(node) => {
             for child in node.children {
-                context.push_str(&ast_parse(child, img_path));
+                context.push_str(&ast_parse(child));
             }
         }
         Node::Strong(node) => {
             context.push_str("*");
             for child in node.children {
-                context.push_str(&ast_parse(child, img_path));
+                context.push_str(&ast_parse(child));
             }
             context.push_str("*");
         }
@@ -149,21 +163,21 @@ fn ast_parse(node: Node, img_path: &str) -> String {
                     .join(", ")
             ));
             for child in node.children {
-                context.push_str(&ast_parse(child, img_path));
+                context.push_str(&ast_parse(child));
             }
             context.push_str(")\n\n");
         }
         Node::TableCell(node) => {
             context.push_str("[");
             for child in node.children {
-                context.push_str(&ast_parse(child, img_path));
+                context.push_str(&ast_parse(child));
             }
             context.push_str("], ");
         }
         Node::TableRow(node) => {
             context.push_str("  ");
             for child in node.children {
-                context.push_str(&ast_parse(child, img_path));
+                context.push_str(&ast_parse(child));
             }
             context.pop();
             context.push_str("\n");
@@ -181,6 +195,28 @@ fn ast_parse(node: Node, img_path: &str) -> String {
     return context;
 }
 
+fn footnote_grep(node: Node) -> HashMap<String, String> {
+    let mut definitions: HashMap<String, String> = HashMap::new();
+    match node {
+        Node::FootnoteDefinition(node) => {
+            let mut item = String::new();
+            for child in node.children {
+                item.push_str(&ast_parse(child));
+            }
+            definitions.insert(node.identifier.clone(), item);
+        }
+        _ => {
+            if let Some(children) = node.children() {
+                for child in children {
+                    let mut d = footnote_grep(child.clone());
+                    definitions.extend(d.drain());
+                }
+            }
+        }
+    }
+    definitions
+}
+
 pub fn sha1(s: &str) -> String {
     let mut sha1 = Sha1::new();
     sha1.update(s);
@@ -190,9 +226,9 @@ pub fn sha1(s: &str) -> String {
         .collect()
 }
 
-fn download_image(url: Url, img_path: &str) -> String {
+fn download_image(url: Url) -> String {
     // TODO download image
-    let mut path = format!("./{}/", img_path);
+    let mut path = format!("./{}/", IMG_PATH.get().unwrap());
     path.push_str(&sha1(url.as_str()));
     path.push_str(".png");
     path

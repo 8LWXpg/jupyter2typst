@@ -5,11 +5,14 @@ use std::{
     io::Write,
 };
 
-use self::md::{html_to_typst, latex_to_typst};
+use crate::IMG_PATH;
 
+// use self::md::{html_to_typst, latex_to_typst};
+
+#[path = "md.rs"]
 mod md;
 
-pub fn ipynb_parse(json: Value, img_path: &str) -> String {
+pub fn ipynb_parse(json: Value) -> String {
     let mut output = String::new();
 
     for cell in json["cells"].as_array().unwrap() {
@@ -23,7 +26,6 @@ pub fn ipynb_parse(json: Value, img_path: &str) -> String {
                         .iter()
                         .map(|v| v.as_str().unwrap())
                         .collect::<Vec<&str>>(),
-                    img_path,
                 ));
             }
             "code" => {
@@ -37,7 +39,10 @@ pub fn ipynb_parse(json: Value, img_path: &str) -> String {
                     cell["execution_count"].as_i64().unwrap(),
                 ));
                 output.push_str("\n]\n#block[\n");
-                output.push_str(&code_output_parse(cell["outputs"].clone(), img_path));
+                output.push_str(&code_output_parse(
+                    cell["outputs"].clone(),
+                    IMG_PATH.get().unwrap(),
+                ));
             }
             _ => {}
         };
@@ -47,7 +52,7 @@ pub fn ipynb_parse(json: Value, img_path: &str) -> String {
     output
 }
 
-fn code_parse(code: Vec<&str>, count: i64) -> String {
+fn code_parse(code: Vec<&str>, _count: i64) -> String {
     // TODO https://nbformat.readthedocs.io/en/latest/format_description.html#code-cells
 
     code.join("")
@@ -79,14 +84,14 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                         .join("");
                     let file_path = format!("{}/{}.svg", img_path, md::sha1(&content));
                     let mut file = File::create(file_path.clone()).unwrap();
-                    let _ = file.write_all(content.as_bytes());
+                    file.write_all(content.as_bytes()).unwrap();
                     ret.push_str(format!("#image(\"./{}\")", file_path).as_str())
                 } else if let Some(img) = data["image/png"].as_str() {
                     fs::create_dir_all(img_path).unwrap();
                     let content = img;
                     let file_path = format!("{}/{}.png", img_path, md::sha1(content));
                     let mut file = File::create(file_path.clone()).unwrap();
-                    let _ = file.write_all(&STANDARD.decode(img).unwrap());
+                    file.write_all(&STANDARD.decode(img).unwrap()).unwrap();
                     ret.push_str(format!("#image(\"./{}\")", file_path).as_str())
                 } else if let Some(text) = data["text/plain"].as_array() {
                     ret.push_str(
@@ -97,7 +102,7 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                             .as_str(),
                     )
                 } else if let Some(text) = data["text/html"].as_array() {
-                    ret.push_str(&html_to_typst(
+                    ret.push_str(&md::html_to_typst(
                         text.iter()
                             .map(|v| v.as_str().unwrap())
                             .collect::<Vec<&str>>()
@@ -105,7 +110,7 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                             .as_str(),
                     ))
                 } else if let Some(text) = data["text/latex"].as_array() {
-                    ret.push_str(&latex_to_typst(
+                    ret.push_str(&md::latex_to_typst(
                         text.iter()
                             .map(|v| v.as_str().unwrap())
                             .collect::<Vec<&str>>()

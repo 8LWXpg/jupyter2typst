@@ -50,7 +50,7 @@
 + list
 + list
 + list
-  #link[link]
+  #link("https://www.google.com")[link]
   #image("././img/7e70d3c88dbf90fadf0da23862f0113ea3e96d91.png")
   `code`
 
@@ -100,7 +100,7 @@ block
 
 #line(length: 100%)
 - Inline #emph[code] `aaaaz`
-- My *favorite search* engine is #strike[not] #link[Duck Duck Go].
+- My *favorite search* engine is #strike[not] #link("https://duckduckgo.com")[Duck Duck Go].
 - #strike[#emph[*Recursive*]]
 - #emph[*#strike[Recursive reversed]*]
 - Item 4
