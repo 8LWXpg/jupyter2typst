@@ -135,16 +135,18 @@ fn ast_parse(node: Node, img_path: &str) -> String {
             context.push_str(")\n");
         }
         Node::TableCell(node) => {
-            context.push_str("  [");
+            context.push_str("[");
             for child in node.children {
                 context.push_str(&ast_parse(child, img_path));
             }
-            context.push_str("],\n");
+            context.push_str("], ");
         }
         Node::TableRow(node) => {
+            context.push_str("  ");
             for child in node.children {
                 context.push_str(&ast_parse(child, img_path));
             }
+            context.push_str("\n");
         }
         Node::Text(node) => {
             context.push_str(&escape(&node.value));
@@ -178,13 +180,13 @@ fn download_image(url: Url, img_path: &str) -> String {
 
 fn escape(s: &str) -> String {
     // https://typst.app/docs/reference/syntax/#markup
-    let escape = vec![
+    const ESCAPE: &[char] = &[
         '*', '_', '`', '<', '>', '@', '=', '-', '+', '/', '$', '\\', '\'', '"', '~', '#',
     ];
 
     let mut result = String::new();
     for c in s.chars() {
-        if escape.contains(&c) {
+        if ESCAPE.contains(&c) {
             result.push('\\');
         }
         result.push(c);
