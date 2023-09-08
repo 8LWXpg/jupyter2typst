@@ -243,7 +243,6 @@ pub fn sha1(s: &str) -> String {
 }
 
 fn download_image(url: Url) -> String {
-    // TODO download image
     let img_bytes = blocking::get(url.as_str()).unwrap().bytes().unwrap();
     let path = format!("{}/{}.png", IMG_PATH.get().unwrap(), sha1(url.as_str()));
     let mut file = File::create(&path).unwrap();
