@@ -1,6 +1,7 @@
 use markdown::{mdast::Node, to_mdast, ParseOptions};
+use reqwest::blocking;
 use sha1::{Digest, Sha1};
-use std::collections::HashMap;
+use std::{collections::HashMap, fs::File, io::Write};
 use url::Url;
 
 use crate::IMG_PATH;
@@ -13,8 +14,8 @@ pub fn md_to_typst(md: Vec<&str>) -> String {
     let tree = to_mdast(&md.join(""), &ParseOptions::gfm()).unwrap();
 
     // write tree to debug file
-    // let mut file = File::create("debug.txt").unwrap();
-    // file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
+    let mut file = File::create("debug.txt").unwrap();
+    file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
 
     FOOTNOTE_DEFINITIONS
         .set(footnote_grep(tree.clone()))
@@ -27,7 +28,7 @@ fn ast_parse(node: Node) -> String {
 
     match node {
         Node::BlockQuote(node) => {
-            context.push_str("#block_quote[\n");
+            context.push_str("#block-quote[\n");
             for child in node.children {
                 let mut item = ast_parse(child);
                 item = format!("  {}\n", item.trim_end_matches("\n").replace("\n", "\n  "));
@@ -65,11 +66,11 @@ fn ast_parse(node: Node) -> String {
         }
         Node::FootnoteReference(node) => {
             let id = node.identifier.as_str();
-            context.push_str(&format!(
-                "#link({})[^{}]",
-                FOOTNOTE_DEFINITIONS.get().unwrap().get(id).unwrap(),
-                id
-            ))
+            if let Some(link) = FOOTNOTE_DEFINITIONS.get().unwrap().get(id) {
+                context.push_str(&format!("#link(\"{}\")[^{}]", link, id))
+            } else {
+                context.push_str(&format!("[^{}]", id))
+            }
         }
         Node::Heading(node) => {
             let mut item = String::new();
@@ -201,7 +202,7 @@ fn footnote_grep(node: Node) -> HashMap<String, String> {
         Node::FootnoteDefinition(node) => {
             let mut item = String::new();
             for child in node.children {
-                item.push_str(&ast_parse(child));
+                item = footnote_def_parse(child);
             }
             definitions.insert(node.identifier.clone(), item);
         }
@@ -217,6 +218,21 @@ fn footnote_grep(node: Node) -> HashMap<String, String> {
     definitions
 }
 
+fn footnote_def_parse(node: Node) -> String {
+    let mut context = String::new();
+    match node {
+        Node::Paragraph(node) => {
+            for child in node.children {
+                context.push_str(&footnote_def_parse(child));
+            }
+        }
+        Node::Text(node) => context.push_str(&node.value),
+        Node::Link(node) => context.push_str(&node.url),
+        _ => println!("footnote_def_parse unhandled node: {:?}\n", node),
+    }
+    context
+}
+
 pub fn sha1(s: &str) -> String {
     let mut sha1 = Sha1::new();
     sha1.update(s);
@@ -228,9 +244,10 @@ pub fn sha1(s: &str) -> String {
 
 fn download_image(url: Url) -> String {
     // TODO download image
-    let mut path = format!("./{}/", IMG_PATH.get().unwrap());
-    path.push_str(&sha1(url.as_str()));
-    path.push_str(".png");
+    let img_bytes = blocking::get(url.as_str()).unwrap().bytes().unwrap();
+    let path = format!("{}/{}.png", IMG_PATH.get().unwrap(), sha1(url.as_str()));
+    let mut file = File::create(&path).unwrap();
+    file.write_all(&img_bytes).unwrap();
     path
 }
 

@@ -4,6 +4,7 @@
 		"emph",
 		"ipynb",
 		"mdast",
+		"reqwest",
 		"traceback",
 		"Typst"
 	]

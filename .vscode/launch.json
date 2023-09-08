@@ -21,6 +21,7 @@
 			},
 			"args": [
 				"./test/test4.ipynb",
+				"-o",
 				"out"
 			],
 			"cwd": "${workspaceFolder}"

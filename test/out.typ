@@ -22,7 +22,7 @@
 #emph[italic]
 #emph[*bold italic*]
 #strike[strike through]
-#block_quote[
+#block[
   quote
 ]
 
@@ -51,17 +51,17 @@
 + list
 + list
   #link("https://www.google.com")[link]
-  #image("././img/7e70d3c88dbf90fadf0da23862f0113ea3e96d91.png")
+  #image("img/7e70d3c88dbf90fadf0da23862f0113ea3e96d91.png")
   `code`
 
 #line(length: 100%)
 #line(length: 100%)
-Here is a simple footnote. With some additional text after it.
+Here is a simple footnote#link("https://www.example.com")[^1]. With some additional text after it#link("./out.typ no")[^2].
 ```
 code
 ```
 ```
-code 
+code
 block
 ```
 #table(
@@ -92,7 +92,7 @@ block
   columns: 2,
   align: (auto, auto),
   [Header 1], [Header 2],
-  [#image("././img/ded905929f9f27d5e6f084b799f4c8f1d145ec72.png")], [#image("././img/6e58c2da06fe64145ccd937de4236df64ecb506f.png")],
+  [#image("img/ded905929f9f27d5e6f084b799f4c8f1d145ec72.png")], [#image("img/6e58c2da06fe64145ccd937de4236df64ecb506f.png")],
 )
 
 === Lists
@@ -123,13 +123,13 @@ int method() {
 ===== Quotes
 <quotes>
 
-#block_quote[
+#block[
   aa
   aa
-  #block_quote[
+  #block[
     bb
     bb
-    #block_quote[
+    #block[
       cc
       cc
       bb
@@ -140,7 +140,7 @@ int method() {
   ]
 ]
 
-#block_quote[
+#block[
   single line
 ]
 

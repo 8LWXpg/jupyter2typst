@@ -19,11 +19,11 @@ struct Args {
     input: String,
 
     /// the output file path (without extension)
-    #[argh(positional)]
-    output: String,
+    #[argh(option, short = 'o')]
+    output: Option<String>,
 
     /// the output image path
-    #[argh(option, short = 'i', default = "String::from(\"./img\")")]
+    #[argh(option, short = 'i', default = "String::from(\"img\")")]
     img_path: String,
 }
 
@@ -54,8 +54,14 @@ fn main() {
 
     let output = inc::ipynb_parse(json);
 
-    let mut file =
-        File::create(format!("{}.typ", args.output)).expect("Failed to create/open file");
+    let out_file = args.output.unwrap_or_else(|| {
+        Path::new(&args.input)
+            .with_extension("typ")
+            .to_str()
+            .unwrap()
+            .to_string()
+    });
+    let mut file = File::create(format!("{}.typ", out_file)).expect("Failed to create/open file");
     file.write_all(output.as_bytes())
         .expect("Failed to write file");
 }
