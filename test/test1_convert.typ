@@ -1,4 +1,5 @@
 #import "template.typ": *
+#show: template
 
 #block[
 = Jupyter Notebook files
@@ -30,9 +31,7 @@ plt.ion()
 
 ]
 #block[
-```
-<contextlib.ExitStack at 0x22bfe5f6610>
-```
+#ansi-render("<contextlib.ExitStack at 0x22bfe5f6610>")
 ]
 #block[
 ```python
@@ -87,9 +86,7 @@ ax.set(title="Smoother linez")
 
 ]
 #block[
-```
-[Text(0.5, 1.0, 'Smoother linez')]
-```
+#ansi-render("[Text(0.5, 1.0, 'Smoother linez')]")
 #image("./img/37953a513550fe20bdf6382bcee49b1b8222e73a.png")]
 #block[
 ```{margin}
@@ -149,12 +146,10 @@ pd.DataFrame([['hi', 'there'], ['this', 'is'], ['a', 'DataFrame']], columns=['Wo
 
 ]
 #block[
-```
-  Word A     Word B
+#ansi-render("  Word A     Word B
 0     hi      there
 1   this         is
-2      a  DataFrame
-```
+2      a  DataFrame")
 ]
 #block[
 See {ref}`hiding/remove-content` for more information about hiding and removing content.
@@ -204,9 +199,7 @@ m
 
 ]
 #block[
-```
-<folium.folium.Map at 0x22bff8ea690>
-```
+#ansi-render("<folium.folium.Map at 0x22bff8ea690>")
 ]
 #block[
 == Rich outputs from notebook cells
@@ -240,7 +233,8 @@ this_will_error
 #block[
 #ansi-render("[1;31m---------------------------------------------------------------------------[0m[1;31mNameError[0m                                 Traceback (most recent call last)Cell [1;32mIn[9], line 1[0m
 [1;32m----> 1[0m this_will_error
-[1;31mNameError[0m: name 'this_will_error' is not defined")]
+[1;31mNameError[0m: name 'this_will_error' is not defined")
+]
 #block[
 == More features with Jupyter notebooks
 <more-features-with-jupyter-notebooks>

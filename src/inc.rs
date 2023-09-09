@@ -13,9 +13,11 @@ use std::{
 mod md;
 
 static LANG: OnceCell<String> = OnceCell::new();
-static TEMPLATE: &str = "#import \"template.typ\": *\n\n";
+static TEMPLATE: &str = "#import \"template.typ\": *\n#show: template\n\n";
+static CODE_SETTINGS: &str = "";
 
 pub fn ipynb_parse(json: Value) -> String {
+    // https://nbformat.readthedocs.io/en/latest/format_description.html
     let mut output = String::from(TEMPLATE);
     LANG.set(
         json["metadata"]["language_info"]["name"]
@@ -26,6 +28,23 @@ pub fn ipynb_parse(json: Value) -> String {
     .unwrap();
 
     for cell in json["cells"].as_array().unwrap() {
+        let mut md_img: Vec<String> = Vec::new();
+        if let Some(attachments) = cell["attachments"].as_object() {
+            for (name, value) in attachments {
+                let extension = name.split(".").last().unwrap();
+                let content = value[format!("image/{}", extension)].as_str().unwrap();
+                let file_path = format!(
+                    "{}/{}.{}",
+                    IMG_PATH.get().unwrap(),
+                    md::sha1(content),
+                    extension
+                );
+                let mut file = File::create(file_path.clone()).unwrap();
+                file.write_all(&STANDARD.decode(content).unwrap()).unwrap();
+                md_img.push(file_path);
+            }
+        };
+
         output.push_str("#block[\n");
         match cell["cell_type"].as_str().unwrap() {
             "markdown" => {
@@ -63,7 +82,6 @@ pub fn ipynb_parse(json: Value) -> String {
 }
 
 fn code_parse(code: Vec<&str>, _count: i64) -> String {
-    // TODO https://nbformat.readthedocs.io/en/latest/format_description.html#code-cells
     let mut context = String::new();
 
     context.push_str(format!("```{}\n", LANG.get().unwrap()).as_str());
@@ -110,13 +128,17 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                     context.push_str(format!("#image(\"./{}\")", file_path).as_str())
                 } else if let Some(text) = data["text/plain"].as_array() {
                     context.push_str(&format!(
-                        "```\n{}\n```\n",
-                        text.iter()
-                            .map(|v| v.as_str().unwrap())
-                            .collect::<Vec<&str>>()
-                            .join(""),
+                        "#ansi-render(\"{}\"{})\n",
+                        escape_string(
+                            text.iter()
+                                .map(|v| v.as_str().unwrap())
+                                .collect::<Vec<&str>>()
+                                .join("")
+                        ),
+                        CODE_SETTINGS,
                     ))
                 } else if let Some(text) = data["text/html"].as_array() {
+                    // TODO test html
                     context.push_str(&md::html_to_typst(
                         text.iter()
                             .map(|v| v.as_str().unwrap())
@@ -125,6 +147,7 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                             .as_str(),
                     ))
                 } else if let Some(text) = data["text/latex"].as_array() {
+                    // TODO test latex
                     context.push_str(&md::latex_to_typst(
                         text.iter()
                             .map(|v| v.as_str().unwrap())
@@ -135,7 +158,7 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                 }
             }
             "error" => context.push_str(&format!(
-                "#ansi-render(\"{}\")",
+                "#ansi-render(\"{}\"{})\n",
                 output["traceback"]
                     .as_array()
                     .unwrap()
@@ -143,6 +166,7 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                     .map(|v| v.as_str().unwrap())
                     .collect::<Vec<&str>>()
                     .join(""),
+                CODE_SETTINGS,
             )),
             _ => {
                 panic!("Unknown output type")
@@ -153,13 +177,13 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
     context
 }
 
-// fn escape_string(s: String) -> String {
-//     let mut result = String::new();
-//     for c in s.chars() {
-//         if c == '"' || c == '\\' {
-//             result.push('\\');
-//         }
-//         result.push(c);
-//     }
-//     result
-// }
+fn escape_string(s: String) -> String {
+    let mut result = String::new();
+    for c in s.chars() {
+        if c == '"' || c == '\\' {
+            result.push('\\');
+        }
+        result.push(c);
+    }
+    result
+}

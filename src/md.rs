@@ -80,21 +80,27 @@ fn ast_parse(node: Node) -> String {
                 item = ast_parse(child);
             }
             context.push_str(&item);
-            context.push_str(&format!(
-                "\n<{}>\n\n",
-                &escape_content(item, true).replace(" ", "-").to_lowercase()
-            ));
+            context.push_str("\n\n");
         }
         Node::Html(node) => {
             context.push_str(&html_to_typst(&node.value));
         }
         Node::Image(node) => match Url::parse(&node.url) {
-            Ok(url) => {
-                context.push_str(&format!("#image(\"{}\")", download_image(url)));
-            }
-            Err(_) => {
-                context.push_str(&format!("#image(\"{}\")", node.url));
-            }
+            Ok(url) => match url.scheme() {
+                "http" | "https" => {
+                    context.push_str(&format!("#image(\"{}\")", download_image(url)))
+                }
+                _ => context.push_str(&format!(
+                    "#image(\"{}/{}\")",
+                    IMG_PATH.get().unwrap(),
+                    node.url.strip_prefix("attachment:").unwrap()
+                )),
+            },
+            Err(_) => context.push_str(&format!(
+                "#image(\"{}/{}\")",
+                IMG_PATH.get().unwrap(),
+                node.url.strip_prefix("attachment:").unwrap()
+            )),
         },
         Node::InlineCode(node) => {
             context.push_str(&format!("`{}`", node.value));
@@ -185,7 +191,7 @@ fn ast_parse(node: Node) -> String {
             context.push_str("\n");
         }
         Node::Text(node) => {
-            context.push_str(&escape_content(node.value, false));
+            context.push_str(&escape_content(node.value));
         }
         Node::ThematicBreak(_) => {
             context.push_str("#line(length: 100%)\n");
@@ -244,14 +250,22 @@ pub fn sha1(s: &str) -> String {
 }
 
 fn download_image(url: Url) -> String {
-    let img_bytes = blocking::get(url.as_str()).unwrap().bytes().unwrap();
-    let path = format!("{}/{}.png", IMG_PATH.get().unwrap(), sha1(url.as_str()));
-    let mut file = File::create(&path).unwrap();
-    file.write_all(&img_bytes).unwrap();
-    path
+    match blocking::get(url.as_str()) {
+        Ok(img) => {
+            let img_bytes = img.bytes().unwrap();
+            let path = format!("{}/{}.png", IMG_PATH.get().unwrap(), sha1(url.as_str()));
+            let mut file = File::create(&path).unwrap();
+            file.write_all(&img_bytes).unwrap();
+            path
+        }
+        Err(_) => {
+            println!("download image failed: {}", url);
+            url.as_str().to_string()
+        }
+    }
 }
 
-pub fn escape_content(s: String, remove: bool) -> String {
+pub fn escape_content(s: String) -> String {
     // https://typst.app/docs/reference/syntax/#markup
     const ESCAPE: &[char] = &[
         '*', '_', '`', '<', '>', '@', '=', '-', '+', '/', '$', '\\', '\'', '"', '~', '#',
@@ -260,11 +274,7 @@ pub fn escape_content(s: String, remove: bool) -> String {
     let mut result = String::new();
     for c in s.chars() {
         if ESCAPE.contains(&c) {
-            if remove {
-                continue;
-            } else {
-                result.push('\\');
-            }
+            result.push('\\');
         }
         result.push(c);
     }
