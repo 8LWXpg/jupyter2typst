@@ -1,12 +1,11 @@
 use crate::IMG_PATH;
 use base64::{engine::general_purpose::STANDARD, Engine as _};
-use once_cell::sync::{Lazy, OnceCell};
+use once_cell::sync::OnceCell;
 use serde_json::Value;
 use std::{
     collections::HashMap,
     fs::{self, File},
     io::Write,
-    sync::RwLock,
 };
 
 #[path = "md.rs"]
