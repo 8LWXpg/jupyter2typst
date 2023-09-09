@@ -4,7 +4,7 @@ use once_cell::sync::OnceCell;
 use serde_json::Value;
 use std::{
     env::set_current_dir,
-    fs::File,
+    fs::{self, File},
     io::{Read, Write},
     path::Path,
 };
@@ -51,7 +51,7 @@ fn main() {
 
     set_current_dir(Path::new(&args.input).parent().unwrap())
         .expect("Failed to set current directory");
-
+    fs::create_dir_all(IMG_PATH.get().unwrap()).expect("Failed to create image directory");
     let output = inc::ipynb_parse(json);
 
     let out_file = args.output.unwrap_or_else(|| {

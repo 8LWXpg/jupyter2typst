@@ -11,16 +11,23 @@ use once_cell::sync::Lazy;
 
 static FOOTNOTE_DEFINITIONS: Lazy<RwLock<HashMap<String, String>>> =
     Lazy::new(|| RwLock::new(HashMap::new()));
+/// <name in attachments, file path>
+static ATTACHMENTS: Lazy<RwLock<HashMap<String, String>>> =
+    Lazy::new(|| RwLock::new(HashMap::new()));
 
-pub fn md_to_typst(md: Vec<&str>) -> String {
+pub fn md_to_typst(md: Vec<&str>, attachments: HashMap<String, String>) -> String {
     let tree = to_mdast(&md.join(""), &ParseOptions::gfm()).unwrap();
 
     // write tree to debug file
-    let mut file = File::create("debug.txt").unwrap();
-    file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
+    // let mut file = File::create("debug.txt").unwrap();
+    // file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
+    {
+        let mut w_fd = FOOTNOTE_DEFINITIONS.write().unwrap();
+        *w_fd = footnote_grep(tree.clone());
 
-    let mut w_fd = FOOTNOTE_DEFINITIONS.write().unwrap();
-    *w_fd = footnote_grep(tree.clone());
+        let mut w_a = ATTACHMENTS.write().unwrap();
+        *w_a = attachments;
+    }
     ast_parse(tree)
 }
 
@@ -90,17 +97,20 @@ fn ast_parse(node: Node) -> String {
                 "http" | "https" => {
                     context.push_str(&format!("#image(\"{}\")", download_image(url)))
                 }
-                _ => context.push_str(&format!(
-                    "#image(\"{}/{}\")",
-                    IMG_PATH.get().unwrap(),
-                    node.url.strip_prefix("attachment:").unwrap()
-                )),
+                _ => {
+                    let name = node.url.strip_prefix("attachment:").unwrap();
+                    let a = ATTACHMENTS.read().unwrap();
+                    if let Some(file_path) = a.to_owned().get(name) {
+                        context.push_str(&format!("#image(\"{}\")", file_path))
+                    };
+                }
             },
-            Err(_) => context.push_str(&format!(
-                "#image(\"{}/{}\")",
-                IMG_PATH.get().unwrap(),
-                node.url.strip_prefix("attachment:").unwrap()
-            )),
+            Err(_) => {
+                let name = node.url.strip_prefix("attachment:").unwrap();
+                if let Some(file_path) = ATTACHMENTS.read().unwrap().to_owned().get(name) {
+                    context.push_str(&format!("#image(\"{}\")", file_path))
+                };
+            }
         },
         Node::InlineCode(node) => {
             context.push_str(&format!("`{}`", node.value));

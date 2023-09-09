@@ -17,7 +17,8 @@ using DataFrames
 == Using Plots.jl
 
 Plots.jl outputs plots in different formats. It is written in #link("https://julialang.org")[Julia]:
-#image("img/image.png")
+#image("img/e4f510a108a52350c25b6485f4c9058cdae2ccba.png")
+#image("img/c75b0d358982c06f338e70a3759a053a212d8278.png")
 ]
 #block[
 ```julia
@@ -46,7 +47,7 @@ These are the trigonometric functions,
 \$\$\\cos(x)\$\$
 \$\$\\tan(x)\$\$
 According to Wikipedia, their graphs look like this:
-#image("img/image.png")
+#image("img/e4f510a108a52350c25b6485f4c9058cdae2ccba.png")
 ]
 #block[
 ```julia

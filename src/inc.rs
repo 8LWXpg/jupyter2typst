@@ -1,13 +1,13 @@
 use crate::IMG_PATH;
 use base64::{engine::general_purpose::STANDARD, Engine as _};
-use once_cell::sync::OnceCell;
+use once_cell::sync::{Lazy, OnceCell};
 use serde_json::Value;
 use std::{
+    collections::HashMap,
     fs::{self, File},
     io::Write,
+    sync::RwLock,
 };
-
-// use self::md::{html_to_typst, latex_to_typst};
 
 #[path = "md.rs"]
 mod md;
@@ -28,9 +28,10 @@ pub fn ipynb_parse(json: Value) -> String {
     .unwrap();
 
     for cell in json["cells"].as_array().unwrap() {
-        let mut md_img: Vec<String> = Vec::new();
-        if let Some(attachments) = cell["attachments"].as_object() {
-            for (name, value) in attachments {
+        // attachments
+        let mut attachments: HashMap<String, String> = HashMap::new();
+        if let Some(item) = cell["attachments"].as_object() {
+            for (name, value) in item {
                 let extension = name.split(".").last().unwrap();
                 let content = value[format!("image/{}", extension)].as_str().unwrap();
                 let file_path = format!(
@@ -41,10 +42,11 @@ pub fn ipynb_parse(json: Value) -> String {
                 );
                 let mut file = File::create(file_path.clone()).unwrap();
                 file.write_all(&STANDARD.decode(content).unwrap()).unwrap();
-                md_img.push(file_path);
+                attachments.insert(name.clone(), file_path);
             }
         };
 
+        // source and output
         output.push_str("#block[\n");
         match cell["cell_type"].as_str().unwrap() {
             "markdown" => {
@@ -55,6 +57,7 @@ pub fn ipynb_parse(json: Value) -> String {
                         .iter()
                         .map(|v| v.as_str().unwrap())
                         .collect::<Vec<&str>>(),
+                    attachments,
                 ));
             }
             "code" => {
