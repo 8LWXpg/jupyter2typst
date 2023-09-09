@@ -1,14 +1,16 @@
 use markdown::{mdast::Node, to_mdast, ParseOptions};
 use reqwest::blocking;
 use sha1::{Digest, Sha1};
+use std::sync::RwLock;
 use std::{collections::HashMap, fs::File, io::Write};
 use url::Url;
 
 use crate::IMG_PATH;
 
-use once_cell::sync::OnceCell;
+use once_cell::sync::Lazy;
 
-static FOOTNOTE_DEFINITIONS: OnceCell<HashMap<String, String>> = OnceCell::new();
+static FOOTNOTE_DEFINITIONS: Lazy<RwLock<HashMap<String, String>>> =
+    Lazy::new(|| RwLock::new(HashMap::new()));
 
 pub fn md_to_typst(md: Vec<&str>) -> String {
     let tree = to_mdast(&md.join(""), &ParseOptions::gfm()).unwrap();
@@ -17,9 +19,8 @@ pub fn md_to_typst(md: Vec<&str>) -> String {
     let mut file = File::create("debug.txt").unwrap();
     file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
 
-    FOOTNOTE_DEFINITIONS
-        .set(footnote_grep(tree.clone()))
-        .unwrap();
+    let mut w_fd = FOOTNOTE_DEFINITIONS.write().unwrap();
+    *w_fd = footnote_grep(tree.clone());
     ast_parse(tree)
 }
 
@@ -66,7 +67,7 @@ fn ast_parse(node: Node) -> String {
         }
         Node::FootnoteReference(node) => {
             let id = node.identifier.as_str();
-            if let Some(link) = FOOTNOTE_DEFINITIONS.get().unwrap().get(id) {
+            if let Some(link) = FOOTNOTE_DEFINITIONS.read().unwrap().to_owned().get(id) {
                 context.push_str(&format!("#link(\"{}\")[^{}]", link, id))
             } else {
                 context.push_str(&format!("[^{}]", id))
@@ -81,7 +82,7 @@ fn ast_parse(node: Node) -> String {
             context.push_str(&item);
             context.push_str(&format!(
                 "\n<{}>\n\n",
-                &escape(&item, true).replace(" ", "-").to_lowercase()
+                &escape_content(item, true).replace(" ", "-").to_lowercase()
             ));
         }
         Node::Html(node) => {
@@ -184,7 +185,7 @@ fn ast_parse(node: Node) -> String {
             context.push_str("\n");
         }
         Node::Text(node) => {
-            context.push_str(&escape(&node.value, false));
+            context.push_str(&escape_content(node.value, false));
         }
         Node::ThematicBreak(_) => {
             context.push_str("#line(length: 100%)\n");
@@ -250,7 +251,7 @@ fn download_image(url: Url) -> String {
     path
 }
 
-fn escape(s: &str, remove: bool) -> String {
+pub fn escape_content(s: String, remove: bool) -> String {
     // https://typst.app/docs/reference/syntax/#markup
     const ESCAPE: &[char] = &[
         '*', '_', '`', '<', '>', '@', '=', '-', '+', '/', '$', '\\', '\'', '"', '~', '#',

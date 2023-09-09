@@ -1,19 +1,29 @@
+use crate::IMG_PATH;
 use base64::{engine::general_purpose::STANDARD, Engine as _};
+use once_cell::sync::OnceCell;
 use serde_json::Value;
 use std::{
     fs::{self, File},
     io::Write,
 };
 
-use crate::IMG_PATH;
-
 // use self::md::{html_to_typst, latex_to_typst};
 
 #[path = "md.rs"]
 mod md;
 
+static LANG: OnceCell<String> = OnceCell::new();
+static TEMPLATE: &str = "#import \"template.typ\": *\n\n";
+
 pub fn ipynb_parse(json: Value) -> String {
-    let mut output = String::new();
+    let mut output = String::from(TEMPLATE);
+    LANG.set(
+        json["metadata"]["language_info"]["name"]
+            .as_str()
+            .unwrap()
+            .to_string(),
+    )
+    .unwrap();
 
     for cell in json["cells"].as_array().unwrap() {
         output.push_str("#block[\n");
@@ -54,16 +64,21 @@ pub fn ipynb_parse(json: Value) -> String {
 
 fn code_parse(code: Vec<&str>, _count: i64) -> String {
     // TODO https://nbformat.readthedocs.io/en/latest/format_description.html#code-cells
+    let mut context = String::new();
 
-    code.join("")
+    context.push_str(format!("```{}\n", LANG.get().unwrap()).as_str());
+    context.push_str(&code.join(""));
+    context.push_str("\n```\n");
+
+    context
 }
 
 fn code_output_parse(outputs: Value, img_path: &str) -> String {
-    let mut ret = String::new();
+    let mut context = String::new();
 
     for output in outputs.as_array().unwrap() {
         match output["output_type"].as_str().unwrap() {
-            "stream" => ret.push_str(
+            "stream" => context.push_str(
                 output["text"]
                     .as_array()
                     .unwrap()
@@ -85,24 +100,24 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                     let file_path = format!("{}/{}.svg", img_path, md::sha1(&content));
                     let mut file = File::create(file_path.clone()).unwrap();
                     file.write_all(content.as_bytes()).unwrap();
-                    ret.push_str(format!("#image(\"./{}\")", file_path).as_str())
+                    context.push_str(format!("#image(\"./{}\")", file_path).as_str())
                 } else if let Some(img) = data["image/png"].as_str() {
                     fs::create_dir_all(img_path).unwrap();
                     let content = img;
                     let file_path = format!("{}/{}.png", img_path, md::sha1(content));
                     let mut file = File::create(file_path.clone()).unwrap();
                     file.write_all(&STANDARD.decode(img).unwrap()).unwrap();
-                    ret.push_str(format!("#image(\"./{}\")", file_path).as_str())
+                    context.push_str(format!("#image(\"./{}\")", file_path).as_str())
                 } else if let Some(text) = data["text/plain"].as_array() {
-                    ret.push_str(
+                    context.push_str(&format!(
+                        "```\n{}\n```\n",
                         text.iter()
                             .map(|v| v.as_str().unwrap())
                             .collect::<Vec<&str>>()
-                            .join("")
-                            .as_str(),
-                    )
+                            .join(""),
+                    ))
                 } else if let Some(text) = data["text/html"].as_array() {
-                    ret.push_str(&md::html_to_typst(
+                    context.push_str(&md::html_to_typst(
                         text.iter()
                             .map(|v| v.as_str().unwrap())
                             .collect::<Vec<&str>>()
@@ -110,7 +125,7 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                             .as_str(),
                     ))
                 } else if let Some(text) = data["text/latex"].as_array() {
-                    ret.push_str(&md::latex_to_typst(
+                    context.push_str(&md::latex_to_typst(
                         text.iter()
                             .map(|v| v.as_str().unwrap())
                             .collect::<Vec<&str>>()
@@ -119,21 +134,32 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                     ))
                 }
             }
-            "error" => ret.push_str(
+            "error" => context.push_str(&format!(
+                "#ansi-render(\"{}\")",
                 output["traceback"]
                     .as_array()
                     .unwrap()
                     .iter()
                     .map(|v| v.as_str().unwrap())
                     .collect::<Vec<&str>>()
-                    .join("")
-                    .as_str(),
-            ),
+                    .join(""),
+            )),
             _ => {
                 panic!("Unknown output type")
             }
         }
     }
 
-    ret
+    context
 }
+
+// fn escape_string(s: String) -> String {
+//     let mut result = String::new();
+//     for c in s.chars() {
+//         if c == '"' || c == '\\' {
+//             result.push('\\');
+//         }
+//         result.push(c);
+//     }
+//     result
+// }

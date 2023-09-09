@@ -1,4 +1,4 @@
-#import "@preview/ansi-render:0.2.0": *
+#import "template.typ": *
 
 #block[
 = Jupyter Notebook files
