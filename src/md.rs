@@ -19,8 +19,8 @@ pub fn md_to_typst(md: Vec<&str>, attachments: HashMap<String, String>) -> Strin
     let tree = to_mdast(&md.join(""), &ParseOptions::gfm()).unwrap();
 
     // write tree to debug file
-    // let mut file = File::create("debug.txt").unwrap();
-    // file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
+    let mut file = File::create("debug.txt").unwrap();
+    file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
     {
         let mut w_fd = FOOTNOTE_DEFINITIONS.write().unwrap();
         *w_fd = footnote_grep(tree.clone());
@@ -131,16 +131,15 @@ fn ast_parse(node: Node) -> String {
                 let mut item = ast_parse(child);
                 item = item.trim_end_matches("\n").replace("\n", "\n  ") + "\n";
                 context.push_str(&item);
+                if node.spread {
+                    context.push_str("\n");
+                }
             }
             context.push_str("\n");
         }
         Node::ListItem(node) => {
             for child in node.children {
                 context.push_str(&ast_parse(child));
-            }
-            if node.spread {
-                println!("spread");
-                context.push_str("\n");
             }
         }
         Node::Math(node) => context.push_str(&latex_to_typst(&node.value)),
@@ -260,6 +259,7 @@ pub fn sha1(s: &str) -> String {
 }
 
 fn download_image(url: Url) -> String {
+    // TODO check for file format
     match blocking::get(url.as_str()) {
         Ok(img) => {
             let img_bytes = img.bytes().unwrap();

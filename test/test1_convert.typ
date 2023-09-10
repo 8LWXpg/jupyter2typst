@@ -3,7 +3,6 @@
 
 #block[
 = Jupyter Notebook files
-<jupyter-notebook-files>
 
 You can create content with Jupyter notebooks.
 For example, the content for the current page is contained in {download}`this notebook file <./notebooks.ipynb>`.
@@ -16,26 +15,22 @@ Jupyter Book supports all Markdown that is supported by Jupyter Notebook.
 This is mostly a flavour of Markdown called #link("https://commonmark.org/")[CommonMark Markdown] with minor modifications.
 For more information about writing Jupyter\-flavoured Markdown in Jupyter Book, see #link("./markdown.md")[].
 == Code blocks and image outputs
-<code-blocks-and-image-outputs>
 
 Jupyter Book will also embed your code blocks and output in your book.
 For example, here\'s some sample Matplotlib code:
 ]
 #block[
-```python
-from matplotlib import rcParams, cycler
+#code-block("from matplotlib import rcParams, cycler
 import matplotlib.pyplot as plt
 import numpy as np
-plt.ion()
-```
+plt.ion()", lang: "python", count: 1)
 
 ]
 #block[
-#ansi-render("<contextlib.ExitStack at 0x22bfe5f6610>")
+#result-block("<contextlib.ExitStack at 0x22bfe5f6610>")
 ]
 #block[
-```python
-# Fixing random state for reproducibility
+#code-block("# Fixing random state for reproducibility
 np.random.seed(19680801)
 
 N = 10
@@ -52,8 +47,7 @@ custom_lines = [Line2D([0], [0], color=cmap(0.), lw=4),
 
 fig, ax = plt.subplots(figsize=(10, 5))
 lines = ax.plot(data)
-ax.legend(custom_lines, ['Cold', 'Medium', 'Hot']);
-```
+ax.legend(custom_lines, ['Cold', 'Medium', 'Hot']);", lang: "python", count: 2)
 
 ]
 #block[
@@ -62,8 +56,7 @@ ax.legend(custom_lines, ['Cold', 'Medium', 'Hot']);
 Note that the image above is captured and displayed in your site.
 ]
 #block[
-```python
-# Fixing random state for reproducibility
+#code-block("# Fixing random state for reproducibility
 np.random.seed(19680801)
 
 N = 10
@@ -81,12 +74,11 @@ custom_lines = [Line2D([0], [0], color=cmap(0.), lw=4),
 fig, ax = plt.subplots(figsize=(10, 5))
 lines = ax.plot(data)
 ax.legend(custom_lines, ['Cold', 'Medium', 'Hot'])
-ax.set(title="Smoother linez")
-```
+ax.set(title=\"Smoother linez\")", lang: "python", count: 3)
 
 ]
 #block[
-#ansi-render("[Text(0.5, 1.0, 'Smoother linez')]")
+#result-block("[Text(0.5, 1.0, 'Smoother linez')]")
 #image("./img/37953a513550fe20bdf6382bcee49b1b8222e73a.png")]
 #block[
 ```{margin}
@@ -96,22 +88,19 @@ check out the {ref}`layout/sidebar` section.
 ]
 #block[
 == Removing content before publishing
-<removing-content-before-publishing>
 
 You can also remove some content before publishing your book to the web.
 For reference, {download}`you can download the notebook content for this page <notebooks.ipynb>`.
 ]
 #block[
-```python
-thisvariable = "none of this should show up in the textbook"
+#code-block("thisvariable = \"none of this should show up in the textbook\"
 
 fig, ax = plt.subplots()
 x = np.random.randn(100)
 y = np.random.randn(100)
 ax.scatter(x, y, s=np.abs(x*100), c=x, cmap=plt.cm.coolwarm)
 ax.text(0, .5, thisvariable, fontsize=20, transform=ax.transAxes)
-ax.set_axis_off()
-```
+ax.set_axis_off()", lang: "python", count: 4)
 
 ]
 #block[
@@ -120,16 +109,14 @@ ax.set_axis_off()
 You can *remove only the code* so that images and other output still show up.
 ]
 #block[
-```python
-thisvariable = "this plot *will* show up in the textbook."
+#code-block("thisvariable = \"this plot *will* show up in the textbook.\"
 
 fig, ax = plt.subplots()
 x = np.random.randn(100)
 y = np.random.randn(100)
 ax.scatter(x, y, s=np.abs(x*100), c=x, cmap=plt.cm.coolwarm)
 ax.text(0, .5, thisvariable, fontsize=20, transform=ax.transAxes)
-ax.set_axis_off()
-```
+ax.set_axis_off()", lang: "python", count: 5)
 
 ]
 #block[
@@ -139,14 +126,12 @@ Which works well if you\'d like to quickly display cell output without clutterin
 This works for any cell output, like a Pandas DataFrame.
 ]
 #block[
-```python
-import pandas as pd
-pd.DataFrame([['hi', 'there'], ['this', 'is'], ['a', 'DataFrame']], columns=['Word A', 'Word B'])
-```
+#code-block("import pandas as pd
+pd.DataFrame([['hi', 'there'], ['this', 'is'], ['a', 'DataFrame']], columns=['Word A', 'Word B'])", lang: "python", count: 6)
 
 ]
 #block[
-#ansi-render("  Word A     Word B
+#result-block("  Word A     Word B
 0     hi      there
 1   this         is
 2      a  DataFrame")
@@ -156,7 +141,6 @@ See {ref}`hiding/remove-content` for more information about hiding and removing 
 ]
 #block[
 == Interactive outputs
-<interactive-outputs>
 
 We can do the same for #emph[interactive] material. Below we\'ll display a map
 using #link("https://python-visualization.github.io/folium/")[folium]. When your book is built,
@@ -168,8 +152,7 @@ depend on an underlying Python kernel to work.
 ```
 ]
 #block[
-```python
-import folium
+#code-block("import folium
 m = folium.Map(
     location=[45.372, -121.6972],
     zoom_start=12,
@@ -194,16 +177,14 @@ folium.Marker(
     icon=folium.Icon(color='red', icon='info-sign')
 ).add_to(m)
 
-m
-```
+m", lang: "python", count: 7)
 
 ]
 #block[
-#ansi-render("<folium.folium.Map at 0x22bff8ea690>")
+#result-block("<folium.folium.Map at 0x22bff8ea690>")
 ]
 #block[
 == Rich outputs from notebook cells
-<rich-outputs-from-notebook-cells>
 
 ]
 #block[
@@ -212,32 +193,28 @@ your Jupyter Book as well! For example, here is the command line help
 menu, see how it is nicely formatted.
 ]
 #block[
-```python
-!jupyter-book build --help
-```
+#code-block("!jupyter-book build --help", lang: "python", count: 8)
 
 ]
 #block[
-'jupyter-book' ���O�����Υ~���R�O�B�i���檺�{���Χ妸�ɡC
+#result-block("'jupyter-book' ���O�����Υ~���R�O�B�i���檺�{���Χ妸�ɡC
+")
 ]
 #block[
 And here is an error. You can mark notebook cells as \"expected to error\" by adding a
 `raises-exception` tag to them.
 ]
 #block[
-```python
-this_will_error
-```
+#code-block("this_will_error", lang: "python", count: 9)
 
 ]
 #block[
-#ansi-render("[1;31m---------------------------------------------------------------------------[0m[1;31mNameError[0m                                 Traceback (most recent call last)Cell [1;32mIn[9], line 1[0m
+#result-block("[1;31m---------------------------------------------------------------------------[0m[1;31mNameError[0m                                 Traceback (most recent call last)Cell [1;32mIn[9], line 1[0m
 [1;32m----> 1[0m this_will_error
 [1;31mNameError[0m: name 'this_will_error' is not defined")
 ]
 #block[
 == More features with Jupyter notebooks
-<more-features-with-jupyter-notebooks>
 
 There are many other features of Jupyter notebooks to take advantage of,
 such as automatically generating Binder links for notebooks or connecting your content with a kernel in the cloud.

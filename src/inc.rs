@@ -13,7 +13,6 @@ mod md;
 
 static LANG: OnceCell<String> = OnceCell::new();
 static TEMPLATE: &str = "#import \"template.typ\": *\n#show: template\n\n";
-static CODE_SETTINGS: &str = "";
 
 pub fn ipynb_parse(json: Value) -> String {
     // https://nbformat.readthedocs.io/en/latest/format_description.html
@@ -83,12 +82,13 @@ pub fn ipynb_parse(json: Value) -> String {
     output
 }
 
-fn code_parse(code: Vec<&str>, _count: i64) -> String {
+fn code_parse(code: Vec<&str>, count: i64) -> String {
     let mut context = String::new();
 
-    context.push_str(format!("```{}\n", LANG.get().unwrap()).as_str());
-    context.push_str(&code.join(""));
-    context.push_str("\n```\n");
+    context.push_str("#code-block(\"");
+    context.push_str(&&escape_string(code.join("")));
+    context
+        .push_str(format!("\", lang: \"{}\", count: {})\n", LANG.get().unwrap(), count).as_str());
 
     context
 }
@@ -98,7 +98,8 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
 
     for output in outputs.as_array().unwrap() {
         match output["output_type"].as_str().unwrap() {
-            "stream" => context.push_str(
+            "stream" => context.push_str(&format!(
+                "#result-block(\"{}\")\n",
                 output["text"]
                     .as_array()
                     .unwrap()
@@ -106,8 +107,7 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                     .map(|v| v.as_str().unwrap())
                     .collect::<Vec<&str>>()
                     .join("")
-                    .as_str(),
-            ),
+            )),
             "display_data" | "execute_result" => {
                 let data = output["data"].clone();
                 if let Some(img) = data["image/svg+xml"].as_array() {
@@ -130,14 +130,13 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                     context.push_str(format!("#image(\"./{}\")", file_path).as_str())
                 } else if let Some(text) = data["text/plain"].as_array() {
                     context.push_str(&format!(
-                        "#ansi-render(\"{}\"{})\n",
+                        "#result-block(\"{}\")\n",
                         escape_string(
                             text.iter()
                                 .map(|v| v.as_str().unwrap())
                                 .collect::<Vec<&str>>()
                                 .join("")
                         ),
-                        CODE_SETTINGS,
                     ))
                 } else if let Some(text) = data["text/html"].as_array() {
                     // TODO test html
@@ -160,7 +159,7 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                 }
             }
             "error" => context.push_str(&format!(
-                "#ansi-render(\"{}\"{})\n",
+                "#result-block(\"{}\")\n",
                 output["traceback"]
                     .as_array()
                     .unwrap()
@@ -168,7 +167,6 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                     .map(|v| v.as_str().unwrap())
                     .collect::<Vec<&str>>()
                     .join(""),
-                CODE_SETTINGS,
             )),
             _ => {
                 panic!("Unknown output type")

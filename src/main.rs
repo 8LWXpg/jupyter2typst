@@ -56,7 +56,8 @@ fn main() {
 
     let out_file = args.output.unwrap_or_else(|| {
         Path::new(&args.input)
-            .with_extension("typ")
+            .file_stem()
+            .unwrap()
             .to_str()
             .unwrap()
             .to_string()

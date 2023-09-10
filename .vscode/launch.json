@@ -20,9 +20,7 @@
 				}
 			},
 			"args": [
-				"./test/test3.ipynb",
-				"-o",
-				"test3_convert"
+				"./test/test4.ipynb",
 			],
 			"cwd": "${workspaceFolder}"
 		},
