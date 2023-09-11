@@ -1,3 +1,4 @@
+use image;
 use markdown::{mdast::Node, to_mdast, ParseOptions};
 use reqwest::blocking;
 use sha1::{Digest, Sha1};
@@ -259,20 +260,58 @@ pub fn sha1(s: &str) -> String {
 }
 
 fn download_image(url: Url) -> String {
-    // TODO check for file format
-    match blocking::get(url.as_str()) {
-        Ok(img) => {
-            let img_bytes = img.bytes().unwrap();
-            let path = format!("{}/{}.png", IMG_PATH.get().unwrap(), sha1(url.as_str()));
-            let mut file = File::create(&path).unwrap();
-            file.write_all(&img_bytes).unwrap();
-            path
-        }
+    println!("Downloading image from {}", url);
+    let response = match blocking::get(url.as_str()) {
+        Ok(r) => r,
         Err(_) => {
             println!("download image failed: {}", url);
-            url.as_str().to_string()
+            return url.as_str().to_string();
         }
-    }
+    };
+
+    let headers = response.headers().clone();
+    let img_bytes = response.bytes().unwrap();
+    let content_type = match headers.get(reqwest::header::CONTENT_TYPE) {
+        Some(content_type) => match content_type.to_str().unwrap() {
+            "image/png" => "png",
+            "image/jpeg" => "jpg",
+            "image/gif" => "gif",
+            "image/svg+xml" => "svg",
+            c => {
+                println!("not supported image format: {}", c);
+                return url.as_str().to_string();
+            }
+        },
+        None => {
+            // guess image format, not containing svg
+            match image::guess_format(&img_bytes) {
+                Ok(format) => match format {
+                    image::ImageFormat::Png => "png",
+                    image::ImageFormat::Jpeg => "jpg",
+                    image::ImageFormat::Gif => "gif",
+                    _ => {
+                        println!("not supported image format: {:?}", format);
+                        return url.as_str().to_string();
+                    }
+                },
+                Err(e) => {
+                    eprintln!("{}", e);
+                    return url.as_str().to_string();
+                }
+            }
+        }
+    };
+
+    let path = format!(
+        "{}/{}.{}",
+        IMG_PATH.get().unwrap(),
+        sha1(url.as_str()),
+        content_type,
+    );
+    let mut file = File::create(&path).unwrap();
+    file.write_all(&img_bytes).unwrap();
+    println!("Downloaded image to {}", path);
+    path
 }
 
 pub fn escape_content(s: String) -> String {

@@ -58,7 +58,7 @@ Here is a simple footnote#link("https://www.example.com")[^1]. With some additio
 code
 ```
 ```
-code
+code 
 block
 ```
 #table(
