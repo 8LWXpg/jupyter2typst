@@ -11,6 +11,9 @@ use std::{
 #[path = "md.rs"]
 mod md;
 
+#[path = "katex.rs"]
+mod katex;
+
 static LANG: OnceCell<String> = OnceCell::new();
 static TEMPLATE: &str = "#import \"template.typ\": *\n#show: template\n\n";
 
@@ -87,8 +90,14 @@ fn code_parse(code: Vec<&str>, count: i64) -> String {
 
     context.push_str("#code-block(\"");
     context.push_str(&&escape_string(code.join("")));
-    context
-        .push_str(format!("\", lang: \"{}\", count: {})\n", LANG.get().unwrap(), count).as_str());
+    context.push_str(
+        format!(
+            "\"\n, lang: \"{}\", count: {})\n",
+            LANG.get().unwrap(),
+            count
+        )
+        .as_str(),
+    );
 
     context
 }
@@ -149,12 +158,11 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                     ))
                 } else if let Some(text) = data["text/latex"].as_array() {
                     // TODO test latex
-                    context.push_str(&md::latex_to_typst(
+                    context.push_str(&katex::latex_to_typst(
                         text.iter()
                             .map(|v| v.as_str().unwrap())
                             .collect::<Vec<&str>>()
-                            .join("")
-                            .as_str(),
+                            .join(""),
                     ))
                 }
             }
@@ -168,8 +176,8 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                     .collect::<Vec<&str>>()
                     .join(""),
             )),
-            _ => {
-                panic!("Unknown output type")
+            other => {
+                println!("unhandled output type: {other}\n");
             }
         }
     }

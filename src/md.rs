@@ -7,6 +7,7 @@ use std::{collections::HashMap, fs::File, io::Write};
 use url::Url;
 
 use crate::IMG_PATH;
+mod katex;
 
 use once_cell::sync::Lazy;
 
@@ -117,7 +118,7 @@ fn ast_parse(node: Node) -> String {
             context.push_str(&format!("`{}`", node.value));
         }
         Node::InlineMath(node) => {
-            context.push_str(&latex_to_typst(&node.value));
+            context.push_str(&katex::latex_to_typst(node.value));
         }
         Node::Link(node) => {
             context.push_str(&format!("#link(\"{}\")[", node.url));
@@ -143,7 +144,7 @@ fn ast_parse(node: Node) -> String {
                 context.push_str(&ast_parse(child));
             }
         }
-        Node::Math(node) => context.push_str(&latex_to_typst(&node.value)),
+        Node::Math(node) => context.push_str(&katex::latex_to_typst(node.value)),
         Node::Paragraph(node) => {
             for child in node.children {
                 context.push_str(&ast_parse(child));
@@ -333,9 +334,4 @@ pub fn escape_content(s: String) -> String {
 pub fn html_to_typst(html: &str) -> String {
     // TODO html to typst
     html.to_string()
-}
-
-pub fn latex_to_typst(latex: &str) -> String {
-    // TODO latex to typst
-    latex.to_string()
 }

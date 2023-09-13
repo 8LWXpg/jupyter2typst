@@ -3,6 +3,7 @@
 		"argh",
 		"emph",
 		"ipynb",
+		"katex",
 		"mdast",
 		"reqwest",
 		"traceback",
