@@ -4,13 +4,11 @@ use image::Rgb;
 enum Node {
     Begin(Begin),
     Box(Box),
-    Color(Color),
     Def(Def),
     Large(Large),
     Overlap(Overlap),
     Text(Text),
     MultiParam(MultiParam),
-    Root(Root),
 }
 
 #[derive(Debug)]
@@ -22,15 +20,8 @@ struct Begin {
 #[derive(Debug)]
 struct Box {
     pub children: Vec<Node>,
-    pub foreground: Option<Color>,
-    pub background: Option<Color>,
-}
-
-#[derive(Debug)]
-struct Color {
-    pub red: u8,
-    pub green: u8,
-    pub blue: u8,
+    pub foreground: Option<Rgb<u8>>,
+    pub background: Option<Rgb<u8>>,
 }
 
 #[derive(Debug)]
@@ -51,17 +42,101 @@ struct Overlap {
 
 #[derive(Debug)]
 struct Text {
-    pub text: String,
+    pub value: String,
+    pub color: Option<Rgb<u8>>,
 }
 
 #[derive(Debug)]
 struct MultiParam {
+    pub params: Vec<Node>,
     pub children: Vec<Node>,
 }
 
 #[derive(Debug)]
-struct Root {
-    pub children: Vec<Node>,
+struct Scanner {
+    cursor: usize,
+    characters: Vec<char>,
+}
+
+impl Scanner {
+    pub fn new(text: String) -> Self {
+        Self {
+            cursor: 0,
+            characters: text.chars().collect(),
+        }
+    }
+
+    /// Returns character at the cursor without advancing the cursor.
+    pub fn peek(&self) -> Option<char> {
+        self.characters.get(self.cursor).copied()
+    }
+
+    /// Returns the next word (ascii alphabet only) in the scanner..
+    pub fn next_word(&mut self) -> Option<String> {
+        // TODO decide skipping non-alphabetic characters before starting to collect a word or not
+        let mut ret = String::new();
+        while let Some(c) = self.next() {
+            if !c.is_ascii_alphabetic() {
+                self.cursor -= 1;
+                break;
+            }
+            ret.push(c);
+        }
+        Some(ret).filter(|s| !s.is_empty())
+    }
+
+    /// Returns the next LaTeX parameter in the scanner.
+    pub fn next_param(&mut self) -> Option<String> {
+        let mut ret = String::new();
+
+        // trim whitespace
+        while let Some(c) = self.next() {
+            if !c.is_whitespace() {
+                self.cursor -= 1;
+                break;
+            }
+        }
+
+        // check if next character is '\\', '{', or any other character
+        match self.next() {
+            Some('\\') => {
+                ret.push('\\');
+                match self.next_word() {
+                    Some(word) => ret.push_str(&word),
+                    None => ret.push(self.next().unwrap()),
+                }
+            }
+            Some('{') => {
+                let mut depth = 0;
+                while let Some(c) = self.next() {
+                    match c {
+                        '{' => depth += 1,
+                        '}' => {
+                            if depth == 0 {
+                                break;
+                            }
+                            depth -= 1;
+                        }
+                        _ => {}
+                    }
+                    ret.push(c);
+                }
+            }
+            Some(c) => ret.push(c),
+            None => {}
+        }
+        Some(ret).filter(|s| !s.is_empty())
+    }
+}
+
+impl Iterator for Scanner {
+    type Item = char;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let item = self.characters.get(self.cursor).copied();
+        self.cursor += 1;
+        item
+    }
 }
 
 pub fn latex_to_typst(latex: String) -> String {
@@ -78,82 +153,80 @@ pub fn latex_to_typst(latex: String) -> String {
 }
 
 fn latex_to_ast(latex: String) -> Vec<Node> {
-    const SYMBOLS: &[char] = &[
-        '\'', '(', ')', '[', ']', '\\', '^', '_', '|', '&', '*', '+', '-', '/', ':', '<', '=', '>',
-        '⟨', '⟩', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    ];
-    const ESCAPE: &[char] = &['{', '}', ' ', '\\'];
     let mut ast = Vec::new();
 
+    let mut scanner = Scanner::new(latex);
     let mut text = String::new();
+    let mut color: Option<Rgb<u8>> = None;
+    while let Some(c) = scanner.next() {
+        match c {
+            '\\' => {
+                let word = scanner.next_word().unwrap();
+                match word.as_str() {
+                    // TODO escape characters
+                    "" => match c {
+                        '!' => text.push_str("#h(-1em/6)"),
+                        '\'' => {
+                            text.push_str("acute(");
+                        }
+                        ' ' => text.push_str("space"),
+                        '(' | ')' => {}
+                        '"' => text.push_str("dot.double("),
+                        ',' => text.push_str("space.sixth "),
+                        '.' => text.push_str("dot("),
+                        ':' => text.push_str("#h(2em/9)"),
+                        ';' => text.push_str("#h(5em/18)"),
+                        '`' => text.push_str("grave("),
+                        _ => text.push(c),
+                    },
+                    _ => {}
+                }
+            }
+            _ => {}
+        }
+    }
+
+    /* const COLLECT_END: &[char] = &[
+        '!', '#', '%', '&', '\'', '"', ',', '.', '(', ')', '*', '+', ',', '-', '.', '/', '0', '1',
+        '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']',
+        '^', '_', '`', '{', '|', '}', '~', '⟨', '⟩', ' ', '\n',
+    ];
+    const ESCAPE: &[char] = &['{', '}', ' ', '\\', '#', '%', '&'];
+    // collect end: SYMBOLS, ESCAPE
+
     let mut cur = String::new();
     let mut collect = false;
+    let mut close_param = false;
     let mut last = '0';
     for c in latex.chars() {
         match c {
-            '\\' => {
+            c if COLLECT_END.contains(&c) => {
                 if collect {
-                    collect = false;
-                    text.push_str("\\");
-                } else {
-                    collect = true;
-                    ast.push(Node::Text(Text { text: text }));
-                    text = String::new();
-                }
-            }
-            ' ' => {
-                if collect {
-                    collect = false;
-                    // TODO giant list of commands matching
-                    match cur {
-                        _ => ast.push(Node::Text(Text { text: cur })),
+                    // TODO giant match
+                    match cur.as_str() {
                     }
-                    cur = String::new();
+                    // TODO push c
                 } else {
-                    text.push(' ');
-                }
-            }
-            '{' => {
-                if collect {
-                    collect = false;
-                    // TODO giant list of commands matching
-                    match cur {
-                        _ => ast.push(Node::Text(Text { text: cur })),
+                    match c {
+                        '\\' => collect = true,
+                        '0'..='9' => {
+                            if !COLLECT_END.contains(&last) {
+                                text.push(' ');
+                            }
+                            text.push(c);
+                        }
+                        '{' => text.push('('),
+                        '}' => text.push(')'),
+                        _ => text.push(c),
                     }
-                    cur = String::new();
-                } else {
-                    text.push('(');
                 }
             }
-            '}' => {
-                if collect {
-                    text.push(c);
-                } else {
-                    text.push(')');
-                }
-            }
-            '0'..='9' => {
-                if collect {
-                    cur.push(c);
-                } else {
-                    if !SYMBOLS.contains(&last) && !ESCAPE.contains(&last) {
-                        text.push(' ');
-                    }
-                    text.push(c);
-                }
-            }
-            c if SYMBOLS.contains(&c) => {
-                if collect {
-                    cur.push(c)
-                } else {
-                    text.push(c)
-                }
-            }
+            '%' => text.push_str("//"),
             _ => {
                 if collect {
                     cur.push(c);
                 } else {
-                    if !SYMBOLS.contains(&last) && !ESCAPE.contains(&last) {
+                    if !COLLECT_END.contains(&last) {
                         text.push(' ');
                     }
                     text.push(c);
@@ -163,23 +236,53 @@ fn latex_to_ast(latex: String) -> Vec<Node> {
         last = c;
     }
     if text.len() > 0 {
-        ast.push(Node::Text(Text { text: text }));
-    }
+        ast.push(Node::Text(Text {
+            value: text,
+            color: color,
+        }));
+    } */
 
     ast
 }
 
 fn ast_to_typst(node: Node) -> String {
+    // TODO ast to typst
     let mut typ = String::new();
 
     match node {
-        Node::Text(text) => typ.push_str(&text.text),
+        Node::Text(text) => typ.push_str(&text.value),
         _ => {}
     }
 
     typ
 }
 
+#[cfg(test)]
+mod scanner_tests {
+    use super::*;
+
+    #[test]
+    fn next_word_test() {
+        let mut scanner = Scanner::new("\n\\frac\t\\land=3aa".to_string());
+        while let Some(c) = scanner.next() {
+            match c {
+                '\\' => {
+                    let word = scanner.next_word().unwrap();
+                    println!("{}", word);
+                }
+                _ => {}
+            }
+        }
+    }
+
+    #[test]
+    fn next_param_test() {
+        let mut scanner = Scanner::new("\n\t\\land\\%=3aa\\\\".to_string());
+        while let Some(c) = scanner.next_param() {
+            println!("{}", c);
+        }
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
