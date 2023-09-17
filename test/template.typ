@@ -29,5 +29,6 @@
 
 // template for the whole document
 #let template(doc) = {
+  set box(stroke: 0.5pt, inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))
   [#doc]
 }
