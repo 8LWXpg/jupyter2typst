@@ -1,65 +1,3 @@
-// use image::Rgb;
-
-// #[derive(Debug)]
-// enum Node {
-//     Begin(Begin),
-//     Box(Box),
-//     Def(Def),
-//     Large(Large),
-//     Overlap(Overlap),
-//     Text(Text),
-//     MultiParam(MultiParam),
-// }
-
-// /// \begin
-// #[derive(Debug)]
-// struct Begin {
-//     pub children: Vec<Node>,
-//     pub kind: String,
-// }
-
-// /// \colorbox or \fcolorbox
-// #[derive(Debug)]
-// struct Box {
-//     pub children: Vec<Node>,
-//     pub foreground: Option<Rgb<u8>>,
-//     pub background: Option<Rgb<u8>>,
-// }
-
-// /// \color or \textcolor
-// #[derive(Debug)]
-// struct Color {
-//     pub children: Vec<Node>,
-//     pub color: Rgb<u8>,
-// }
-
-// #[derive(Debug)]
-// struct Def {
-//     pub name: String,
-//     pub value: String,
-// }
-
-// #[derive(Debug)]
-// struct Large {
-//     pub children: Vec<Node>,
-// }
-
-// #[derive(Debug)]
-// struct Overlap {
-//     pub children: Vec<Node>,
-// }
-
-// #[derive(Debug)]
-// struct Text {
-//     pub value: String,
-// }
-
-// #[derive(Debug)]
-// struct MultiParam {
-//     pub params: Vec<Node>,
-//     pub children: Vec<Node>,
-// }
-
 #[derive(Debug)]
 struct Scanner {
     cursor: usize,
@@ -109,6 +47,7 @@ impl Scanner {
         match self.next() {
             Some('\\') => {
                 ret.push('\\');
+                // TODO next param contains binary operators as well
                 match self.next_word().as_str() {
                     "" => ret.push(self.next().unwrap()),
                     word => ret.push_str(&word),
@@ -131,7 +70,7 @@ impl Scanner {
                 }
             }
             Some(c) => ret.push(c),
-            None => {}
+            None => unreachable!(),
         }
         Some(ret).filter(|s| !s.is_empty())
     }
@@ -146,19 +85,6 @@ impl Iterator for Scanner {
         item
     }
 }
-
-// pub fn latex_to_typst(latex: String) -> String {
-//     // TODO latex to typst
-//     let mut typ = String::from("$\n");
-
-//     let ast = latex_to_ast(latex);
-//     for node in ast {
-//         typ.push_str(&ast_to_typst(node));
-//     }
-
-//     typ.push_str("\n$\n");
-//     typ
-// }
 
 pub fn latex_to_typst(latex: String) -> String {
     let mut scanner = Scanner::new(latex);
@@ -203,6 +129,7 @@ pub fn latex_to_typst(latex: String) -> String {
                             _ => text.push(c),
                         }
                     }
+                    // A
                     "AA" => text.push_str("circle(A)"),
                     "aa" => text.push_str("circle(a)"),
                     "acute" => {
@@ -213,17 +140,18 @@ pub fn latex_to_typst(latex: String) -> String {
                     "AE" => text.push('Æ'),
                     "ae" => text.push('æ'),
                     "alefsym" => text.push_str("alef"),
-                    "amalg" => text.push_str("product.co"),
+                    "amalg" | "coprod" => text.push_str("product.co"),
                     "And" => text.push_str("\\&"),
                     "approxeq" => text.push_str("approx.eq"),
-                    "approxcolon" => text.push_str("approx colon"),
-                    "approxcoloncolon" => text.push_str("approx colon colon"),
+                    "approxcolon" => text.push_str("approx:"),
+                    "approxcoloncolon" => text.push_str("approx::"),
                     "arcctg" => text.push_str("#math.op(\"arcctg\")"),
                     "arctg" => text.push_str("#math.op(\"arctg\")"),
                     "argmax" => text.push_str("arg max"),
                     "argmin" => text.push_str("arg min"),
                     "ast" => text.push('*'),
                     "asymp" => text.push('≍'),
+                    // B
                     "backepsilon" => text.push_str("in.rev.small"),
                     "backprime" => text.push_str("prime.rev"),
                     "backsim" => text.push_str("tilde.rev"),
@@ -290,7 +218,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "Box" => text.push_str("square.stroked"),
                     "boxdot" => text.push_str("dot.square"),
                     "boxed" => {
-                        text.push_str("#box[$");
+                        text.push_str("#box(stroke: 0.5pt)[$");
                         text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
                         text.push_str("$]");
                     }
@@ -305,6 +233,121 @@ pub fn latex_to_typst(latex: String) -> String {
                     "bull" | "bullet" => text.push_str("circle.filled.small"),
                     "Bumpeq" => text.push('≎'),
                     "bumpeq" => text.push('≏'),
+                    // C
+                    "cancel" => {
+                        text.push_str("cancel(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "Cap" | "doublecap" => text.push_str("sect.double"),
+                    "cap" => text.push_str("sect"),
+                    "cdot" | "cdotp" | "centerdot" => text.push_str("dot.op"),
+                    "cdots" | "dots" | "dotsb" | "dotsc" | "dotsi" | "dotsm" => {
+                        text.push_str("dots.h.c")
+                    }
+                    "check" => {
+                        text.push_str("caron(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "circ" => text.push_str("compose"),
+                    "circeq" => text.push('≗'),
+                    "circlearrowleft" => text.push_str("arrow.ccw"),
+                    "circlearrowright" => text.push_str("arrow.cw"),
+                    "circledast" => text.push_str("ast.circle"),
+                    "circledcirc" => text.push_str("circle.nested"),
+                    "circleddash" => text.push_str("dash.circle"),
+                    "circledR" => text.push('®'),
+                    "circledS" => text.push('Ⓢ'),
+                    "clubs" | "clubsuit" => text.push_str("suit.club"),
+                    "cnums" => text.push_str("CC"),
+                    "Colonapprox" => text.push_str("::approx"),
+                    "colonapprox" => text.push_str(":approx"),
+                    "coloncolon" => text.push_str("::"),
+                    "coloncolonapprox" => text.push_str("::approx"),
+                    "coloncolonequals" | "Coloneqq" => text.push_str("::="),
+                    "coloncolonminus" | "Coloneq" => text.push_str("\"::-\""),
+                    "coloncolonsim" | "Colonsim" => text.push_str("\"::~\""),
+                    "coloneq" | "colonminus" => text.push_str("\":-\""),
+                    "colonequals" | "coloneqq" => text.push_str(":="),
+                    "colonsim" => text.push_str("\":~\""),
+                    "color" => {
+                        // expect both text input
+                        text.push_str("#text(fill: rgb(\"");
+                        text.push_str(&scanner.next_param().unwrap());
+                        text.push_str("\"))[");
+                        text.push_str(&scanner.next_param().unwrap());
+                        text.push_str("]");
+                    }
+                    "complexes" => text.push_str("CC"),
+                    "cong" => text.push_str("tilde.equiv"),
+                    "cosec" => text.push_str("#math.op(\"cosec\")"),
+                    "cotg" => text.push_str("#math.op(\"cotg\")"),
+                    "cth" => text.push_str("#math.op(\"cth\")"),
+                    "Cup" | "doublecup" => text.push_str("union.double"),
+                    "cup" => text.push_str("union"),
+                    "curlyeqprec" => text.push_str("eq.prec"),
+                    "curlyeqsucc" => text.push_str("eq.succ"),
+                    "curlyvee" => text.push_str("or.curly"),
+                    "curlywedge" => text.push_str("and.curly"),
+                    "curvearrowleft" => text.push_str("arrow.ccw.half"),
+                    "curvearrowright" => text.push_str("arrow.cw.half"),
+                    // D
+                    "dag" => text.push_str("dagger"),
+                    "Dagger" | "ddag" | "ddagger" => text.push_str("dagger.double"),
+                    "daleth" => text.push_str("ℸ"),
+                    "Darr" | "dArr" | "Downarrow" => text.push_str("arrow.b.double"),
+                    "darr" | "downarrow" => text.push_str("arrow.b"),
+                    "dashleftarrow" => text.push_str("arrow.l.dash"),
+                    "dashrightarrow" => text.push_str("arrow.r.dash"),
+                    "dashv" => text.push_str("tack.l"),
+                    "dbinom" => {
+                        text.push_str("dbinom(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push_str(", ");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "dbcolon" => text.push_str("::"),
+                    "ddot" => {
+                        text.push_str("dot.double(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push_str(")");
+                    }
+                    "ddots" => text.push_str("dots.down"),
+                    "digaamma" => text.push('ϝ'),
+                    "dfrac" => {
+                        text.push_str("frac(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push_str(", ");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "diagdown" => text.push('╲'),
+                    "diagup" => text.push('╱'),
+                    "Diamond" => text.push_str("lozenge.stroked"),
+                    "diamond" => text.push_str("diamond.stroked.small"),
+                    "diamonds" | "diamondsuit" => text.push('♢'),
+                    "displaystyle" => {
+                        text.push_str("display(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "divideontimes" => text.push_str("times.div"),
+                    "dot" => {
+                        text.push_str("dot(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "Doteq" | "doteqdot" => text.push('≑'),
+                    "doteq" => text.push('≐'),
+                    "dotplus" => text.push_str("plus.dot"),
+                    "dotso" => text.push_str("dots.h"),
+                    "doublebarwedge" => text.push('⩞'),
+                    "downdownarrows" => text.push_str("arrow.bb"),
+                    "downharpoonleft" => text.push_str("harpoon.bl"),
+                    "downharpoonright" => text.push_str("harpoon.br"),
+                    // E
                     word => text.push_str(word),
                 }
             }
