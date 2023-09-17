@@ -271,11 +271,11 @@ pub fn latex_to_typst(latex: String) -> String {
                     "coloneq" | "colonminus" => text.push_str("\":-\""),
                     "colonequals" | "coloneqq" => text.push_str(":="),
                     "colonsim" => text.push_str("\":~\""),
-                    "color" => {
+                    "colorbox" => {
                         // expect both text input
-                        text.push_str("#text(fill: rgb(\"");
-                        text.push_str(&scanner.next_param().unwrap());
-                        text.push_str("\"))[");
+                        text.push_str("#text(fill: ");
+                        text.push_str(&latex_color_to_typst(scanner.next_param().unwrap()));
+                        text.push_str(")[");
                         text.push_str(&scanner.next_param().unwrap());
                         text.push_str("]");
                     }
@@ -348,6 +348,94 @@ pub fn latex_to_typst(latex: String) -> String {
                     "downharpoonleft" => text.push_str("harpoon.bl"),
                     "downharpoonright" => text.push_str("harpoon.br"),
                     // E
+                    "ell" => text.push_str("cal(l)"),
+                    "empty" | "emptyset" => text.push_str("empty"),
+                    "enspace" => text.push_str("space.en"),
+                    "epsilon" => text.push_str("epsilon.alt"),
+                    "eqcirc" => text.push('≖'),
+                    "Eqcolon" => text.push_str("\"-::\""),
+                    "eqcolon" => text.push_str("\"-:\""),
+                    "Eqqcolon" | "equalscoloncolon" => text.push_str("\"=::\""),
+                    "eqqcolon" | "equalscolon" => text.push_str("=:"),
+                    "eqsim" => text.push_str("eq.tilde"),
+                    "eqslantgtr" => text.push('⪖'),
+                    "eqslantless" => text.push('⪕'),
+                    "eth" => text.push('ð'),
+                    "exist" => text.push_str("exists"),
+                    // F
+                    "fallingdotseq" => text.push('≒'),
+                    "fbox" => {
+                        // expect text input
+                        text.push_str("#box[");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push_str("]");
+                    }
+                    "fcolorbox" => {
+                        // expect text input
+                        text.push_str("#box(stroke: ");
+                        text.push_str(&latex_color_to_typst(scanner.next_param().unwrap()));
+                        text.push_str(", fill: ");
+                        text.push_str(&latex_color_to_typst(scanner.next_param().unwrap()));
+                        text.push_str(")[");
+                        text.push_str(&scanner.next_param().unwrap());
+                        text.push_str("]");
+                    }
+                    "Finv" => text.push('Ⅎ'),
+                    "flat" => text.push('♭'),
+                    "frac" => {
+                        text.push_str("frac(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push_str(", ");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "frak" => {
+                        text.push_str("frak(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "frown" => text.push('⌢'),
+                    // G
+                    "Game" => text.push('⅁'),
+                    "ge" | "geq" => text.push_str(">="),
+                    "geqq" => text.push_str("ge.equiv"),
+                    "geqslant" => text.push_str("gt.eq.slant"),
+                    "gets" => text.push_str("arrow.l"),
+                    "gg" => text.push_str(">>"),
+                    "ggg" | "gggtr" => text.push_str(">>>"),
+                    "gnapprox" => text.push('⪊'),
+                    "gneq" => text.push('⪈'),
+                    "gneqq" => text.push_str("gt.nequiv"),
+                    "gnsim" => text.push_str("gt.ntilde"),
+                    "grave" => {
+                        text.push_str("grave(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "gt" => text.push('>'),
+                    "gtapprox" => text.push('⪆'),
+                    "gtreqless" => text.push_str("gt.eq.lt"),
+                    "gtreqqless" => text.push('⪌'),
+                    "gtrless" => text.push_str("gt.lt"),
+                    "gtrsim" => text.push_str("gt.tilde"),
+                    "gvertneqq" => text.push_str("gt.nequiv"),
+                    // H
+                    "H" => {
+                        text.push_str("acute.double(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "Harr" | "hArr" => text.push_str("<=>"),
+                    "harr" => text.push_str("<->"),
+                    "hat" => {
+                        text.push_str("hat(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "hbar" | "hslash" => text.push_str("planck.reduce"),
+                    "hearts" | "heartsuit" => text.push('♡'),
+                    "hookleftarrow" => text.push_str("arrow.l.hook"),
+                    "hookrightarrow" => text.push_str("arrow.r.hook"),
                     word => text.push_str(word),
                 }
             }
@@ -375,17 +463,13 @@ pub fn latex_to_typst(latex: String) -> String {
     text
 }
 
-// fn ast_to_typst(node: Node) -> String {
-//     // TODO ast to typst
-//     let mut typ = String::new();
-
-//     match node {
-//         Node::Text(text) => typ.push_str(&text.value),
-//         _ => {}
-//     }
-
-//     typ
-// }
+fn latex_color_to_typst(color: String) -> String {
+    if color.chars().next().unwrap() == '#' {
+        format!("rgb(\"{}\")", color)
+    } else {
+        color
+    }
+}
 
 #[cfg(test)]
 mod scanner_tests {
@@ -411,6 +495,12 @@ mod scanner_tests {
         while let Some(c) = scanner.next_param() {
             println!("{}", c);
         }
+    }
+
+    #[test]
+    fn color_test() {
+        println!("{}", latex_color_to_typst("#00ff00".to_string()));
+        println!("{}", latex_color_to_typst("red".to_string()));
     }
 }
 #[cfg(test)]

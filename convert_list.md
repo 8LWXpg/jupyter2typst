@@ -143,77 +143,77 @@
 
 ## C
 
-| LaTeX               | Typst                       |
-| ------------------- | --------------------------- |
-| `\cal`              | TODO                        |
-| `\cancel`           | `cancel($1)`                |
-| `\Cap`              | `sect.double`               |
-| `\cap`              | `sect`                      |
-| `\cdot`             | `dot.op`                    |
-| `\cdotp`            | `dot.op`                    |
-| `\cdots`            | `dots.h.c`                  |
-| `\ce`               | not supported in ipynb      |
-| `\centerdot`        | `dot.op`                    |
-| `\cfrac`            | TODO                        |
-| `\char`             | TODO                        |
-| `\check`            | `caron($1)`                 |
-| `\ch`               | not supported in ipynb      |
-| `\Chi`              | `Chi`                       |
-| `\chi`              | `chi`                       |
-| `\choose`           | TODO                        |
-| `\circ`             | `compose`                   |
-| `\circeq`           | `≗`                         |
-| `\circlearrowleft`  | `arrow.ccw`                 |
-| `\circlearrowright` | `arrow.cw`                  |
-| `\circledast`       | `ast.circle`                |
-| `\circledcirc`      | `circle.nested`             |
-| `\circleddash`      | `dash.circle`               |
-| `\circledR`         | `®`                         |
-| `\circledS`         | `Ⓢ`                         |
-| `\clubs`            | `suit.club`                 |
-| `\clubsuit`         | `suit.club`                 |
-| `\cnums`            | `CC`                        |
-| `\colon`            | `colon`                     |
-| `\Colonapprox`      | `::approx`                  |
-| `\colonapprox`      | `:approx`                   |
-| `\coloncolon`       | `::`                        |
-| `\coloncolonapprox` | `::approx`                  |
-| `\coloncolonequals` | `::=`                       |
-| `\coloncolonminus`  | `"::−"`                     |
-| `\coloncolonsim`    | `"::~"`                     |
-| `\Coloneq`          | `"::−"`                     |
-| `\coloneq`          | `":-"`                      |
-| `\colonequals`      | `:=`                        |
-| `\Coloneqq`         | `::=`                       |
-| `\coloneqq`         | `:=`                        |
-| `\colonminus`       | `":−"`                      |
-| `\Colonsim`         | `"::~"`                     |
-| `\colonsim`         | `":~"`                      |
-| `\color`            | TODO                        |
-| `\colorbox`         | `#box(fill: rgb("$1"))[$2]` |
-| `\complement`       | `complement`                |
-| `\Complex`          | `CC`                        |
-| `\cong`             | `tilde.equiv`               |
-| `\coprod`           | `product.co`                |
-| `\copyright`        | `copyright`                 |
-| `\cos`              | `cos`                       |
-| `\cosec`            | `#math.op("cosec")`         |
-| `\cosh`             | `cosh`                      |
-| `\cot`              | `cot`                       |
-| `\cotg`             | `#math.op("cotg")`          |
-| `\coth`             | `coth`                      |
-| `\cr`               | TODO                        |
-| `\csc`              | `csc`                       |
-| `\ctg`              | `ctg`                       |
-| `\cth`              | `#math.op("cth")`           |
-| `\Cup`              | `union.double`              |
-| `\cup`              | `union`                     |
-| `\curlyeqprec`      | `eq.prec`                   |
-| `\curlyeqsucc`      | `eq.succ`                   |
-| `\curlyvee`         | `or.curly`                  |
-| `\curlywedge`       | `and.curly`                 |
-| `\curvearrowleft`   | `arrow.ccw.half`            |
-| `\curvearrowright`  | `arrow.cw.half`             |
+| LaTeX               | Typst                  |
+| ------------------- | ---------------------- |
+| `\cal`              | TODO                   |
+| `\cancel`           | `cancel($1)`           |
+| `\Cap`              | `sect.double`          |
+| `\cap`              | `sect`                 |
+| `\cdot`             | `dot.op`               |
+| `\cdotp`            | `dot.op`               |
+| `\cdots`            | `dots.h.c`             |
+| `\ce`               | not supported in ipynb |
+| `\centerdot`        | `dot.op`               |
+| `\cfrac`            | TODO                   |
+| `\char`             | TODO                   |
+| `\check`            | `caron($1)`            |
+| `\ch`               | not supported in ipynb |
+| `\Chi`              | `Chi`                  |
+| `\chi`              | `chi`                  |
+| `\choose`           | TODO                   |
+| `\circ`             | `compose`              |
+| `\circeq`           | `≗`                    |
+| `\circlearrowleft`  | `arrow.ccw`            |
+| `\circlearrowright` | `arrow.cw`             |
+| `\circledast`       | `ast.circle`           |
+| `\circledcirc`      | `circle.nested`        |
+| `\circleddash`      | `dash.circle`          |
+| `\circledR`         | `®`                    |
+| `\circledS`         | `Ⓢ`                    |
+| `\clubs`            | `suit.club`            |
+| `\clubsuit`         | `suit.club`            |
+| `\cnums`            | `CC`                   |
+| `\colon`            | `colon`                |
+| `\Colonapprox`      | `::approx`             |
+| `\colonapprox`      | `:approx`              |
+| `\coloncolon`       | `::`                   |
+| `\coloncolonapprox` | `::approx`             |
+| `\coloncolonequals` | `::=`                  |
+| `\coloncolonminus`  | `"::−"`                |
+| `\coloncolonsim`    | `"::~"`                |
+| `\Coloneq`          | `"::−"`                |
+| `\coloneq`          | `":-"`                 |
+| `\colonequals`      | `:=`                   |
+| `\Coloneqq`         | `::=`                  |
+| `\coloneqq`         | `:=`                   |
+| `\colonminus`       | `":−"`                 |
+| `\Colonsim`         | `"::~"`                |
+| `\colonsim`         | `":~"`                 |
+| `\color`            | TODO                   |
+| `\colorbox`         | `#box(fill: $1)[$2]`   |
+| `\complement`       | `complement`           |
+| `\Complex`          | `CC`                   |
+| `\cong`             | `tilde.equiv`          |
+| `\coprod`           | `product.co`           |
+| `\copyright`        | `copyright`            |
+| `\cos`              | `cos`                  |
+| `\cosec`            | `#math.op("cosec")`    |
+| `\cosh`             | `cosh`                 |
+| `\cot`              | `cot`                  |
+| `\cotg`             | `#math.op("cotg")`     |
+| `\coth`             | `coth`                 |
+| `\cr`               | TODO                   |
+| `\csc`              | `csc`                  |
+| `\ctg`              | `ctg`                  |
+| `\cth`              | `#math.op("cth")`      |
+| `\Cup`              | `union.double`         |
+| `\cup`              | `union`                |
+| `\curlyeqprec`      | `eq.prec`              |
+| `\curlyeqsucc`      | `eq.succ`              |
+| `\curlyvee`         | `or.curly`             |
+| `\curlywedge`       | `and.curly`            |
+| `\curvearrowleft`   | `arrow.ccw.half`       |
+| `\curvearrowright`  | `arrow.cw.half`        |
 
 ## D
 
@@ -274,6 +274,113 @@
 | `\downharpoonright` | `harpoon.br`            |
 
 ## E
+
+| LaTeX               | Typst         |
+| ------------------- | ------------- |
+| `\edef`             | TODO          |
+| `\ell`              | `ell`         |
+| `\empty`            | `emptyset`    |
+| `\emptyset`         | `emptyset`    |
+| `\end`              | TODO          |
+| `\endgroup`         | TODO          |
+| `\enspace`          | `space.en`    |
+| `\Epsilon`          | `Epsilon`     |
+| `\epsilon`          | `epsilon.alt` |
+| `\eqcirc`           | `≖`           |
+| `\Eqcolon`          | `"-::"`       |
+| `\eqcolon`          | `"-:"`        |
+| `\Eqqcolon`         | `"=::"`       |
+| `\eqqcolon`         | `=:`          |
+| `\eqsim`            | `minus.tilde` |
+| `\eqslantgtr`       | `⪖`           |
+| `\eqslantless`      | `⪕`           |
+| `\equalscolon`      | `=:`          |
+| `\equalscoloncolon` | `"=::"`       |
+| `\equiv`            | `equiv`       |
+| `\Eta`              | `Eta`         |
+| `\eta`              | `eta`         |
+| `\eth`              | `ð`           |
+| `\exist`            | `exists`      |
+| `\exists`           | `exists`      |
+| `\exp`              | `exp`         |
+| `\expandafter`      | TODO          |
+
+## F
+
+| LaTeX            | Typst                            |
+| ---------------- | -------------------------------- |
+| `\fallingdotseq` | `≒`                              |
+| `\fbox`          | `#box(stroke: 0.5pt)[$1]`        |
+| `\fcolorbox`     | `#box(stroke: $1, fill: $2)[$3]` |
+| `\Finv`          | `Ⅎ`                              |
+| `\flat`          | `♭`                              |
+| `\footnotesize`  | TODO                             |
+| `\forall`        | `forall`                         |
+| `\frac`          | `frac($1, $2)`                   |
+| `\frak`          | `frak($1)`                       |
+| `\frown`         | `⌢`                              |
+| `\futurelet`     | TODO                             |
+
+## G
+
+| LaTeX        | Typst         |
+| ------------ | ------------- |
+| `\Game`      | `⅁`           |
+| `\Gamma`     | `Gamma`       |
+| `\gamma`     | `gamma`       |
+| `\gcd`       | `gcd`         |
+| `\ge`        | `>=`          |
+| `\genfrac`   | TODO          |
+| `\geq`       | `>=`          |
+| `\geqq`      | `ge.equiv`    |
+| `\geqslant`  | `gt.eq.slant` |
+| `\gets`      | `arrow.l`     |
+| `\gg`        | `>>`          |
+| `\ggg`       | `>>>`         |
+| `\gggtr`     | `>>>`         |
+| `\gimel`     | `gimel`       |
+| `\global`    | TODO          |
+| `\gnapprox`  | `⪊`           |
+| `\gneq`      | `⪈`           |
+| `\gneqq`     | `gt.nequiv`   |
+| `\gnsim`     | `gt.ntilde`   |
+| `\grave`     | `grave($1)`   |
+| `\gt`        | `>`           |
+| `gtapprox`   | `⪆`           |
+| `gtreqless`  | `gt.eq.lt`    |
+| `gtreqqless` | `⪌`           |
+| `gtrless`    | `gt.lt`       |
+| `gtrsim`     | `gt.tilde`    |
+| `gvertneqq`  | `gt.nequiv`   |
+
+## H
+
+| LaTeX                         | Typst                  |
+| ----------------------------- | ---------------------- |
+| `\H`                          | `acute.double($1)`     |
+| `\Harr`                       | `<=>`                  |
+| `\hArr`                       | `<=>`                  |
+| `\harr`                       | `<->`                  |
+| `\hat`                        | `hat($1)`              |
+| `\hbar`                       | `planck.reduce`        |
+| `hbox`                        | TODO                   |
+| `\hdashline`                  | TODO                   |
+| `\hearts`                     | `♡`                    |
+| `\heartsuit`                  | `♡`                    |
+| `\hline`                      | TODO                   |
+| `\hom`                        | `hom`                  |
+| `\hookleftarrow`              | `arrow.l.hook`         |
+| `\hookrightarrow`             | `arrow.r.hook`         |
+| `\hphantom`                   | TODO                   |
+| `\href`                       | not supported in ipynb |
+| `\hskip`                      | TODO                   |
+| `\hslash`                     | `planck.reduce`        |
+| `\hspace`                     | TODO                   |
+| `\htmlClass` and its variants | not supported in ipynb |
+| `\huge`                       | TODO                   |
+| `\Huge`                       | TODO                   |
+
+## I
 
 | LaTeX | Typst |
 | ----- | ----- |
