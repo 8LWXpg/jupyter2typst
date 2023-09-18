@@ -93,7 +93,8 @@ pub fn latex_to_typst(latex: String) -> String {
         match c {
             '\\' => {
                 // TODO giant match of all LaTeX commands
-                match scanner.next_word().as_str() {
+                let word = scanner.next_word();
+                match word.as_str() {
                     // same one goes to default
                     "" => {
                         let c = scanner.next().unwrap();
@@ -214,7 +215,7 @@ pub fn latex_to_typst(latex: String) -> String {
                         text.push(')');
                     }
                     "bmod" => text.push_str("mod"),
-                    "bowtie" => text.push('⋈'),
+                    "bowtie" | "Join" => text.push('⋈'),
                     "Box" => text.push_str("square.stroked"),
                     "boxdot" => text.push_str("dot.square"),
                     "boxed" => {
@@ -342,9 +343,9 @@ pub fn latex_to_typst(latex: String) -> String {
                     "Doteq" | "doteqdot" => text.push('≑'),
                     "doteq" => text.push('≐'),
                     "dotplus" => text.push_str("plus.dot"),
-                    "dotso" => text.push_str("dots.h"),
+                    "dotso" | "ldots" => text.push_str("dots.h"),
                     "doublebarwedge" => text.push('⩞'),
-                    "downdownarrows" => text.push_str("arrow.bb"),
+                    "downdownarrows" => text.push_str("arrows.bb"),
                     "downharpoonleft" => text.push_str("harpoon.bl"),
                     "downharpoonright" => text.push_str("harpoon.br"),
                     // E
@@ -400,7 +401,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "ge" | "geq" => text.push_str(">="),
                     "geqq" => text.push_str("ge.equiv"),
                     "geqslant" => text.push_str("gt.eq.slant"),
-                    "gets" => text.push_str("arrow.l"),
+                    "gets" | "larr" | "leftarrow" => text.push_str("<-"),
                     "gg" => text.push_str(">>"),
                     "ggg" | "gggtr" => text.push_str(">>>"),
                     "gnapprox" => text.push('⪊'),
@@ -418,15 +419,14 @@ pub fn latex_to_typst(latex: String) -> String {
                     "gtreqqless" => text.push('⪌'),
                     "gtrless" => text.push_str("gt.lt"),
                     "gtrsim" => text.push_str("gt.tilde"),
-                    "gvertneqq" => text.push_str("gt.nequiv"),
                     // H
                     "H" => {
                         text.push_str("acute.double(");
                         text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
                         text.push(')');
                     }
-                    "Harr" | "hArr" => text.push_str("<=>"),
-                    "harr" => text.push_str("<->"),
+                    "Harr" | "hArr" | "Leftrightarrow" | "Lrarr" | "lrArr" => text.push_str("<=>"),
+                    "harr" | "leftrightarrow" | "lrarr" => text.push_str("<->"),
                     "hat" => {
                         text.push_str("hat(");
                         text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
@@ -436,6 +436,79 @@ pub fn latex_to_typst(latex: String) -> String {
                     "hearts" | "heartsuit" => text.push('♡'),
                     "hookleftarrow" => text.push_str("arrow.l.hook"),
                     "hookrightarrow" => text.push_str("arrow.r.hook"),
+                    // I
+                    "i" | "imath" => text.push_str("dotless.i"),
+                    "iff" | "Longleftrightarrow" => text.push_str("<==>"),
+                    "iiint" => text.push_str("integral.triple"),
+                    "iint" => text.push_str("integral.double"),
+                    "image" => text.push_str("Im"),
+                    "impliedby" | "Longleftarrow" => text.push_str("<=="),
+                    "implies" => text.push_str("==>"),
+                    "infin" | "infty" => text.push_str("infinity"),
+                    "injlim" => text.push_str("#math.op(\"inj\u{2009}lim\", limits: true)"),
+                    "int" | "intop" => text.push_str("integral"),
+                    "intercal" => text.push('⊺'),
+                    "isin" => text.push_str("in"),
+                    // JK
+                    "j" | "jmath" => text.push_str("dotless.j"),
+                    "KaTeX" | "LaTeX" => text.push_str(&format!("\"{}\"", word)),
+                    // L
+                    "lang" | "langle" => text.push('⟨'),
+                    "Larr" | "lArr" | "Leftarrow" => text.push_str("arrow.l.double"),
+                    "lBrace" => text.push('⦃'),
+                    "lbrace" => text.push('{'),
+                    "lbrack" => text.push('['),
+                    "lceil" => text.push('⌈'),
+                    "ldotp" => text.push('.'),
+                    "le" | "leq" => text.push_str("<="),
+                    "leadsto" => text.push_str("arrow.r.squiggly"),
+                    "leftarrowtail" => text.push_str("<-<"),
+                    "leftharpoondown" => text.push_str("harpoon.lb"),
+                    "leftharpoonup" => text.push_str("harpoon.lt"),
+                    "leftleftarrows" => text.push_str("arrows.ll"),
+                    "leftrightarrows" => text.push_str("arrows.lr"),
+                    "leftrightharpoons" => text.push_str("harpoons.ltrb"),
+                    "leftrightsquigarrow" => text.push_str("arrow.l.r.wave"),
+                    "leftthreetimes" => text.push_str("times.three.l"),
+                    "leqq" => text.push_str("lt.equiv"),
+                    "leqslant" => text.push_str("lt.eq.slant"),
+                    "lessapprox" => text.push('⪅'),
+                    "lessdot" => text.push_str("lt.dot"),
+                    "lesseqgtr" => text.push_str("lt.eq.gt"),
+                    "lesseqqgtr" => text.push('⪋'),
+                    "lessgtr" => text.push_str("lt.gt"),
+                    "lesssim" => text.push_str("lt.tilde"),
+                    "lfloor" => text.push('⌊'),
+                    "lgroup" => text.push('⟮'),
+                    "lhd" => text.push_str("ld.tri"),
+                    "ll" => text.push_str("<<"),
+                    "llbracket" => text.push_str("bracket.l.double"),
+                    "llcorner" => text.push('⌞'),
+                    "Lleftarrow" => text.push_str("arrow.l.triple"),
+                    "lll" | "llless" => text.push_str("<<<"),
+                    "lnapprox" => text.push('⪉'),
+                    "lneq" => text.push('⪇'),
+                    "lneqq" => text.push_str("lt.nequiv"),
+                    "lnot" => text.push_str("not"),
+                    "lnsim" => text.push_str("lt.ntilde"),
+                    "longleftarrow" => text.push_str("<--"),
+                    "longleftrightarrow" => text.push_str("<-->"),
+                    "longmapsto" => text.push_str("arrow.r.long.bar"),
+                    "Longrightarrow" => text.push_str("==>"),
+                    "longrightarrow" => text.push_str("-->"),
+                    "looparrowleft" => text.push_str("arrow.l.loop"),
+                    "looparrowright" => text.push_str("arrow.r.loop"),
+                    "lor" => text.push_str("or"),
+                    "lozenge" => text.push_str("lozenge.stroked"),
+                    "lparen" => text.push('('),
+                    "lrcorner" => text.push('⌟'),
+                    "lq" => text.push_str("quote.l.single"),
+                    "Lsh" => text.push('↰'),
+                    "lt" => text.push('<'),
+                    "ltimes" => text.push_str("times.l"),
+                    "lVert" => text.push_str("parallel"),
+                    "lvert" => text.push_str("divides"),
+                    // M
                     word => text.push_str(word),
                 }
             }
