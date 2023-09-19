@@ -23,6 +23,11 @@ impl Scanner {
         let mut ret = String::new();
         while let Some(c) = self.peek() {
             if !c.is_ascii_alphabetic() {
+                // pick up '\operatorname*' specifically
+                if ret == "operatorname" && c == '*' {
+                    ret.push(c);
+                    self.cursor += 1;
+                }
                 break;
             }
             self.cursor += 1;
@@ -576,7 +581,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "nexist" => text.push_str("exists.not"),
                     "ngeq" => text.push_str("gt.eq.not"),
                     "ngtr" => text.push_str("gt.not"),
-                    "ni" => text.push_str("in.rev"),
+                    "ni" | "owns" => text.push_str("in.rev"),
                     "nLeftarrow" => text.push_str("arrow.l.double.not"),
                     "nleftarrow" => text.push_str("arrow.l.not"),
                     "nLeftrightarrow" => text.push_str("arrow.l.r.double.not"),
@@ -606,6 +611,60 @@ pub fn latex_to_typst(latex: String) -> String {
                     "nvdash" => text.push_str("tack.r.not"),
                     "nwarrow" => text.push_str("arrow.tl"),
                     // O
+                    "O" => text.push('Ø'),
+                    "o" => text.push('ø'),
+                    "odot" => text.push_str("dot.circle"),
+                    "OE" => text.push('Œ'),
+                    "oe" => text.push('œ'),
+                    "oiiint" => text.push_str("integral.vol"),
+                    "oiint" => text.push_str("integral.surf"),
+                    "oint" => text.push_str("integral.cont"),
+                    "ominus" => text.push_str("minus.circle"),
+                    "operatorname" => {
+                        text.push_str("#math.op(\"");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push_str("\")");
+                    }
+                    "operatorname*" | "operatornamewithlimits" => {
+                        text.push_str("#math.op(\"");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push_str("\", limits: true)");
+                    }
+                    "oplus" => text.push_str("plus.circle"),
+                    "origof" => text.push('⊶'),
+                    "oslash" => text.push('⊘'),
+                    "otimes" => text.push_str("times.circle"),
+                    "overbrace" => {
+                        text.push_str("overbrace(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push_str(", ");
+                        // except '^' here
+                        if scanner.next().is_some_and(|c| c != '^') {
+                            panic!("expected '^' after $1 in overbrace");
+                        }
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "overgroup" => {
+                        text.push_str("accent(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push_str(", turtle.t)");
+                    }
+                    "overleftarrow" => {
+                        text.push_str("arrow.l(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "overline" => {
+                        text.push_str("overline(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "overrightarrow" => {
+                        text.push_str("arrow.r(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
                     word => text.push_str(word),
                 }
             }
@@ -690,5 +749,13 @@ mod tests {
     #[test]
     fn test_parse_typ3() {
         println!("{:?}", latex_to_typst("\\binom {asdf} {aas}".to_string()));
+    }
+
+    #[test]
+    fn test_parse_typ4() {
+        println!(
+            "{:?}",
+            latex_to_typst("\\overbrace{x+⋯+x}^{n\\text{ times}}".to_string())
+        );
     }
 }

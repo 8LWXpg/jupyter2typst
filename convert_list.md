@@ -8,6 +8,8 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 - begin
 - lr
 - binary
+- affect all
+- no alternative
 - not sure
 
 ## Symbols
@@ -84,7 +86,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\arg`              | `arg`                |
 | `\argmax`           | `arg max`            |
 | `\argmin`           | `arg min`            |
-| `\arraystretch`     | TODO                 |
+| `\arraystretch`     | TODO#begin           |
 | `\ast`              | `*`                  |
 | `\asymp`            | `≍`                  |
 | `\atop`             | TODO#binary          |
@@ -108,7 +110,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\beta`                 | `beta`                      |
 | `\beth`                 | `beth`                      |
 | `\between`              | `≬`                         |
-| `\bf`                   | TODO#font                   |
+| `\bf`                   | TODO#affect all             |
 | `\big` and its variants | TODO#font                   |
 | `\bigcap`               | `sect.big`                  |
 | `\bigcirc`              | `circle.stroked.big`        |
@@ -155,7 +157,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 
 | LaTeX               | Typst                  |
 | ------------------- | ---------------------- |
-| `\cal`              | TODO#font              |
+| `\cal`              | TODO#affect all        |
 | `\cancel`           | `cancel($1)`           |
 | `\Cap`              | `sect.double`          |
 | `\cap`              | `sect`                 |
@@ -199,7 +201,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\colonminus`       | `":−"`                 |
 | `\Colonsim`         | `"::~"`                |
 | `\colonsim`         | `":~"`                 |
-| `\color`            | TODO#font              |
+| `\color`            | TODO#affect all        |
 | `\colorbox`         | `#box(fill: $1)[$2]`   |
 | `\complement`       | `complement`           |
 | `\Complex`          | `CC`                   |
@@ -324,7 +326,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\fcolorbox`     | `#box(stroke: $1, fill: $2)[$3]` |
 | `\Finv`          | `Ⅎ`                              |
 | `\flat`          | `♭`                              |
-| `\footnotesize`  | TODO#font                        |
+| `\footnotesize`  | TODO#affect all                  |
 | `\forall`        | `forall`                         |
 | `\frac`          | `frac($1, $2)`                   |
 | `\frak`          | `frak($1)`                       |
@@ -373,7 +375,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\harr`                       | `<->`                  |
 | `\hat`                        | `hat($1)`              |
 | `\hbar`                       | `planck.reduce`        |
-| `hbox`                        | TODO#not sure          |
+| `\hbox`                       | TODO#not sure          |
 | `\hdashline`                  | TODO#begin             |
 | `\hearts`                     | `♡`                    |
 | `\heartsuit`                  | `♡`                    |
@@ -387,8 +389,8 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\hslash`                     | `planck.reduce`        |
 | `\hspace`                     | TODO#spacing           |
 | `\htmlClass` and its variants | not supported in ipynb |
-| `\huge`                       | TODO#font              |
-| `\Huge`                       | TODO#font              |
+| `\huge`                       | TODO#affect all        |
+| `\Huge`                       | TODO#affect all        |
 
 ## I
 
@@ -416,7 +418,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\Iota`            | `Iota`                                     |
 | `\iota`            | `iota`                                     |
 | `\isin`            | `in`                                       |
-| `\it`              | TODO#font                                  |
+| `\it`              | TODO#affect all                            |
 
 ## JK
 
@@ -445,7 +447,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\Larr`                   | `arrow.l.double`     |
 | `\lArr`                   | `arrow.l.double`     |
 | `\larr`                   | `<-`                 |
-| `\large` and its variants | TODO#font            |
+| `\large` and its variants | TODO#affect all      |
 | `\LaTeX`                  | `"LaTeX"`            |
 | `\lBrace`                 | `⦃`                  |
 | `\lbrace`                 | `{`                  |
@@ -554,7 +556,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\mathrm`          | `upright($1)`   |
 | `\mathscr`         | TODO#font       |
 | `\mathsf`          | `sans($1)`      |
-| `\mathsterling`    | pound           |
+| `\mathsterling`    | `pound`         |
 | `\mathstrut`       | TODO#spacing    |
 | `\mathtt`          | `mono($1)`      |
 | `\max`             | `max`           |
@@ -613,7 +615,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\noexpand`         | TODO#scripting         |
 | `\nolimits`         | TODO#not sure          |
 | `\nonumber`         | TODO#begin             |
-| `\normalsize`       | TODO#font              |
+| `\normalsize`       | TODO#affect all        |
 | `\notin`            | `in.not`               |
 | `\notni`            | `in.rev.not`           |
 | `\nparallel`        | `parallel.not`         |
@@ -643,6 +645,44 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\nwarrow`          | `arrow.tl`             |
 
 ## O
+
+| LaTeX                     | Typst                          |
+| ------------------------- | ------------------------------ |
+| `\O`                      | `Ø`                            |
+| `\o`                      | `ø`                            |
+| `\odot`                   | `dot.circle`                   |
+| `\OE`                     | `Œ`                            |
+| `\oe`                     | `œ`                            |
+| `\oiiint`                 | `integral.vol`                 |
+| `\oiint`                  | `integral.surf`                |
+| `\oint`                   | `integral.cont`                |
+| `\Omega`                  | `Omega`                        |
+| `\omega`                  | `omega`                        |
+| `\Omicron`                | `Omicron`                      |
+| `\omicron`                | `omicron`                      |
+| `\ominus`                 | `minus.circle`                 |
+| `\operatorname`           | `#math.op("$1")`               |
+| `\operatorname*`          | `#math.op("$1", limits: true)` |
+| `\operatornamewithlimits` | `#math.op("$1", limits: true)` |
+| `\oplus`                  | `plus.circle`                  |
+| `\origof`                 | `⊶`                            |
+| `\oslash`                 | `⊘`                            |
+| `\otimes`                 | `times.circle`                 |
+| `\over`                   | TODO#binary                    |
+| `\overbrace`              | `overbrace($1, $2)`            |
+| `\overgroup`              | `accent($1, turtle.t)`         |
+| `\overleftarrow`          | `arrow.l($1)`                  |
+| `\overleftharpoon`        | TODO#no alternative            |
+| `\overleftrightarrow`     | TODO#no alternative            |
+| `\overline`               | `overline($1)`                 |
+| `\overlinesegment`        | TODO#no alternative            |
+| `\Overrightarrow`         | TODO#no alternative            |
+| `\overrightarrow`         | `arrow.r($1)`                  |
+| `\overrightharpoon`       | TODO#no alternative            |
+| `\overset`                | TODO#not sure                  |
+| `\owns`                   | `in.rev`                       |
+
+## P
 
 | LaTeX | Typst |
 | ----- | ----- |
