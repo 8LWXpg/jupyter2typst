@@ -273,7 +273,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\dotsc`            | `dots.h.c`              |
 | `\dotsi`            | `dots.h.c`              |
 | `\dotsm`            | `dots.h.c`              |
-| `\dotso`            | `dots.h`                |
+| `\dotso`            | `...`                   |
 | `\doublebarwedge`   | `⩞`                     |
 | `\doublecap`        | `sect.double`           |
 | `\doublecup`        | `union.double`          |
@@ -333,35 +333,35 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 
 ## G
 
-| LaTeX        | Typst                     |
-| ------------ | ------------------------- |
-| `\Game`      | `⅁`                       |
-| `\Gamma`     | `Gamma`                   |
-| `\gamma`     | `gamma`                   |
-| `\gcd`       | `gcd`                     |
-| `\ge`        | `>=`                      |
-| `\genfrac`   | TODO#not sure             |
-| `\geq`       | `>=`                      |
-| `\geqq`      | `ge.equiv`                |
-| `\geqslant`  | `gt.eq.slant`             |
-| `\gets`      | `arrow.l`                 |
-| `\gg`        | `>>`                      |
-| `\ggg`       | `>>>`                     |
-| `\gggtr`     | `>>>`                     |
-| `\gimel`     | `gimel`                   |
-| `\global`    | TODO#not sure             |
-| `\gnapprox`  | `⪊`                       |
-| `\gneq`      | `⪈`                       |
-| `\gneqq`     | `gt.nequiv`               |
-| `\gnsim`     | `gt.ntilde`               |
-| `\grave`     | `grave($1)`               |
-| `\gt`        | `>`                       |
-| `gtapprox`   | `⪆`                       |
-| `gtreqless`  | `gt.eq.lt`                |
-| `gtreqqless` | `⪌`                       |
-| `gtrless`    | `gt.lt`                   |
-| `gtrsim`     | `gt.tilde`                |
-| `gvertneqq`  | not even found in unicode |
+| LaTeX        | Typst                |
+| ------------ | -------------------- |
+| `\Game`      | `⅁`                  |
+| `\Gamma`     | `Gamma`              |
+| `\gamma`     | `gamma`              |
+| `\gcd`       | `gcd`                |
+| `\ge`        | `>=`                 |
+| `\genfrac`   | TODO#not sure        |
+| `\geq`       | `>=`                 |
+| `\geqq`      | `ge.equiv`           |
+| `\geqslant`  | `gt.eq.slant`        |
+| `\gets`      | `arrow.l`            |
+| `\gg`        | `>>`                 |
+| `\ggg`       | `>>>`                |
+| `\gggtr`     | `>>>`                |
+| `\gimel`     | `gimel`              |
+| `\global`    | TODO#not sure        |
+| `\gnapprox`  | `⪊`                  |
+| `\gneq`      | `⪈`                  |
+| `\gneqq`     | `gt.nequiv`          |
+| `\gnsim`     | `gt.ntilde`          |
+| `\grave`     | `grave($1)`          |
+| `\gt`        | `>`                  |
+| `gtapprox`   | `⪆`                  |
+| `gtreqless`  | `gt.eq.lt`           |
+| `gtreqqless` | `⪌`                  |
+| `gtrless`    | `gt.lt`              |
+| `gtrsim`     | `gt.tilde`           |
+| `gvertneqq`  | not found in unicode |
 
 ## H
 
@@ -435,97 +435,214 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 
 ## L
 
-| LaTeX                     | Typst                     |
-| ------------------------- | ------------------------- |
-| `\Lambda`                 | `Lambda`                  |
-| `\lambda`                 | `lambda`                  |
-| `\land`                   | `and`                     |
-| `\lang`                   | `⟨`                       |
-| `\langle`                 | `⟨`                       |
-| `\Larr`                   | `arrow.l.double`          |
-| `\lArr`                   | `arrow.l.double`          |
-| `\larr`                   | `<-`                      |
-| `\large` and its variants | TODO#font                 |
-| `\LaTeX`                  | `"LaTeX"`                 |
-| `\lBrace`                 | `⦃`                       |
-| `\lbrace`                 | `{`                       |
-| `\lbrack`                 | `[`                       |
-| `\lceil`                  | `⌈`                       |
-| `\ldotp`                  | `.`                       |
-| `\ldots`                  | `dots.h`                  |
-| `\le`                     | `<=`                      |
-| `\leadsto`                | `arrow.r.squiggly`        |
-| `\left`                   | TODO#lr                   |
-| `\leftarrow`              | `<-`                      |
-| `\Leftarrow`              | `arrow.l.double`          |
-| `\leftarrowtail`          | `<-<`                     |
-| `\leftharpoondown`        | `harpoon.lb`              |
-| `\leftharpoonup`          | `harpoon.lt`              |
-| `\leftleftarrows`         | `arrows.ll`               |
-| `\Leftrightarrow`         | `<=>`                     |
-| `\leftrightarrow`         | `<->`                     |
-| `\leftrightarrows`        | `arrows.lr`               |
-| `\leftrightharpoons`      | `harpoons.ltrb`           |
-| `\leftrightsquigarrow`    | `arrow.l.r.wave`          |
-| `\leftthreetimes`         | `times.three.l`           |
-| `\leq`                    | `<=`                      |
-| `\leqq`                   | `lt.equiv`                |
-| `\leqslant`               | `lt.eq.slant`             |
-| `\lessapprox`             | `⪅`                       |
-| `\lessdot`                | `lt.dot`                  |
-| `\lesseqgtr`              | `lt.eq.gt`                |
-| `\lesseqqgtr`             | `⪋`                       |
-| `\lessgtr`                | `lt.gt`                   |
-| `\lesssim`                | `lt.tilde`                |
-| `\let`                    | TODO#scripting            |
-| `\lfloor`                 | `⌊`                       |
-| `\lg`                     | `lg`                      |
-| `\lgroup`                 | `⟮`                       |
-| `\lhd`                    | `ld.tri`                  |
-| `\lim`                    | `lim`                     |
-| `\liminf`                 | `liminf`                  |
-| `\limits`                 | TODO#not sure             |
-| `\limsup`                 | `limsup`                  |
-| `\ll`                     | `<<`                      |
-| `\llap`                   | TODO#spacing              |
-| `\llbracket`              | `bracket.l.double`        |
-| `\llcorner`               | `⌞`                       |
-| `\Lleftarrow`             | `arrow.l.triple`          |
-| `\lll`                    | `<<<`                     |
-| `\llless`                 | `<<<`                     |
-| `\ln`                     | `ln`                      |
-| `\lnapprox`               | `⪉`                       |
-| `\lneq`                   | `⪇`                       |
-| `\lneqq`                  | `lt.nequiv`               |
-| `\lnot`                   | `not`                     |
-| `\lnsim`                  | `lt.ntilde`               |
-| `\log`                    | `log`                     |
-| `\long`                   | TODO#lr                   |
-| `\Longleftarrow`          | `<==`                     |
-| `\longleftarrow`          | `<--`                     |
-| `\Longleftrightarrow`     | `<==>`                    |
-| `\longleftrightarrow`     | `<-->`                    |
-| `\longmapsto`             | `arrow.r.long.bar`        |
-| `\Longrightarrow`         | `==>`                     |
-| `\longrightarrow`         | `-->`                     |
-| `\looparrowleft`          | `arrow.l.loop`            |
-| `\looparrowright`         | `arrow.r.loop`            |
-| `\lor`                    | `or`                      |
-| `\lozenge`                | `lozenge.stroked`         |
-| `\lparen`                 | `(`                       |
-| `\Lrarr`                  | `<=>`                     |
-| `\lrArr`                  | `<=>`                     |
-| `\lrarr`                  | `<->`                     |
-| `\lrcorner`               | `⌟`                       |
-| `\lq`                     | `quote.l.single`          |
-| `\Lsh`                    | `↰`                       |
-| `\lt`                     | `<`                       |
-| `\ltimes`                 | `times.l`                 |
-| `\lVert`                  | `parallel`                |
-| `\lvert`                  | `divides`                 |
-| `\lvertneqq`              | not even found in unicode |
+| LaTeX                     | Typst                |
+| ------------------------- | -------------------- |
+| `\Lambda`                 | `Lambda`             |
+| `\lambda`                 | `lambda`             |
+| `\land`                   | `and`                |
+| `\lang`                   | `⟨`                  |
+| `\langle`                 | `⟨`                  |
+| `\Larr`                   | `arrow.l.double`     |
+| `\lArr`                   | `arrow.l.double`     |
+| `\larr`                   | `<-`                 |
+| `\large` and its variants | TODO#font            |
+| `\LaTeX`                  | `"LaTeX"`            |
+| `\lBrace`                 | `⦃`                  |
+| `\lbrace`                 | `{`                  |
+| `\lbrack`                 | `[`                  |
+| `\lceil`                  | `⌈`                  |
+| `\ldotp`                  | `.`                  |
+| `\ldots`                  | `...`                |
+| `\le`                     | `<=`                 |
+| `\leadsto`                | `arrow.r.squiggly`   |
+| `\left`                   | TODO#lr              |
+| `\leftarrow`              | `<-`                 |
+| `\Leftarrow`              | `arrow.l.double`     |
+| `\leftarrowtail`          | `<-<`                |
+| `\leftharpoondown`        | `harpoon.lb`         |
+| `\leftharpoonup`          | `harpoon.lt`         |
+| `\leftleftarrows`         | `arrows.ll`          |
+| `\Leftrightarrow`         | `<=>`                |
+| `\leftrightarrow`         | `<->`                |
+| `\leftrightarrows`        | `arrows.lr`          |
+| `\leftrightharpoons`      | `harpoons.ltrb`      |
+| `\leftrightsquigarrow`    | `arrow.l.r.wave`     |
+| `\leftthreetimes`         | `times.three.l`      |
+| `\leq`                    | `<=`                 |
+| `\leqq`                   | `lt.equiv`           |
+| `\leqslant`               | `lt.eq.slant`        |
+| `\lessapprox`             | `⪅`                  |
+| `\lessdot`                | `lt.dot`             |
+| `\lesseqgtr`              | `lt.eq.gt`           |
+| `\lesseqqgtr`             | `⪋`                  |
+| `\lessgtr`                | `lt.gt`              |
+| `\lesssim`                | `lt.tilde`           |
+| `\let`                    | TODO#scripting       |
+| `\lfloor`                 | `⌊`                  |
+| `\lg`                     | `lg`                 |
+| `\lgroup`                 | `⟮`                  |
+| `\lhd`                    | `ld.tri`             |
+| `\lim`                    | `lim`                |
+| `\liminf`                 | `liminf`             |
+| `\limits`                 | TODO#not sure        |
+| `\limsup`                 | `limsup`             |
+| `\ll`                     | `<<`                 |
+| `\llap`                   | TODO#spacing         |
+| `\llbracket`              | `bracket.l.double`   |
+| `\llcorner`               | `⌞`                  |
+| `\Lleftarrow`             | `arrow.l.triple`     |
+| `\lll`                    | `<<<`                |
+| `\llless`                 | `<<<`                |
+| `\ln`                     | `ln`                 |
+| `\lnapprox`               | `⪉`                  |
+| `\lneq`                   | `⪇`                  |
+| `\lneqq`                  | `lt.nequiv`          |
+| `\lnot`                   | `not`                |
+| `\lnsim`                  | `lt.ntilde`          |
+| `\log`                    | `log`                |
+| `\long`                   | TODO#lr              |
+| `\Longleftarrow`          | `<==`                |
+| `\longleftarrow`          | `<--`                |
+| `\Longleftrightarrow`     | `<==>`               |
+| `\longleftrightarrow`     | `<-->`               |
+| `\longmapsto`             | `arrow.r.long.bar`   |
+| `\Longrightarrow`         | `==>`                |
+| `\longrightarrow`         | `-->`                |
+| `\looparrowleft`          | `arrow.l.loop`       |
+| `\looparrowright`         | `arrow.r.loop`       |
+| `\lor`                    | `or`                 |
+| `\lozenge`                | `lozenge.stroked`    |
+| `\lparen`                 | `(`                  |
+| `\Lrarr`                  | `<=>`                |
+| `\lrArr`                  | `<=>`                |
+| `\lrarr`                  | `<->`                |
+| `\lrcorner`               | `⌟`                  |
+| `\lq`                     | `quote.l.single`     |
+| `\Lsh`                    | `↰`                  |
+| `\lt`                     | `<`                  |
+| `\ltimes`                 | `times.l`            |
+| `\lVert`                  | `parallel`           |
+| `\lvert`                  | `divides`            |
+| `\lvertneqq`              | not found in unicode |
 
 ## M
+
+| LaTeX              | Typst           |
+| ------------------ | --------------- |
+| `\maltese`         | `maltese`       |
+| `\mapsto`          | `arrow.r.bar`   |
+| `\mathbb`          | `bb($1)`        |
+| `\mathbf`          | `bold($1)`      |
+| `\mathbin`         | TODO#spacing    |
+| `\mathcal`         | `cal($1)`       |
+| `\mathchoise`      | TODO#spacing    |
+| `\mathclap`        | TODO#spacing    |
+| `\mathclose`       | TODO#lr         |
+| `\mathellipsis`    | `...`           |
+| `\mathfrak`        | `frak($1)`      |
+| `\mathinner`       | TODO#spacing    |
+| `\mathit`          | `italic($1)`    |
+| `\mathllap`        | TODO#spacing    |
+| `\mathnormal`      | ommited         |
+| `\mathop`          | ommited         |
+| `\mathopen`        | TODO#lr         |
+| `\mathord`         | TODO#spacing    |
+| `\mathpunct`       | TODO#spacing    |
+| `\mathrel`         | TODO#spacing    |
+| `\mathrlap`        | TODO#spacing    |
+| `\mathring`        | `circle($1)`    |
+| `\mathrm`          | `upright($1)`   |
+| `\mathscr`         | TODO#font       |
+| `\mathsf`          | `sans($1)`      |
+| `\mathsterling`    | pound           |
+| `\mathstrut`       | TODO#spacing    |
+| `\mathtt`          | `mono($1)`      |
+| `\max`             | `max`           |
+| `\measuredangle`   | `angle.arc`     |
+| `\medspace`        | `#h(2em/9)`     |
+| `\mho`             | `ohm.inv`       |
+| `\mid`             | `\|`            |
+| `\middle`          | TODO#lr         |
+| `\minuscolon`      | `"-:"`          |
+| `\minuscoloncolon` | `"-::"`         |
+| `\minuso`          | `⦵`             |
+| `\mkren`           | TODO#spacing    |
+| `\mod`             | `mod`           |
+| `\models`          | `tack.r.double` |
+| `\mp`              | `minus.plus`    |
+| `\mskip`           | TODO#spacing    |
+| `\Mu`              | `Mu`            |
+| `\mu`              | `mu`            |
+| `\multimap`        | `multimap`      |
+
+## N
+
+| LaTeX               | Typst                  |
+| ------------------- | ---------------------- |
+| `\N`                | `NN`                   |
+| `\nabla`            | `nabla`                |
+| `\natnums`          | `NN`                   |
+| `\natural`          | `♮`                    |
+| `\negmedspace`      | `#h(-2em/9)`           |
+| `\ncong`            | `tilde.equiv.not`      |
+| `\ne`               | `!=`                   |
+| `\nearrow`          | `arrow.tr`             |
+| `\neg`              | `not`                  |
+| `\negthickspace`    | `#h(-5em/18)`          |
+| `\negthinmedspace`  | `#h(-1em/6)`           |
+| `\neq`              | `!=`                   |
+| `\newcommand`       | TODO#scripting         |
+| `\newline`          | `\ `                   |
+| `nexist`            | `exists.not`           |
+| `\ngeq`             | `gt.eq.not`            |
+| `\ngeqq`            | not found in unicode   |
+| `\ngeqslant`        | not found in unicode   |
+| `\ngtr`             | `gt.not`               |
+| `\ni`               | `in.rev`               |
+| `\nLeftarrow`       | `arrow.l.double.not`   |
+| `\nleftarrow`       | `arrow.l.not`          |
+| `\nLeftrightarrow`  | `arrow.l.r.double.not` |
+| `\nleftrightarrow`  | `arrow.l.r.not`        |
+| `\nleq`             | `lt.eq.not`            |
+| `\nleqq`            | not found in unicode   |
+| `\nleqslant`        | not found in unicode   |
+| `\nless`            | `lt.not`               |
+| `\nmid`             | `divides.not`          |
+| `\nobreak`          | TODO#spacing           |
+| `\nobreakspace`     | `space.nobreak`        |
+| `\noexpand`         | TODO#scripting         |
+| `\nolimits`         | TODO#not sure          |
+| `\nonumber`         | TODO#begin             |
+| `\normalsize`       | TODO#font              |
+| `\notin`            | `in.not`               |
+| `\notni`            | `in.rev.not`           |
+| `\nparallel`        | `parallel.not`         |
+| `\nprec`            | `prec.not`             |
+| `\npreceq`          | `prec.eq.not`          |
+| `\nRightarrow`      | `arrow.r.double.not`   |
+| `\nrightarrow`      | `arrow.r.not`          |
+| `\nshortmid`        | not found in unicode   |
+| `\nshortparallel`   | not found in unicode   |
+| `\nsim`             | `tilde.not`            |
+| `\nsubseteq`        | `subset.eq.not`        |
+| `\nsubseteqq`       | not found in unicode   |
+| `\nsucc`            | `succ.not`             |
+| `\nsucceq`          | `succ.eq.not`          |
+| `\nsupseteq`        | `supset.eq.not`        |
+| `\nsupseteqq`       | not found in unicode   |
+| `\ntriangleleft`    | `lt.tri.not`           |
+| `\ntrianglelefteq`  | `lt.tri.eq.not`        |
+| `\ntriangleright`   | `gt.tri.not`           |
+| `\ntrianglerighteq` | `gt.tri.eq.not`        |
+| `\Nu`               | `Nu`                   |
+| `\nu`               | `nu`                   |
+| `\nVDash`           | `⊯`                    |
+| `\nVdash`           | `⊮`                    |
+| `\nvDash`           | `tack.r.double.not`    |
+| `\nvdash`           | `tack.r.not`           |
+| `\nwarrow`          | `arrow.tl`             |
+
+## O
 
 | LaTeX | Typst |
 | ----- | ----- |

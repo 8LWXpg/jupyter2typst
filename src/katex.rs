@@ -276,9 +276,9 @@ pub fn latex_to_typst(latex: String) -> String {
                         // expect both text input
                         text.push_str("#text(fill: ");
                         text.push_str(&latex_color_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(")[");
-                        text.push_str(&scanner.next_param().unwrap());
-                        text.push_str("]");
+                        text.push_str(")[$upright(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push_str(")$]");
                     }
                     "complexes" => text.push_str("CC"),
                     "cong" => text.push_str("tilde.equiv"),
@@ -343,7 +343,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "Doteq" | "doteqdot" => text.push('≑'),
                     "doteq" => text.push('≐'),
                     "dotplus" => text.push_str("plus.dot"),
-                    "dotso" | "ldots" => text.push_str("dots.h"),
+                    "dotso" | "ldots" | "mathellipsis" => text.push_str("..."),
                     "doublebarwedge" => text.push('⩞'),
                     "downdownarrows" => text.push_str("arrows.bb"),
                     "downharpoonleft" => text.push_str("harpoon.bl"),
@@ -367,9 +367,9 @@ pub fn latex_to_typst(latex: String) -> String {
                     "fallingdotseq" => text.push('≒'),
                     "fbox" => {
                         // expect text input
-                        text.push_str("#box[");
+                        text.push_str("#box[$upright(");
                         text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str("]");
+                        text.push_str(")$]");
                     }
                     "fcolorbox" => {
                         // expect text input
@@ -377,9 +377,9 @@ pub fn latex_to_typst(latex: String) -> String {
                         text.push_str(&latex_color_to_typst(scanner.next_param().unwrap()));
                         text.push_str(", fill: ");
                         text.push_str(&latex_color_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(")[");
+                        text.push_str(")[$upright(");
                         text.push_str(&scanner.next_param().unwrap());
-                        text.push_str("]");
+                        text.push_str(")$]");
                     }
                     "Finv" => text.push('Ⅎ'),
                     "flat" => text.push('♭'),
@@ -509,6 +509,103 @@ pub fn latex_to_typst(latex: String) -> String {
                     "lVert" => text.push_str("parallel"),
                     "lvert" => text.push_str("divides"),
                     // M
+                    "mapsto" => text.push_str("arrow.r.bar"),
+                    "mathbb" => {
+                        text.push_str("bb(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "mathbf" => {
+                        text.push_str("bold(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "mathcal" => {
+                        text.push_str("cal(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "mathfrak" => {
+                        text.push_str("frak(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "mathit" => {
+                        text.push_str("italic(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "mathnormal" | "mathop" => {
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                    }
+                    "mathring" => {
+                        text.push_str("circle(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "mathrm" => {
+                        text.push_str("upright(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "mathsf" => {
+                        text.push_str("sans(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "mathsterling" => text.push_str("pound"),
+                    "measuredangle" => text.push_str("angle.arc"),
+                    "medspace" => text.push_str("#h(2em/9)"),
+                    "mho" => text.push_str("ohm.inv"),
+                    "mid" => text.push('|'),
+                    "minuscolon" => text.push_str("\"-:\""),
+                    "minuscoloncolon" => text.push_str("\"-::\""),
+                    "minuso" => text.push('⊖'),
+                    "models" => text.push_str("tack.r.double"),
+                    "mp" => text.push_str("minus.plus"),
+                    // N
+                    "N" | "natnums" => text.push_str("NN"),
+                    "natural" => text.push('♮'),
+                    "negmedspace" => text.push_str("#h(-2em/9)"),
+                    "ncong" => text.push_str("tilde.equiv.not"),
+                    "ne" | "neq" => text.push_str("!="),
+                    "nearrow" => text.push_str("arrow.tr"),
+                    "neg" => text.push_str("not"),
+                    "negthickspace" => text.push_str("#h(-5em/18)"),
+                    "negthinspace" => text.push_str("#h(-1em/6)"),
+                    "nexist" => text.push_str("exists.not"),
+                    "ngeq" => text.push_str("gt.eq.not"),
+                    "ngtr" => text.push_str("gt.not"),
+                    "ni" => text.push_str("in.rev"),
+                    "nLeftarrow" => text.push_str("arrow.l.double.not"),
+                    "nleftarrow" => text.push_str("arrow.l.not"),
+                    "nLeftrightarrow" => text.push_str("arrow.l.r.double.not"),
+                    "nleftrightarrow" => text.push_str("arrow.l.r.not"),
+                    "nleq" => text.push_str("lt.eq.not"),
+                    "nless" => text.push_str("lt.not"),
+                    "nmid" => text.push_str("divides.not"),
+                    "nobreakspace" => text.push_str("space.nobreak"),
+                    "notin" => text.push_str("in.not"),
+                    "notni" => text.push_str("in.rev.not"),
+                    "notparallel" => text.push_str("parallel.not"),
+                    "nprec" => text.push_str("prec.not"),
+                    "npreceq" => text.push_str("prec.eq.not"),
+                    "nRightarrow" => text.push_str("arrow.r.double.not"),
+                    "nrightarrow" => text.push_str("arrow.r.not"),
+                    "nsim" => text.push_str("tilde.not"),
+                    "nsubseteq" | "nsupseteq" => text.push_str("subset.eq.not"),
+                    "nsucc" => text.push_str("succ.not"),
+                    "nsucceq" => text.push_str("succ.eq.not"),
+                    "ntriangleleft" => text.push_str("lt.tri.not"),
+                    "ntrianglelefteq" => text.push_str("lt.tri.eq.not"),
+                    "ntriangleright" => text.push_str("gt.tri.not"),
+                    "ntrianglerighteq" => text.push_str("gt.tri.eq.not"),
+                    "nVDash" => text.push('⊯'),
+                    "nVdash" => text.push('⊮'),
+                    "nvDash" => text.push_str("tack.r.double.not"),
+                    "nvdash" => text.push_str("tack.r.not"),
+                    "nwarrow" => text.push_str("arrow.tl"),
+                    // O
                     word => text.push_str(word),
                 }
             }
