@@ -442,8 +442,8 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\Lambda`                 | `Lambda`             |
 | `\lambda`                 | `lambda`             |
 | `\land`                   | `and`                |
-| `\lang`                   | `⟨`                  |
-| `\langle`                 | `⟨`                  |
+| `\lang`                   | `angle.l`            |
+| `\langle`                 | `angle.l`            |
 | `\Larr`                   | `arrow.l.double`     |
 | `\lArr`                   | `arrow.l.double`     |
 | `\larr`                   | `<-`                 |
@@ -683,6 +683,101 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\owns`                   | `in.rev`                       |
 
 ## P
+
+| LaTeX             | Typst                                       |
+| ----------------- | ------------------------------------------- |
+| `\P`              | `pilcrow`                                   |
+| `\parallel`       | `parallel`                                  |
+| `\partial`        | `diff`                                      |
+| `\perp`           | `bot`                                       |
+| `\phantom`        | TODO#spacing                                |
+| `\phase`          | no alternative                              |
+| `\Phi`            | `Phi`                                       |
+| `\phi`            | `phi.alt`                                   |
+| `\Pi`             | `Pi`                                        |
+| `\pi`             | `pi`                                        |
+| `\pitchfork`      | `⋔`                                         |
+| `\plim`           | `#math.op("plim", limits: true)`            |
+| `\plusmn`         | `plus.minus`                                |
+| `\pm`             | `plus.minus`                                |
+| `\pmb`            | `bold($1)` maybe works                      |
+| `\pmod`           | `mod`                                       |
+| `\pod`            | TODO#spacing                                |
+| `\pounds`         | `pound`                                     |
+| `\Pr`             | `Pr`                                        |
+| `\prec`           | `prec`                                      |
+| `\precapprox`     | `prec.approx`                               |
+| `\preccurlyeq`    | `prec.eq`                                   |
+| `\preceq`         | `⪯`                                         |
+| `\precnapprox`    | `prec.napprox`                              |
+| `\precneqq`       | `prec.nequiv`                               |
+| `\precnsim`       | `prec.ntilde`                               |
+| `\precsim`        | `prec.tilde`                                |
+| `\prime`          | `prime`                                     |
+| `\prod`           | `product`                                   |
+| `\projlim`        | `#math.op("proj\u{2009}lim", limits: true)` |
+| `\propto`         | `prop`                                      |
+| `\providecommand` | TODO#scripting                              |
+| `\Psi`            | `Psi`                                       |
+| `\psi`            | `psi`                                       |
+| `\pu`             | not supported in ipynb                      |
+
+## QR
+
+| LaTeX                | Typst                      |
+| -------------------- | -------------------------- |
+| `\qquad`             | `#h(2em)`                  |
+| `\quad`              | `space.quad`               |
+| `\R`                 | `RR`                       |
+| `\r`                 | `circle($1)`               |
+| `\raisebox`          | `#text(baseline: -$1)[$2]` |
+| `\rang`              | `angle.r`                  |
+| `\rangle`            | `angle.r`                  |
+| `\Rarr`              | `=>`                       |
+| `\rArr`              | `=>`                       |
+| `\rarr`              | `->`                       |
+| `\ratio`             | `:`                        |
+| `\rBrace`            | `⦄`                        |
+| `\rbrace`            | `}`                        |
+| `\rbrack`            | `]`                        |
+| `\rceil`             | `⌉`                        |
+| `\Re`                | `Re`                       |
+| `\real`              | `Re`                       |
+| `\Reals`             | `RR`                       |
+| `\reals`             | `RR`                       |
+| `\renewcommand`      | TODO#scripting             |
+| `\restriction`       | `harpoon.tr`               |
+| `\rfloor`            | `⌋`                        |
+| `\rgroup`            | `turtle.r`                 |
+| `\rhd`               | `gt.tri`                   |
+| `\Rho`               | `Rho`                      |
+| `\rho`               | `rho`                      |
+| `\right`             | TODO#lr                    |
+| `\Rightarrow`        | `=>`                       |
+| `\rightarrow`        | `->`                       |
+| `\rightarrowtail`    | `>->`                      |
+| `\rightharpoondown`  | `harpoon.rb`               |
+| `\rightharpoonup`    | `harpoon.rt`               |
+| `\rightleftarrows`   | `arrows.rl`                |
+| `\rightleftharpoons` | `harpoons.rtlb`            |
+| `\rightrightarrows`  | `arrows.rr`                |
+| `\rightsquigarrow`   | `arrow.r.squiggly`         |
+| `\rightthreetimes`   | `times.three.r`            |
+| `\risingdotseq`      | `≓`                        |
+| `\rlap`              | TODO#spacing               |
+| `\rm`                | TODO#affect all            |
+| `\rmoustache`        | `⎱`                        |
+| `\rparen`            | `)`                        |
+| `\rq`                | `'`                        |
+| `rrbracket`          | `bracket.r.double`         |
+| `\Rrightarrow`       | `arrow.r.triple`           |
+| `\Rsh`               | `↱`                        |
+| `\rtimes`            | `times.r`                  |
+| `\rule`              | TODO#not sure              |
+| `\rVert`             | `parallel`                 |
+| `\rvert`             | `divides`                  |
+
+## S
 
 | LaTeX | Typst |
 | ----- | ----- |

@@ -219,7 +219,7 @@ pub fn latex_to_typst(latex: String) -> String {
                         text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
                         text.push(')');
                     }
-                    "bmod" => text.push_str("mod"),
+                    "bmod" | "pmod" => text.push_str("mod"),
                     "bowtie" | "Join" => text.push('⋈'),
                     "Box" => text.push_str("square.stroked"),
                     "boxdot" => text.push_str("dot.square"),
@@ -458,7 +458,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "j" | "jmath" => text.push_str("dotless.j"),
                     "KaTeX" | "LaTeX" => text.push_str(&format!("\"{}\"", word)),
                     // L
-                    "lang" | "langle" => text.push('⟨'),
+                    "lang" | "langle" => text.push_str("angle.l"),
                     "Larr" | "lArr" | "Leftarrow" => text.push_str("arrow.l.double"),
                     "lBrace" => text.push('⦃'),
                     "lbrace" => text.push('{'),
@@ -484,7 +484,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "lessgtr" => text.push_str("lt.gt"),
                     "lesssim" => text.push_str("lt.tilde"),
                     "lfloor" => text.push('⌊'),
-                    "lgroup" => text.push('⟮'),
+                    "lgroup" => text.push_str("turtle.l"),
                     "lhd" => text.push_str("ld.tri"),
                     "ll" => text.push_str("<<"),
                     "llbracket" => text.push_str("bracket.l.double"),
@@ -637,12 +637,10 @@ pub fn latex_to_typst(latex: String) -> String {
                     "overbrace" => {
                         text.push_str("overbrace(");
                         text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(", ");
-                        // except '^' here
-                        if scanner.next().is_some_and(|c| c != '^') {
-                            panic!("expected '^' after $1 in overbrace");
+                        if scanner.next().is_some_and(|c| c == '^') {
+                            text.push_str(", ");
+                            text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
                         }
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
                         text.push(')');
                     }
                     "overgroup" => {
@@ -665,6 +663,74 @@ pub fn latex_to_typst(latex: String) -> String {
                         text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
                         text.push(')');
                     }
+                    // P
+                    "P" => text.push_str("pilcrow"),
+                    "partial" => text.push_str("diff"),
+                    "prep" => text.push_str("bot"),
+                    "phi" => text.push_str("phi.alt"),
+                    "pitchfork" => text.push('⋔'),
+                    "plim" => text.push_str("#math.op(\"plim\", limits: true)"),
+                    "plusmn" | "pm" => text.push_str("plus.minus"),
+                    "pounds" => text.push_str("pound"),
+                    "precapprox" => text.push_str("prec.approx"),
+                    "preccurlyeq" => text.push_str("prec.eq"),
+                    "preceq" => text.push('⪯'),
+                    "precnapprox" => text.push_str("prec.napprox"),
+                    "precneqq" => text.push_str("prec.nequiv"),
+                    "precnsim" => text.push_str("prec.ntilde"),
+                    "precsim" => text.push_str("prec.tilde"),
+                    "prime" | "rq" => text.push('\''),
+                    "prod" => text.push_str("product"),
+                    "projlim" => text.push_str("#math.op(\"proj\u{2009}lim\", limits: true)"),
+                    "propto" => text.push_str("prop"),
+                    // QR
+                    "qquad" => text.push_str("#h(2em)"),
+                    "quad" => text.push_str("space.quad"),
+                    "R" => text.push_str("RR"),
+                    "r" => {
+                        text.push_str("circle(");
+                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        text.push(')');
+                    }
+                    "raisebox" => {
+                        // expect text input
+                        text.push_str("#text(baseline: -");
+                        text.push_str(&scanner.next_param().unwrap());
+                        text.push_str(")[");
+                        text.push_str(&latex_text_to_typst(scanner.next_param().unwrap()));
+                        text.push_str("]");
+                    }
+                    "rang" | "rangle" => text.push_str("angle.r"),
+                    "Rarr" | "rArr" | "Rightarrow" => text.push_str("=>"),
+                    "rarr" | "rightarrow" => text.push_str("->"),
+                    "ratio" => text.push(':'),
+                    "rBrace" => text.push('⦄'),
+                    "rbrace" => text.push('}'),
+                    "rbrack" => text.push(']'),
+                    "rceil" => text.push('⌉'),
+                    "Reals" | "reals" => text.push_str("RR"),
+                    "restriction" => text.push_str("harpoon.tr"),
+                    "rfloor" => text.push('⌋'),
+                    "rgroup" => text.push_str("turtle.r"),
+                    "rhd" => text.push_str("gt.tri"),
+                    "rightarrowtail" => text.push_str(">->"),
+                    "rightharpoondown" => text.push_str("harpoon.rb"),
+                    "rightharpoonup" => text.push_str("harpoon.rt"),
+                    "rightleftarrows" => text.push_str("arrows.rl"),
+                    "rightleftharpoons" => text.push_str("harpoons.rtlb"),
+                    "rightrightarrows" => text.push_str("arrows.rr"),
+                    "rightsquigarrow" => text.push_str("arrow.r.squiggly"),
+                    "rightthreetimes" => text.push_str("times.three.r"),
+                    "risingdotseq" => text.push('≓'),
+                    "rmoustache" => text.push('⎱'),
+                    "rparen" => text.push(')'),
+                    "rrbracket" => text.push_str("bracket.r.double"),
+                    "Rrightarrow" => text.push_str("arrow.r.triple"),
+                    "Rsh" => text.push('↱'),
+                    "rtimes" => text.push_str("times.r"),
+                    "rVert" => text.push_str("parallel"),
+                    "rvert" => text.push_str("divides"),
+                    // S
                     word => text.push_str(word),
                 }
             }
@@ -698,6 +764,11 @@ fn latex_color_to_typst(color: String) -> String {
     } else {
         color
     }
+}
+
+fn latex_text_to_typst(text: String) -> String {
+    // TODO
+    text
 }
 
 #[cfg(test)]
