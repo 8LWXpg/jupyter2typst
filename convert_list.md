@@ -192,15 +192,15 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\coloncolonapprox` | `::approx`             |
 | `\coloncolonequals` | `::=`                  |
 | `\coloncolonminus`  | `"::−"`                |
-| `\coloncolonsim`    | `"::~"`                |
+| `\coloncolonsim`    | `::tilde.op`           |
 | `\Coloneq`          | `"::−"`                |
-| `\coloneq`          | `":-"`                 |
+| `\coloneq`          | `":−"`                 |
 | `\colonequals`      | `:=`                   |
 | `\Coloneqq`         | `::=`                  |
 | `\coloneqq`         | `:=`                   |
 | `\colonminus`       | `":−"`                 |
-| `\Colonsim`         | `"::~"`                |
-| `\colonsim`         | `":~"`                 |
+| `\Colonsim`         | `::tilde.op`           |
+| `\colonsim`         | `:tilde.op`            |
 | `\color`            | TODO#affect all        |
 | `\colorbox`         | `#box(fill: $1)[$2]`   |
 | `\complement`       | `complement`           |
@@ -299,8 +299,8 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\Epsilon`          | `Epsilon`      |
 | `\epsilon`          | `epsilon.alt`  |
 | `\eqcirc`           | `≖`            |
-| `\Eqcolon`          | `"-::"`        |
-| `\eqcolon`          | `"-:"`         |
+| `\Eqcolon`          | `"−::"`        |
+| `\eqcolon`          | `"−:"`         |
 | `\Eqqcolon`         | `"=::"`        |
 | `\eqqcolon`         | `=:`           |
 | `\eqsim`            | `minus.tilde`  |
@@ -565,8 +565,8 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\mho`             | `ohm.inv`       |
 | `\mid`             | `\|`            |
 | `\middle`          | TODO#lr         |
-| `\minuscolon`      | `"-:"`          |
-| `\minuscoloncolon` | `"-::"`         |
+| `\minuscolon`      | `"−:"`          |
+| `\minuscoloncolon` | `"−::"`         |
 | `\minuso`          | `⦵`             |
 | `\mkren`           | TODO#spacing    |
 | `\mod`             | `mod`           |
@@ -646,41 +646,41 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 
 ## O
 
-| LaTeX                     | Typst                          |
-| ------------------------- | ------------------------------ |
-| `\O`                      | `Ø`                            |
-| `\o`                      | `ø`                            |
-| `\odot`                   | `dot.circle`                   |
-| `\OE`                     | `Œ`                            |
-| `\oe`                     | `œ`                            |
-| `\oiiint`                 | `integral.vol`                 |
-| `\oiint`                  | `integral.surf`                |
-| `\oint`                   | `integral.cont`                |
-| `\Omega`                  | `Omega`                        |
-| `\omega`                  | `omega`                        |
-| `\Omicron`                | `Omicron`                      |
-| `\omicron`                | `omicron`                      |
-| `\ominus`                 | `minus.circle`                 |
-| `\operatorname`           | `#math.op("$1")`               |
-| `\operatorname*`          | `#math.op("$1", limits: true)` |
-| `\operatornamewithlimits` | `#math.op("$1", limits: true)` |
-| `\oplus`                  | `plus.circle`                  |
-| `\origof`                 | `⊶`                            |
-| `\oslash`                 | `⊘`                            |
-| `\otimes`                 | `times.circle`                 |
-| `\over`                   | TODO#binary                    |
-| `\overbrace`              | `overbrace($1, $2)`            |
-| `\overgroup`              | `accent($1, turtle.t)`         |
-| `\overleftarrow`          | `arrow.l($1)`                  |
-| `\overleftharpoon`        | TODO#no alternative            |
-| `\overleftrightarrow`     | TODO#no alternative            |
-| `\overline`               | `overline($1)`                 |
-| `\overlinesegment`        | TODO#no alternative            |
-| `\Overrightarrow`         | TODO#no alternative            |
-| `\overrightarrow`         | `arrow.r($1)`                  |
-| `\overrightharpoon`       | TODO#no alternative            |
-| `\overset`                | TODO#not sure                  |
-| `\owns`                   | `in.rev`                       |
+| LaTeX                     | Typst                               |
+| ------------------------- | ----------------------------------- |
+| `\O`                      | `Ø`                                 |
+| `\o`                      | `ø`                                 |
+| `\odot`                   | `dot.circle`                        |
+| `\OE`                     | `Œ`                                 |
+| `\oe`                     | `œ`                                 |
+| `\oiiint`                 | `integral.vol`                      |
+| `\oiint`                  | `integral.surf`                     |
+| `\oint`                   | `integral.cont`                     |
+| `\Omega`                  | `Omega`                             |
+| `\omega`                  | `omega`                             |
+| `\Omicron`                | `Omicron`                           |
+| `\omicron`                | `omicron`                           |
+| `\ominus`                 | `minus.circle`                      |
+| `\operatorname`           | `#math.op("$1")`                    |
+| `\operatorname*`          | `#math.op("$1", limits: true)`      |
+| `\operatornamewithlimits` | `#math.op("$1", limits: true)`      |
+| `\oplus`                  | `plus.circle`                       |
+| `\origof`                 | `⊶`                                 |
+| `\oslash`                 | `⊘`                                 |
+| `\otimes`                 | `times.circle`                      |
+| `\over`                   | TODO#binary                         |
+| `\overbrace`              | `overbrace($1)` `overbrace($1, $2)` |
+| `\overgroup`              | `accent($1, turtle.t)`              |
+| `\overleftarrow`          | `arrow.l($1)`                       |
+| `\overleftharpoon`        | TODO#no alternative                 |
+| `\overleftrightarrow`     | TODO#no alternative                 |
+| `\overline`               | `overline($1)`                      |
+| `\overlinesegment`        | TODO#no alternative                 |
+| `\Overrightarrow`         | TODO#no alternative                 |
+| `\overrightarrow`         | `arrow.r($1)`                       |
+| `\overrightharpoon`       | TODO#no alternative                 |
+| `\overset`                | TODO#not sure                       |
+| `\owns`                   | `in.rev`                            |
 
 ## P
 
@@ -778,6 +778,83 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\rvert`             | `divides`                  |
 
 ## S
+
+| LaTeX                | Typst                     |
+| -------------------- | ------------------------- |
+| `\S`                 | `section`                 |
+| `\scriptscriptstyle` | TODO#affect all           |
+| `\scriptsize`        | TODO#affect all           |
+| `\scriptstyle`       | TODO#affect all           |
+| `\sdot`              | `dot.op`                  |
+| `\searrow`           | `arrow.br`                |
+| `\sec`               | `sec`                     |
+| `\sect`              | `section`                 |
+| `\Set`               | `{$1}`                    |
+| `\set`               | `{$1}`                    |
+| `\setminus`          | `without`                 |
+| `\sf`                | TODO#affect all           |
+| `sharp`              | `♯`                       |
+| `\shortmid`          | no alternative            |
+| `\shortparallel`     | no alternative            |
+| `\Sigma`             | `Sigma`                   |
+| `\sigma`             | `sigma`                   |
+| `\sim`               | `tilde.op`                |
+| `\simcolon`          | `tilde.op:`               |
+| `\simcoloncolon`     | `tilde.op::`              |
+| `\simeq`             | `tilde.eq`                |
+| `\sin`               | `sin`                     |
+| `\sinh`              | `sinh`                    |
+| `\sixptsize`         | TODO#affect all           |
+| `\sh`                | `#math.op("sh")`          |
+| `\small`             | TODO#affect all           |
+| `\smallint`          | TODO#not sure             |
+| `\smallsetminus`     | TODO#not sure             |
+| `\smallsmile`        | `⌣`                       |
+| `\sout`              | TODO#not sure             |
+| `\space`             | `space`                   |
+| `\spades`            | `suit.spade`              |
+| `\spadesuit`         | `suit.spade`              |
+| `\sphericalangle`    | `angle.spheric`           |
+| `\sqcap`             | `sect.sq`                 |
+| `\sqcup`             | `union.sq`                |
+| `\square`            | `square.stroked`          |
+| `\sqrt`              | `sqrt($1)` `root($1, $2)` |
+| `\sqsubset`          | `subset.sq`               |
+| `\sqsubseteq`        | `subset.eq.sq`            |
+| `\sqsupset`          | `supset.sq`               |
+| `\sqsupseteq`        | `supset.eq.sq`            |
+| `\ss`                | `ß`                       |
+| `\stackrel`          | TODO#not sure             |
+| `\star`              | `star.op`                 |
+| `\sub`               | `subset`                  |
+| `\sube`              | `subset.eq`               |
+| `\Subset`            | `subset.double`           |
+| `\subset`            | `subset`                  |
+| `\subseteq`          | `subset.eq`               |
+| `\subseteqq`         | `⫅`                       |
+| `\subsetneq`         | `subset.neq`              |
+| `\subsetneqq`        | `⫋`                       |
+| `\substack`          | TODO#not sure             |
+| `\succ`              | `succ`                    |
+| `\succapprox`        | `succ.approx`             |
+| `\succcurlyeq`       | `succ.eq`                 |
+| `\succeq`            | `⪰`                       |
+| `\succnapprox`       | `succ.napprox`            |
+| `\succneqq`          | `succ.nequiv`             |
+| `\succnsim`          | `succ.ntilde`             |
+| `\sum`               | `sum`                     |
+| `\sup`               | `sup`                     |
+| `\supe`              | `supset.eq`               |
+| `\Supset`            | `supset.double`           |
+| `\supset`            | `supset`                  |
+| `\supseteq`          | `supset.eq`               |
+| `\supseteqq`         | `⫆`                       |
+| `\supsetneq`         | `supset.neq`              |
+| `\supsetneqq`        | `⫌`                       |
+| `\surd`              | `√`                       |
+| `\swarrow`           | `arrow.bl`                |
+
+## T
 
 | LaTeX | Typst |
 | ----- | ----- |

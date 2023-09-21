@@ -19,7 +19,6 @@ impl Scanner {
 
     /// Returns the next word (ascii alphabet only) in the scanner..
     pub fn next_word(&mut self) -> String {
-        // TODO decide skipping non-alphabetic characters before starting to collect a word or not
         let mut ret = String::new();
         while let Some(c) = self.peek() {
             if !c.is_ascii_alphabetic() {
@@ -79,6 +78,32 @@ impl Scanner {
         }
         Some(ret).filter(|s| !s.is_empty())
     }
+
+    fn next_param_optional(&mut self) -> Option<String> {
+        let mut ret = String::new();
+
+        // trim whitespace
+        while let Some(c) = self.peek() {
+            if !c.is_whitespace() {
+                break;
+            }
+            self.cursor += 1;
+        }
+
+        // check if next character is '\\', '{', or any other character
+        match self.next() {
+            Some('[') => {
+                while let Some(c) = self.next() {
+                    match c {
+                        ']' => break,
+                        _ => ret.push(c),
+                    }
+                }
+            }
+            _ => return None,
+        }
+        Some(ret)
+    }
 }
 
 impl Iterator for Scanner {
@@ -98,641 +123,573 @@ pub fn latex_to_typst(latex: String) -> String {
         match c {
             '\\' => {
                 // TODO giant match of all LaTeX commands
-                let word = scanner.next_word();
-                match word.as_str() {
+                text.push_str(&match scanner.next_word().as_str() {
                     // same one goes to default
                     "" => {
                         let c = scanner.next().unwrap();
                         match c {
                             '\'' | '"' | '.' | '`' | '=' | '~' | '^' => {
                                 let func = match c {
-                                    '\'' => "acute",
-                                    '"' => "dot.double",
-                                    '.' => "dot",
-                                    '`' => "grave",
-                                    '=' => "macron",
-                                    '~' => "tilde",
-                                    '^' => "hat",
+                                    '\'' => "acute".to_owned(),
+                                    '"' => "dot.double".to_owned(),
+                                    '.' => "dot".to_owned(),
+                                    '`' => "grave".to_owned(),
+                                    '=' => "macron".to_owned(),
+                                    '~' => "tilde".to_owned(),
+                                    '^' => "hat".to_owned(),
                                     _ => unreachable!(),
                                 };
-                                text.push_str(&format!("{}(", func));
-                                text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                                text.push(')');
+                                format!(
+                                    "{}({})",
+                                    func,
+                                    latex_to_typst(scanner.next_param().unwrap())
+                                )
                             }
                             // escape characters in Typst
-                            '_' | '&' | '#' => {
-                                text.push('\\');
-                                text.push(c);
-                            }
-                            '!' => text.push_str("#h(-1em/6)"),
-                            ' ' => text.push_str("space"),
-                            '(' | ')' => {}
-                            ',' => text.push_str("space.sixth"),
-                            ':' | '>' => text.push_str("#h(2em/9)"),
-                            ';' => text.push_str("#h(5em/18)"),
-                            '|' => text.push_str("||"),
-                            '\\' => text.push_str("\\"),
-                            _ => text.push(c),
+                            '_' | '&' | '#' => format!("\\{}", c),
+                            '!' => "#h(-1em/6)".to_owned(),
+                            ' ' => "space".to_owned(),
+                            '(' | ')' => "".to_owned(),
+                            ',' => "space.sixth".to_owned(),
+                            ':' | '>' => "#h(2em/9)".to_owned(),
+                            ';' => "#h(5em/18)".to_owned(),
+                            '|' => "||".to_owned(),
+                            '\\' => "\\".to_owned(),
+                            _ => format!("{}", c),
                         }
                     }
                     // A
-                    "AA" => text.push_str("circle(A)"),
-                    "aa" => text.push_str("circle(a)"),
-                    "acute" => {
-                        text.push_str("acute(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "AE" => text.push('Æ'),
-                    "ae" => text.push('æ'),
-                    "alefsym" => text.push_str("alef"),
-                    "amalg" | "coprod" => text.push_str("product.co"),
-                    "And" => text.push_str("\\&"),
-                    "approxeq" => text.push_str("approx.eq"),
-                    "approxcolon" => text.push_str("approx:"),
-                    "approxcoloncolon" => text.push_str("approx::"),
-                    "arcctg" => text.push_str("#math.op(\"arcctg\")"),
-                    "arctg" => text.push_str("#math.op(\"arctg\")"),
-                    "argmax" => text.push_str("arg max"),
-                    "argmin" => text.push_str("arg min"),
-                    "ast" => text.push('*'),
-                    "asymp" => text.push('≍'),
+                    "AA" => "circle(A)".to_owned(),
+                    "aa" => "circle(a)".to_owned(),
+                    "acute" => format!("acute({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "AE" => "Æ".to_owned(),
+                    "ae" => "æ".to_owned(),
+                    "alefsym" => "alef".to_owned(),
+                    "amalg" | "coprod" => "product.co".to_owned(),
+                    "And" => "\\&".to_owned(),
+                    "approxeq" => "approx.eq".to_owned(),
+                    "approxcolon" => "approx:".to_owned(),
+                    "approxcoloncolon" => "approx::".to_owned(),
+                    "arcctg" => "#math.op(\"arcctg\")".to_owned(),
+                    "arctg" => "#math.op(\"arctg\")".to_owned(),
+                    "argmax" => "arg max".to_owned(),
+                    "argmin" => "arg min".to_owned(),
+                    "ast" => "*".to_owned(),
+                    "asymp" => "≍".to_owned(),
                     // B
-                    "backepsilon" => text.push_str("in.rev.small"),
-                    "backprime" => text.push_str("prime.rev"),
-                    "backsim" => text.push_str("tilde.rev"),
-                    "backsimeq" => text.push_str("tilde.eq.rev"),
-                    "backslash" => text.push_str("\\\\"),
-                    "bar" => {
-                        text.push_str("macron(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "barwedge" => text.push('⊼'),
-                    "Bbb" => {
-                        text.push_str("bb(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "Bbbk" => text.push_str("bb(k)"),
-                    "bcancel" => {
-                        text.push_str("cancel(inverted: #true, ");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "begin" => {
-                        // TODO
-                    }
-                    "between" => text.push('≬'),
-                    "bf" => {
-                        // TODO
-                    }
-                    "bigcap" => text.push_str("sect.big"),
-                    "bigcirc" => text.push_str("circle.stroked.big"),
-                    "bigcup" => text.push_str("union.big"),
-                    "bigdot" => text.push_str("dot.circle.big"),
-                    "bigoplus" => text.push_str("plus.circle.big"),
-                    "bigotimes" => text.push_str("times.circle.big"),
-                    "bigsqcup" => text.push_str("union.sq.big"),
-                    "bigstar" => text.push_str("star.stroked"),
-                    "bigtriangledown" => text.push_str("triangle.stroked.b"),
-                    "bigtriangleup" => text.push_str("triangle.stroked.t"),
-                    "biguplus" => text.push_str("union.plus.big"),
-                    "bigvee" => text.push_str("or.big"),
-                    "bigwedge" => text.push_str("and.big"),
-                    "binom" => {
-                        text.push_str("binom(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(", ");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "blacklozenge" => text.push_str("lozenge.filled"),
-                    "blacksquare" => text.push_str("square.filled"),
-                    "blacktriangle" => text.push_str("triangle.filled.t"),
-                    "blacktriangledown" => text.push_str("triangle.filled.b"),
-                    "blacktriangleleft" => text.push_str("triangle.filled.l"),
-                    "blacktriangleright" => text.push_str("triangle.filled.r"),
+                    "backepsilon" => "in.rev.small".to_owned(),
+                    "backprime" => "prime.rev".to_owned(),
+                    "backsim" => "tilde.rev".to_owned(),
+                    "backsimeq" => "tilde.eq.rev".to_owned(),
+                    "backslash" => "\\\\".to_owned(),
+                    "bar" => format!("macron({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "barwedge" => "⊼".to_owned(),
+                    "Bbb" => format!("bb({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "Bbbk" => "bb(k)".to_owned(),
+                    "bcancel" => format!(
+                        "cancel(inverted: #true, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "between" => "≬".to_owned(),
+                    "bigcap" => "sect.big".to_owned(),
+                    "bigcirc" => "circle.stroked.big".to_owned(),
+                    "bigcup" => "union.big".to_owned(),
+                    "bigdot" => "dot.circle.big".to_owned(),
+                    "bigoplus" => "plus.circle.big".to_owned(),
+                    "bigotimes" => "times.circle.big".to_owned(),
+                    "bigsqcup" => "union.sq.big".to_owned(),
+                    "bigstar" => "star.stroked".to_owned(),
+                    "bigtriangledown" => "triangle.stroked.b".to_owned(),
+                    "bigtriangleup" => "triangle.stroked.t".to_owned(),
+                    "biguplus" => "union.plus.big".to_owned(),
+                    "bigvee" => "or.big".to_owned(),
+                    "bigwedge" => "and.big".to_owned(),
+                    "binom" => format!(
+                        "binom({}, {})",
+                        latex_to_typst(scanner.next_param().unwrap()),
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "blacklozenge" => "lozenge.filled".to_owned(),
+                    "blacksquare" => "square.filled".to_owned(),
+                    "blacktriangle" => "triangle.filled.t".to_owned(),
+                    "blacktriangledown" => "triangle.filled.b".to_owned(),
+                    "blacktriangleleft" => "triangle.filled.l".to_owned(),
+                    "blacktriangleright" => "triangle.filled.r".to_owned(),
                     "bm" | "bold" | "boldsymbol" => {
-                        // TODO seperate bold
-                        text.push_str("bold(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
+                        format!("bold({})", latex_to_typst(scanner.next_param().unwrap()))
                     }
-                    "bmod" | "pmod" => text.push_str("mod"),
-                    "bowtie" | "Join" => text.push('⋈'),
-                    "Box" => text.push_str("square.stroked"),
-                    "boxdot" => text.push_str("dot.square"),
-                    "boxed" => {
-                        text.push_str("#box(stroke: 0.5pt)[$");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str("$]");
-                    }
-                    "boxminus" => text.push_str("minus.square"),
-                    "boxplus" => text.push_str("plus.square"),
-                    "boxtimes" => text.push_str("times.square"),
-                    "breve" => {
-                        text.push_str("breve(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "bull" | "bullet" => text.push_str("circle.filled.small"),
-                    "Bumpeq" => text.push('≎'),
-                    "bumpeq" => text.push('≏'),
+                    "bmod" | "pmod" => "mod".to_owned(),
+                    "bowtie" | "Join" => "⋈".to_owned(),
+                    "Box" => "square.stroked".to_owned(),
+                    "boxdot" => "dot.square".to_owned(),
+                    "boxed" => format!(
+                        "#box(stroke: 0.5pt)[${}$]",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "boxminus" => "minus.square".to_owned(),
+                    "boxplus" => "plus.square".to_owned(),
+                    "boxtimes" => "times.square".to_owned(),
+                    "breve" => format!("breve({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "bull" | "bullet" => "circle.filled.small".to_owned(),
+                    "Bumpeq" => "≎".to_owned(),
+                    "bumpeq" => "≏".to_owned(),
                     // C
                     "cancel" => {
-                        text.push_str("cancel(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
+                        format!("cancel({})", latex_to_typst(scanner.next_param().unwrap()))
                     }
-                    "Cap" | "doublecap" => text.push_str("sect.double"),
-                    "cap" => text.push_str("sect"),
-                    "cdot" | "cdotp" | "centerdot" => text.push_str("dot.op"),
+                    "Cap" | "doublecap" => "sect.double".to_owned(),
+                    "cap" => "sect".to_owned(),
+                    "cdot" | "cdotp" | "centerdot" | "sdot" => "dot.op".to_owned(),
                     "cdots" | "dots" | "dotsb" | "dotsc" | "dotsi" | "dotsm" => {
-                        text.push_str("dots.h.c")
+                        "dots.h.c".to_owned()
                     }
-                    "check" => {
-                        text.push_str("caron(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "circ" => text.push_str("compose"),
-                    "circeq" => text.push('≗'),
-                    "circlearrowleft" => text.push_str("arrow.ccw"),
-                    "circlearrowright" => text.push_str("arrow.cw"),
-                    "circledast" => text.push_str("ast.circle"),
-                    "circledcirc" => text.push_str("circle.nested"),
-                    "circleddash" => text.push_str("dash.circle"),
-                    "circledR" => text.push('®'),
-                    "circledS" => text.push('Ⓢ'),
-                    "clubs" | "clubsuit" => text.push_str("suit.club"),
-                    "cnums" => text.push_str("CC"),
-                    "Colonapprox" => text.push_str("::approx"),
-                    "colonapprox" => text.push_str(":approx"),
-                    "coloncolon" => text.push_str("::"),
-                    "coloncolonapprox" => text.push_str("::approx"),
-                    "coloncolonequals" | "Coloneqq" => text.push_str("::="),
-                    "coloncolonminus" | "Coloneq" => text.push_str("\"::-\""),
-                    "coloncolonsim" | "Colonsim" => text.push_str("\"::~\""),
-                    "coloneq" | "colonminus" => text.push_str("\":-\""),
-                    "colonequals" | "coloneqq" => text.push_str(":="),
-                    "colonsim" => text.push_str("\":~\""),
-                    "colorbox" => {
-                        // expect both text input
-                        text.push_str("#text(fill: ");
-                        text.push_str(&latex_color_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(")[$upright(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(")$]");
-                    }
-                    "complexes" => text.push_str("CC"),
-                    "cong" => text.push_str("tilde.equiv"),
-                    "cosec" => text.push_str("#math.op(\"cosec\")"),
-                    "cotg" => text.push_str("#math.op(\"cotg\")"),
-                    "cth" => text.push_str("#math.op(\"cth\")"),
-                    "Cup" | "doublecup" => text.push_str("union.double"),
-                    "cup" => text.push_str("union"),
-                    "curlyeqprec" => text.push_str("eq.prec"),
-                    "curlyeqsucc" => text.push_str("eq.succ"),
-                    "curlyvee" => text.push_str("or.curly"),
-                    "curlywedge" => text.push_str("and.curly"),
-                    "curvearrowleft" => text.push_str("arrow.ccw.half"),
-                    "curvearrowright" => text.push_str("arrow.cw.half"),
+                    "check" => format!("caron({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "circ" => "compose".to_owned(),
+                    "circeq" => "≗".to_owned(),
+                    "circlearrowleft" => "arrow.ccw".to_owned(),
+                    "circlearrowright" => "arrow.cw".to_owned(),
+                    "circledast" => "ast.circle".to_owned(),
+                    "circledcirc" => "circle.nested".to_owned(),
+                    "circleddash" => "dash.circle".to_owned(),
+                    "circledR" => "®".to_owned(),
+                    "circledS" => "Ⓢ".to_owned(),
+                    "clubs" | "clubsuit" => "suit.club".to_owned(),
+                    "cnums" => "CC".to_owned(),
+                    "Colonapprox" => "::approx".to_owned(),
+                    "colonapprox" => ":approx".to_owned(),
+                    "coloncolon" => "::".to_owned(),
+                    "coloncolonapprox" => "::approx".to_owned(),
+                    "coloncolonequals" | "Coloneqq" => "::=".to_owned(),
+                    "coloncolonminus" | "Coloneq" => "\"::−\"".to_owned(),
+                    "coloncolonsim" | "Colonsim" => "::tilde.op".to_owned(),
+                    "coloneq" | "colonminus" => "\":−\"".to_owned(),
+                    "colonequals" | "coloneqq" => ":=".to_owned(),
+                    "colonsim" => ":tilde.op".to_owned(),
+                    "colorbox" => format!(
+                        "#text(fill: {})[${}$]",
+                        latex_color_to_typst(scanner.next_param().unwrap()),
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "complexes" => "CC".to_owned(),
+                    "cong" => "tilde.equiv".to_owned(),
+                    "cosec" => "#math.op(\"cosec\")".to_owned(),
+                    "cotg" => "#math.op(\"cotg\")".to_owned(),
+                    "cth" => "#math.op(\"cth\")".to_owned(),
+                    "Cup" | "doublecup" => "union.double".to_owned(),
+                    "cup" => "union".to_owned(),
+                    "curlyeqprec" => "eq.prec".to_owned(),
+                    "curlyeqsucc" => "eq.succ".to_owned(),
+                    "curlyvee" => "or.curly".to_owned(),
+                    "curlywedge" => "and.curly".to_owned(),
+                    "curvearrowleft" => "arrow.ccw.half".to_owned(),
+                    "curvearrowright" => "arrow.cw.half".to_owned(),
                     // D
-                    "dag" => text.push_str("dagger"),
-                    "Dagger" | "ddag" | "ddagger" => text.push_str("dagger.double"),
-                    "daleth" => text.push_str("ℸ"),
-                    "Darr" | "dArr" | "Downarrow" => text.push_str("arrow.b.double"),
-                    "darr" | "downarrow" => text.push_str("arrow.b"),
-                    "dashleftarrow" => text.push_str("arrow.l.dash"),
-                    "dashrightarrow" => text.push_str("arrow.r.dash"),
-                    "dashv" => text.push_str("tack.l"),
-                    "dbinom" => {
-                        text.push_str("dbinom(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(", ");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "dbcolon" => text.push_str("::"),
-                    "ddot" => {
-                        text.push_str("dot.double(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(")");
-                    }
-                    "ddots" => text.push_str("dots.down"),
-                    "digaamma" => text.push('ϝ'),
-                    "dfrac" => {
-                        text.push_str("frac(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(", ");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "diagdown" => text.push('╲'),
-                    "diagup" => text.push('╱'),
-                    "Diamond" => text.push_str("lozenge.stroked"),
-                    "diamond" => text.push_str("diamond.stroked.small"),
-                    "diamonds" | "diamondsuit" => text.push('♢'),
+                    "dag" => "dagger".to_owned(),
+                    "Dagger" | "ddag" | "ddagger" => "dagger.double".to_owned(),
+                    "daleth" => "ℸ".to_owned(),
+                    "Darr" | "dArr" | "Downarrow" => "arrow.b.double".to_owned(),
+                    "darr" | "downarrow" => "arrow.b".to_owned(),
+                    "dashleftarrow" => "arrow.l.dash".to_owned(),
+                    "dashrightarrow" => "arrow.r.dash".to_owned(),
+                    "dashv" => "tack.l".to_owned(),
+                    "dbinom" => format!(
+                        "dbinom({}, {})",
+                        latex_to_typst(scanner.next_param().unwrap()),
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "dbcolon" => "::".to_owned(),
+                    "ddot" => format!(
+                        "dot.double({})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "ddots" => "dots.down".to_owned(),
+                    "digaamma" => "ϝ".to_owned(),
+                    "dfrac" => format!(
+                        "frac({}, {})",
+                        latex_to_typst(scanner.next_param().unwrap()),
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "diagdown" => "╲".to_owned(),
+                    "diagup" => "╱".to_owned(),
+                    "Diamond" => "lozenge.stroked".to_owned(),
+                    "diamond" => "diamond.stroked.small".to_owned(),
+                    "diamonds" | "diamondsuit" => "♢".to_owned(),
                     "displaystyle" => {
-                        text.push_str("display(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
+                        format!("display({})", latex_to_typst(scanner.next_param().unwrap()))
                     }
-                    "divideontimes" => text.push_str("times.div"),
-                    "dot" => {
-                        text.push_str("dot(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "Doteq" | "doteqdot" => text.push('≑'),
-                    "doteq" => text.push('≐'),
-                    "dotplus" => text.push_str("plus.dot"),
-                    "dotso" | "ldots" | "mathellipsis" => text.push_str("..."),
-                    "doublebarwedge" => text.push('⩞'),
-                    "downdownarrows" => text.push_str("arrows.bb"),
-                    "downharpoonleft" => text.push_str("harpoon.bl"),
-                    "downharpoonright" => text.push_str("harpoon.br"),
+                    "divideontimes" => "times.div".to_owned(),
+                    "dot" => format!("dot({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "Doteq" | "doteqdot" => "≑".to_owned(),
+                    "doteq" => "≐".to_owned(),
+                    "dotplus" => "plus.dot".to_owned(),
+                    "dotso" | "ldots" | "mathellipsis" => "...".to_owned(),
+                    "doublebarwedge" => "⩞".to_owned(),
+                    "downdownarrows" => "arrows.bb".to_owned(),
+                    "downharpoonleft" => "harpoon.bl".to_owned(),
+                    "downharpoonright" => "harpoon.br".to_owned(),
                     // E
-                    "ell" => text.push_str("cal(l)"),
-                    "empty" | "emptyset" => text.push_str("empty"),
-                    "enspace" => text.push_str("space.en"),
-                    "epsilon" => text.push_str("epsilon.alt"),
-                    "eqcirc" => text.push('≖'),
-                    "Eqcolon" => text.push_str("\"-::\""),
-                    "eqcolon" => text.push_str("\"-:\""),
-                    "Eqqcolon" | "equalscoloncolon" => text.push_str("\"=::\""),
-                    "eqqcolon" | "equalscolon" => text.push_str("=:"),
-                    "eqsim" => text.push_str("eq.tilde"),
-                    "eqslantgtr" => text.push('⪖'),
-                    "eqslantless" => text.push('⪕'),
-                    "eth" => text.push('ð'),
-                    "exist" => text.push_str("exists"),
+                    "ell" => "cal(l)".to_owned(),
+                    "empty" | "emptyset" => "empty".to_owned(),
+                    "enspace" => "space.en".to_owned(),
+                    "epsilon" => "epsilon.alt".to_owned(),
+                    "eqcirc" => "≖".to_owned(),
+                    "Eqcolon" => "\"−::\"".to_owned(),
+                    "eqcolon" => "\"−:\"".to_owned(),
+                    "Eqqcolon" | "equalscoloncolon" => "\"=::\"".to_owned(),
+                    "eqqcolon" | "equalscolon" => "=:".to_owned(),
+                    "eqsim" => "eq.tilde".to_owned(),
+                    "eqslantgtr" => "⪖".to_owned(),
+                    "eqslantless" => "⪕".to_owned(),
+                    "eth" => "ð".to_owned(),
+                    "exist" => "exists".to_owned(),
                     // F
-                    "fallingdotseq" => text.push('≒'),
-                    "fbox" => {
-                        // expect text input
-                        text.push_str("#box[$upright(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(")$]");
-                    }
-                    "fcolorbox" => {
-                        // expect text input
-                        text.push_str("#box(stroke: ");
-                        text.push_str(&latex_color_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(", fill: ");
-                        text.push_str(&latex_color_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(")[$upright(");
-                        text.push_str(&scanner.next_param().unwrap());
-                        text.push_str(")$]");
-                    }
-                    "Finv" => text.push('Ⅎ'),
-                    "flat" => text.push('♭'),
-                    "frac" => {
-                        text.push_str("frac(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(", ");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "frak" => {
-                        text.push_str("frak(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "frown" => text.push('⌢'),
+                    "fallingdotseq" => "≒".to_owned(),
+                    "fbox" => format!(
+                        "#box[$upright({})$]",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "fcolorbox" => format!(
+                        "#box(stroke: {}, fill: {})[$upright({})$]",
+                        latex_color_to_typst(scanner.next_param().unwrap()),
+                        latex_color_to_typst(scanner.next_param().unwrap()),
+                        scanner.next_param().unwrap()
+                    ),
+                    "Finv" => "Ⅎ".to_owned(),
+                    "flat" => "♭".to_owned(),
+                    "frac" => format!(
+                        "frac({}, {})",
+                        latex_to_typst(scanner.next_param().unwrap()),
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "frak" => format!("frak({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "frown" => "⌢".to_owned(),
                     // G
-                    "Game" => text.push('⅁'),
-                    "ge" | "geq" => text.push_str(">="),
-                    "geqq" => text.push_str("ge.equiv"),
-                    "geqslant" => text.push_str("gt.eq.slant"),
-                    "gets" | "larr" | "leftarrow" => text.push_str("<-"),
-                    "gg" => text.push_str(">>"),
-                    "ggg" | "gggtr" => text.push_str(">>>"),
-                    "gnapprox" => text.push('⪊'),
-                    "gneq" => text.push('⪈'),
-                    "gneqq" => text.push_str("gt.nequiv"),
-                    "gnsim" => text.push_str("gt.ntilde"),
-                    "grave" => {
-                        text.push_str("grave(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "gt" => text.push('>'),
-                    "gtapprox" => text.push('⪆'),
-                    "gtreqless" => text.push_str("gt.eq.lt"),
-                    "gtreqqless" => text.push('⪌'),
-                    "gtrless" => text.push_str("gt.lt"),
-                    "gtrsim" => text.push_str("gt.tilde"),
+                    "Game" => "⅁".to_owned(),
+                    "ge" | "geq" => ">=".to_owned(),
+                    "geqq" => "ge.equiv".to_owned(),
+                    "geqslant" => "gt.eq.slant".to_owned(),
+                    "gets" | "larr" | "leftarrow" => "<-".to_owned(),
+                    "gg" => ">>".to_owned(),
+                    "ggg" | "gggtr" => ">>>".to_owned(),
+                    "gnapprox" => "⪊".to_owned(),
+                    "gneq" => "⪈".to_owned(),
+                    "gneqq" => "gt.nequiv".to_owned(),
+                    "gnsim" => "gt.ntilde".to_owned(),
+                    "grave" => format!("grave({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "gt" => ">".to_owned(),
+                    "gtapprox" => "⪆".to_owned(),
+                    "gtreqless" => "gt.eq.lt".to_owned(),
+                    "gtreqqless" => "⪌".to_owned(),
+                    "gtrless" => "gt.lt".to_owned(),
+                    "gtrsim" => "gt.tilde".to_owned(),
                     // H
-                    "H" => {
-                        text.push_str("acute.double(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "Harr" | "hArr" | "Leftrightarrow" | "Lrarr" | "lrArr" => text.push_str("<=>"),
-                    "harr" | "leftrightarrow" | "lrarr" => text.push_str("<->"),
-                    "hat" => {
-                        text.push_str("hat(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "hbar" | "hslash" => text.push_str("planck.reduce"),
-                    "hearts" | "heartsuit" => text.push('♡'),
-                    "hookleftarrow" => text.push_str("arrow.l.hook"),
-                    "hookrightarrow" => text.push_str("arrow.r.hook"),
+                    "H" => format!(
+                        "acute.double({})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "Harr" | "hArr" | "Leftrightarrow" | "Lrarr" | "lrArr" => "<=>".to_owned(),
+                    "harr" | "leftrightarrow" | "lrarr" => "<->".to_owned(),
+                    "hat" => format!("hat({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "hbar" | "hslash" => "planck.reduce".to_owned(),
+                    "hearts" | "heartsuit" => "♡".to_owned(),
+                    "hookleftarrow" => "arrow.l.hook".to_owned(),
+                    "hookrightarrow" => "arrow.r.hook".to_owned(),
                     // I
-                    "i" | "imath" => text.push_str("dotless.i"),
-                    "iff" | "Longleftrightarrow" => text.push_str("<==>"),
-                    "iiint" => text.push_str("integral.triple"),
-                    "iint" => text.push_str("integral.double"),
-                    "image" => text.push_str("Im"),
-                    "impliedby" | "Longleftarrow" => text.push_str("<=="),
-                    "implies" => text.push_str("==>"),
-                    "infin" | "infty" => text.push_str("infinity"),
-                    "injlim" => text.push_str("#math.op(\"inj\u{2009}lim\", limits: true)"),
-                    "int" | "intop" => text.push_str("integral"),
-                    "intercal" => text.push('⊺'),
-                    "isin" => text.push_str("in"),
+                    "i" | "imath" => "dotless.i".to_owned(),
+                    "iff" | "Longleftrightarrow" => "<==>".to_owned(),
+                    "iiint" => "integral.triple".to_owned(),
+                    "iint" => "integral.double".to_owned(),
+                    "image" => "Im".to_owned(),
+                    "impliedby" | "Longleftarrow" => "<==".to_owned(),
+                    "implies" => "==>".to_owned(),
+                    "infin" | "infty" => "infinity".to_owned(),
+                    "injlim" => "#math.op(\"inj\u{2009}lim\", limits: true)".to_owned(),
+                    "int" | "intop" => "integral".to_owned(),
+                    "intercal" => "⊺".to_owned(),
+                    "isin" => "in".to_owned(),
                     // JK
-                    "j" | "jmath" => text.push_str("dotless.j"),
-                    "KaTeX" | "LaTeX" => text.push_str(&format!("\"{}\"", word)),
+                    "j" | "jmath" => "dotless.j".to_owned(),
+                    "KaTeX" => "\"KaTeX\"".to_owned(),
                     // L
-                    "lang" | "langle" => text.push_str("angle.l"),
-                    "Larr" | "lArr" | "Leftarrow" => text.push_str("arrow.l.double"),
-                    "lBrace" => text.push('⦃'),
-                    "lbrace" => text.push('{'),
-                    "lbrack" => text.push('['),
-                    "lceil" => text.push('⌈'),
-                    "ldotp" => text.push('.'),
-                    "le" | "leq" => text.push_str("<="),
-                    "leadsto" => text.push_str("arrow.r.squiggly"),
-                    "leftarrowtail" => text.push_str("<-<"),
-                    "leftharpoondown" => text.push_str("harpoon.lb"),
-                    "leftharpoonup" => text.push_str("harpoon.lt"),
-                    "leftleftarrows" => text.push_str("arrows.ll"),
-                    "leftrightarrows" => text.push_str("arrows.lr"),
-                    "leftrightharpoons" => text.push_str("harpoons.ltrb"),
-                    "leftrightsquigarrow" => text.push_str("arrow.l.r.wave"),
-                    "leftthreetimes" => text.push_str("times.three.l"),
-                    "leqq" => text.push_str("lt.equiv"),
-                    "leqslant" => text.push_str("lt.eq.slant"),
-                    "lessapprox" => text.push('⪅'),
-                    "lessdot" => text.push_str("lt.dot"),
-                    "lesseqgtr" => text.push_str("lt.eq.gt"),
-                    "lesseqqgtr" => text.push('⪋'),
-                    "lessgtr" => text.push_str("lt.gt"),
-                    "lesssim" => text.push_str("lt.tilde"),
-                    "lfloor" => text.push('⌊'),
-                    "lgroup" => text.push_str("turtle.l"),
-                    "lhd" => text.push_str("ld.tri"),
-                    "ll" => text.push_str("<<"),
-                    "llbracket" => text.push_str("bracket.l.double"),
-                    "llcorner" => text.push('⌞'),
-                    "Lleftarrow" => text.push_str("arrow.l.triple"),
-                    "lll" | "llless" => text.push_str("<<<"),
-                    "lnapprox" => text.push('⪉'),
-                    "lneq" => text.push('⪇'),
-                    "lneqq" => text.push_str("lt.nequiv"),
-                    "lnot" => text.push_str("not"),
-                    "lnsim" => text.push_str("lt.ntilde"),
-                    "longleftarrow" => text.push_str("<--"),
-                    "longleftrightarrow" => text.push_str("<-->"),
-                    "longmapsto" => text.push_str("arrow.r.long.bar"),
-                    "Longrightarrow" => text.push_str("==>"),
-                    "longrightarrow" => text.push_str("-->"),
-                    "looparrowleft" => text.push_str("arrow.l.loop"),
-                    "looparrowright" => text.push_str("arrow.r.loop"),
-                    "lor" => text.push_str("or"),
-                    "lozenge" => text.push_str("lozenge.stroked"),
-                    "lparen" => text.push('('),
-                    "lrcorner" => text.push('⌟'),
-                    "lq" => text.push_str("quote.l.single"),
-                    "Lsh" => text.push('↰'),
-                    "lt" => text.push('<'),
-                    "ltimes" => text.push_str("times.l"),
-                    "lVert" => text.push_str("parallel"),
-                    "lvert" => text.push_str("divides"),
+                    "lang" | "langle" => "angle.l".to_owned(),
+                    "Larr" | "lArr" | "Leftarrow" => "arrow.l.double".to_owned(),
+                    "LaTeX" => "\"LaTeX\"".to_owned(),
+                    "lBrace" => "⦃".to_owned(),
+                    "lbrace" => "{".to_owned(),
+                    "lbrack" => "[".to_owned(),
+                    "lceil" => "⌈".to_owned(),
+                    "ldotp" => ".".to_owned(),
+                    "le" | "leq" => "<=".to_owned(),
+                    "leadsto" => "arrow.r.squiggly".to_owned(),
+                    "lfloor" => "⌊".to_owned(),
+                    "lgroup" => "turtle.l".to_owned(),
+                    "lhd" => "ld.tri".to_owned(),
+                    "ll" => "<<".to_owned(),
+                    "llbracket" => "bracket.l.double".to_owned(),
+                    "llcorner" => "⌞".to_owned(),
+                    "Lleftarrow" => "arrow.l.triple".to_owned(),
+                    "lll" | "llless" => "<<<".to_owned(),
+                    "lnapprox" => "⪉".to_owned(),
+                    "lneq" => "⪇".to_owned(),
+                    "lneqq" => "lt.nequiv".to_owned(),
+                    "lnot" => "not".to_owned(),
+                    "lnsim" => "lt.ntilde".to_owned(),
+                    "longleftarrow" => "<--".to_owned(),
+                    "longleftrightarrow" => "<-->".to_owned(),
+                    "longmapsto" => "arrow.r.long.bar".to_owned(),
+                    "Longrightarrow" => "==>".to_owned(),
+                    "longrightarrow" => "-->".to_owned(),
+                    "looparrowleft" => "arrow.l.loop".to_owned(),
+                    "looparrowright" => "arrow.r.loop".to_owned(),
+                    "lor" => "or".to_owned(),
+                    "lozenge" => "lozenge.stroked".to_owned(),
+                    "lparen" => "(".to_owned(),
+                    "lrcorner" => "⌟".to_owned(),
+                    "lq" => "quote.l.single".to_owned(),
+                    "Lsh" => "↰".to_owned(),
+                    "lt" => "<".to_owned(),
+                    "ltimes" => "times.l".to_owned(),
+                    "lVert" => "parallel".to_owned(),
+                    "lvert" => "divides".to_owned(),
                     // M
-                    "mapsto" => text.push_str("arrow.r.bar"),
-                    "mathbb" => {
-                        text.push_str("bb(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "mathbf" => {
-                        text.push_str("bold(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "mathcal" => {
-                        text.push_str("cal(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
+                    "mapsto" => "arrow.r.bar".to_owned(),
+                    "mathbb" => format!("bb({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "mathbf" => format!("bold({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "mathcal" => format!("cal({})", latex_to_typst(scanner.next_param().unwrap())),
                     "mathfrak" => {
-                        text.push_str("frak(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
+                        format!("frak({})", latex_to_typst(scanner.next_param().unwrap()))
                     }
                     "mathit" => {
-                        text.push_str("italic(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
+                        format!("italic({})", latex_to_typst(scanner.next_param().unwrap()))
                     }
-                    "mathnormal" | "mathop" => {
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                    }
+                    "mathnormal" | "mathop" => latex_to_typst(scanner.next_param().unwrap()),
                     "mathring" => {
-                        text.push_str("circle(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
+                        format!("circle({})", latex_to_typst(scanner.next_param().unwrap()))
                     }
                     "mathrm" => {
-                        text.push_str("upright(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
+                        format!("upright({})", latex_to_typst(scanner.next_param().unwrap()))
                     }
-                    "mathsf" => {
-                        text.push_str("sans(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "mathsterling" => text.push_str("pound"),
-                    "measuredangle" => text.push_str("angle.arc"),
-                    "medspace" => text.push_str("#h(2em/9)"),
-                    "mho" => text.push_str("ohm.inv"),
-                    "mid" => text.push('|'),
-                    "minuscolon" => text.push_str("\"-:\""),
-                    "minuscoloncolon" => text.push_str("\"-::\""),
-                    "minuso" => text.push('⊖'),
-                    "models" => text.push_str("tack.r.double"),
-                    "mp" => text.push_str("minus.plus"),
+                    "mathsf" => format!("sans({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "mathsterling" => "pound".to_owned(),
+                    "measuredangle" => "angle.arc".to_owned(),
+                    "medspace" => "#h(2em/9)".to_owned(),
+                    "mho" => "ohm.inv".to_owned(),
+                    "mid" => "|".to_owned(),
+                    "minuscolon" => "\"−:\"".to_owned(),
+                    "minuscoloncolon" => "\"−::\"".to_owned(),
+                    "minuso" => "⊖".to_owned(),
+                    "models" => "tack.r.double".to_owned(),
+                    "mp" => "minus.plus".to_owned(),
                     // N
-                    "N" | "natnums" => text.push_str("NN"),
-                    "natural" => text.push('♮'),
-                    "negmedspace" => text.push_str("#h(-2em/9)"),
-                    "ncong" => text.push_str("tilde.equiv.not"),
-                    "ne" | "neq" => text.push_str("!="),
-                    "nearrow" => text.push_str("arrow.tr"),
-                    "neg" => text.push_str("not"),
-                    "negthickspace" => text.push_str("#h(-5em/18)"),
-                    "negthinspace" => text.push_str("#h(-1em/6)"),
-                    "nexist" => text.push_str("exists.not"),
-                    "ngeq" => text.push_str("gt.eq.not"),
-                    "ngtr" => text.push_str("gt.not"),
-                    "ni" | "owns" => text.push_str("in.rev"),
-                    "nLeftarrow" => text.push_str("arrow.l.double.not"),
-                    "nleftarrow" => text.push_str("arrow.l.not"),
-                    "nLeftrightarrow" => text.push_str("arrow.l.r.double.not"),
-                    "nleftrightarrow" => text.push_str("arrow.l.r.not"),
-                    "nleq" => text.push_str("lt.eq.not"),
-                    "nless" => text.push_str("lt.not"),
-                    "nmid" => text.push_str("divides.not"),
-                    "nobreakspace" => text.push_str("space.nobreak"),
-                    "notin" => text.push_str("in.not"),
-                    "notni" => text.push_str("in.rev.not"),
-                    "notparallel" => text.push_str("parallel.not"),
-                    "nprec" => text.push_str("prec.not"),
-                    "npreceq" => text.push_str("prec.eq.not"),
-                    "nRightarrow" => text.push_str("arrow.r.double.not"),
-                    "nrightarrow" => text.push_str("arrow.r.not"),
-                    "nsim" => text.push_str("tilde.not"),
-                    "nsubseteq" | "nsupseteq" => text.push_str("subset.eq.not"),
-                    "nsucc" => text.push_str("succ.not"),
-                    "nsucceq" => text.push_str("succ.eq.not"),
-                    "ntriangleleft" => text.push_str("lt.tri.not"),
-                    "ntrianglelefteq" => text.push_str("lt.tri.eq.not"),
-                    "ntriangleright" => text.push_str("gt.tri.not"),
-                    "ntrianglerighteq" => text.push_str("gt.tri.eq.not"),
-                    "nVDash" => text.push('⊯'),
-                    "nVdash" => text.push('⊮'),
-                    "nvDash" => text.push_str("tack.r.double.not"),
-                    "nvdash" => text.push_str("tack.r.not"),
-                    "nwarrow" => text.push_str("arrow.tl"),
+                    "N" | "natnums" => "NN".to_owned(),
+                    "natural" => "♮".to_owned(),
+                    "negmedspace" => "#h(-2em/9)".to_owned(),
+                    "ncong" => "tilde.equiv.not".to_owned(),
+                    "ne" | "neq" => "!=".to_owned(),
+                    "nearrow" => "arrow.tr".to_owned(),
+                    "neg" => "not".to_owned(),
+                    "negthickspace" => "#h(-5em/18)".to_owned(),
+                    "negthinspace" => "#h(-1em/6)".to_owned(),
+                    "nexist" => "exists.not".to_owned(),
+                    "ngeq" => "gt.eq.not".to_owned(),
+                    "ngtr" => "gt.not".to_owned(),
+                    "ni" | "owns" => "in.rev".to_owned(),
+                    "nLeftarrow" => "arrow.l.double.not".to_owned(),
+                    "nleftarrow" => "arrow.l.not".to_owned(),
+                    "nLeftrightarrow" => "arrow.l.r.double.not".to_owned(),
+                    "nleftrightarrow" => "arrow.l.r.not".to_owned(),
+                    "nleq" => "lt.eq.not".to_owned(),
+                    "nless" => "lt.not".to_owned(),
+                    "nmid" => "divides.not".to_owned(),
+                    "nobreakspace" => "space.nobreak".to_owned(),
+                    "notin" => "in.not".to_owned(),
+                    "notni" => "in.rev.not".to_owned(),
+                    "notparallel" => "parallel.not".to_owned(),
+                    "nprec" => "prec.not".to_owned(),
+                    "npreceq" => "prec.eq.not".to_owned(),
+                    "nRightarrow" => "arrow.r.double.not".to_owned(),
+                    "nrightarrow" => "arrow.r.not".to_owned(),
+                    "nsim" => "tilde.not".to_owned(),
+                    "nsubseteq" | "nsupseteq" => "subset.eq.not".to_owned(),
+                    "nsucc" => "succ.not".to_owned(),
+                    "nsucceq" => "succ.eq.not".to_owned(),
+                    "ntriangleleft" => "lt.tri.not".to_owned(),
+                    "ntrianglelefteq" => "lt.tri.eq.not".to_owned(),
+                    "ntriangleright" => "gt.tri.not".to_owned(),
+                    "ntrianglerighteq" => "gt.tri.eq.not".to_owned(),
+                    "nVDash" => "⊯".to_owned(),
+                    "nVdash" => "⊮".to_owned(),
+                    "nvDash" => "tack.r.double.not".to_owned(),
+                    "nvdash" => "tack.r.not".to_owned(),
+                    "nwarrow" => "arrow.tl".to_owned(),
                     // O
-                    "O" => text.push('Ø'),
-                    "o" => text.push('ø'),
-                    "odot" => text.push_str("dot.circle"),
-                    "OE" => text.push('Œ'),
-                    "oe" => text.push('œ'),
-                    "oiiint" => text.push_str("integral.vol"),
-                    "oiint" => text.push_str("integral.surf"),
-                    "oint" => text.push_str("integral.cont"),
-                    "ominus" => text.push_str("minus.circle"),
-                    "operatorname" => {
-                        text.push_str("#math.op(\"");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str("\")");
-                    }
-                    "operatorname*" | "operatornamewithlimits" => {
-                        text.push_str("#math.op(\"");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str("\", limits: true)");
-                    }
-                    "oplus" => text.push_str("plus.circle"),
-                    "origof" => text.push('⊶'),
-                    "oslash" => text.push('⊘'),
-                    "otimes" => text.push_str("times.circle"),
+                    "O" => "Ø".to_owned(),
+                    "o" => "ø".to_owned(),
+                    "odot" => "dot.circle".to_owned(),
+                    "OE" => "Œ".to_owned(),
+                    "oe" => "œ".to_owned(),
+                    "oiiint" => "integral.vol".to_owned(),
+                    "oiint" => "integral.surf".to_owned(),
+                    "oint" => "integral.cont".to_owned(),
+                    "ominus" => "minus.circle".to_owned(),
+                    "operatorname" => format!(
+                        "#math.op(\"{}\")",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "operatorname*" | "operatornamewithlimits" => format!(
+                        "#math.op(\"{}\", limits: true)",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "oplus" => "plus.circle".to_owned(),
+                    "origof" => "⊶".to_owned(),
+                    "oslash" => "⊘".to_owned(),
+                    "otimes" => "times.circle".to_owned(),
                     "overbrace" => {
-                        text.push_str("overbrace(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        if scanner.next().is_some_and(|c| c == '^') {
-                            text.push_str(", ");
-                            text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
+                        let param1 = latex_to_typst(scanner.next_param().unwrap());
+                        match scanner.peek() {
+                            Some('^') => {
+                                scanner.cursor += 1;
+                                format!(
+                                    "overline({}, {})",
+                                    param1,
+                                    latex_to_typst(scanner.next_param().unwrap())
+                                )
+                            }
+                            _ => format!("overline({})", param1),
                         }
-                        text.push(')');
                     }
-                    "overgroup" => {
-                        text.push_str("accent(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push_str(", turtle.t)");
-                    }
+                    "overgroup" => format!(
+                        "accent({}, turtle.t)",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
                     "overleftarrow" => {
-                        text.push_str("arrow.l(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
+                        format!("arrow.l({})", latex_to_typst(scanner.next_param().unwrap()))
                     }
-                    "overline" => {
-                        text.push_str("overline(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
+                    "overline" => format!(
+                        "overline({})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
                     "overrightarrow" => {
-                        text.push_str("arrow.r(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
+                        format!("arrow.r({})", latex_to_typst(scanner.next_param().unwrap()))
                     }
                     // P
-                    "P" => text.push_str("pilcrow"),
-                    "partial" => text.push_str("diff"),
-                    "prep" => text.push_str("bot"),
-                    "phi" => text.push_str("phi.alt"),
-                    "pitchfork" => text.push('⋔'),
-                    "plim" => text.push_str("#math.op(\"plim\", limits: true)"),
-                    "plusmn" | "pm" => text.push_str("plus.minus"),
-                    "pounds" => text.push_str("pound"),
-                    "precapprox" => text.push_str("prec.approx"),
-                    "preccurlyeq" => text.push_str("prec.eq"),
-                    "preceq" => text.push('⪯'),
-                    "precnapprox" => text.push_str("prec.napprox"),
-                    "precneqq" => text.push_str("prec.nequiv"),
-                    "precnsim" => text.push_str("prec.ntilde"),
-                    "precsim" => text.push_str("prec.tilde"),
-                    "prime" | "rq" => text.push('\''),
-                    "prod" => text.push_str("product"),
-                    "projlim" => text.push_str("#math.op(\"proj\u{2009}lim\", limits: true)"),
-                    "propto" => text.push_str("prop"),
+                    "P" => "pilcrow".to_owned(),
+                    "partial" => "diff".to_owned(),
+                    "prep" => "bot".to_owned(),
+                    "phi" => "phi.alt".to_owned(),
+                    "pitchfork" => "⋔".to_owned(),
+                    "plim" => "#math.op(\"plim\", limits: true)".to_owned(),
+                    "plusmn" | "pm" => "plus.minus".to_owned(),
+                    "pounds" => "pound".to_owned(),
+                    "precapprox" => "prec.approx".to_owned(),
+                    "preccurlyeq" => "prec.eq".to_owned(),
+                    "preceq" => "⪯".to_owned(),
+                    "precnapprox" => "prec.napprox".to_owned(),
+                    "precneqq" => "prec.nequiv".to_owned(),
+                    "precnsim" => "prec.ntilde".to_owned(),
+                    "precsim" => "prec.tilde".to_owned(),
+                    "prime" | "rq" => "'".to_owned(),
+                    "prod" => "product".to_owned(),
+                    "projlim" => "#math.op(\"proj\u{2009}lim\", limits: true)".to_owned(),
+                    "propto" => "prop".to_owned(),
                     // QR
-                    "qquad" => text.push_str("#h(2em)"),
-                    "quad" => text.push_str("space.quad"),
-                    "R" => text.push_str("RR"),
-                    "r" => {
-                        text.push_str("circle(");
-                        text.push_str(&latex_to_typst(scanner.next_param().unwrap()));
-                        text.push(')');
-                    }
-                    "raisebox" => {
-                        // expect text input
-                        text.push_str("#text(baseline: -");
-                        text.push_str(&scanner.next_param().unwrap());
-                        text.push_str(")[");
-                        text.push_str(&latex_text_to_typst(scanner.next_param().unwrap()));
-                        text.push_str("]");
-                    }
-                    "rang" | "rangle" => text.push_str("angle.r"),
-                    "Rarr" | "rArr" | "Rightarrow" => text.push_str("=>"),
-                    "rarr" | "rightarrow" => text.push_str("->"),
-                    "ratio" => text.push(':'),
-                    "rBrace" => text.push('⦄'),
-                    "rbrace" => text.push('}'),
-                    "rbrack" => text.push(']'),
-                    "rceil" => text.push('⌉'),
-                    "Reals" | "reals" => text.push_str("RR"),
-                    "restriction" => text.push_str("harpoon.tr"),
-                    "rfloor" => text.push('⌋'),
-                    "rgroup" => text.push_str("turtle.r"),
-                    "rhd" => text.push_str("gt.tri"),
-                    "rightarrowtail" => text.push_str(">->"),
-                    "rightharpoondown" => text.push_str("harpoon.rb"),
-                    "rightharpoonup" => text.push_str("harpoon.rt"),
-                    "rightleftarrows" => text.push_str("arrows.rl"),
-                    "rightleftharpoons" => text.push_str("harpoons.rtlb"),
-                    "rightrightarrows" => text.push_str("arrows.rr"),
-                    "rightsquigarrow" => text.push_str("arrow.r.squiggly"),
-                    "rightthreetimes" => text.push_str("times.three.r"),
-                    "risingdotseq" => text.push('≓'),
-                    "rmoustache" => text.push('⎱'),
-                    "rparen" => text.push(')'),
-                    "rrbracket" => text.push_str("bracket.r.double"),
-                    "Rrightarrow" => text.push_str("arrow.r.triple"),
-                    "Rsh" => text.push('↱'),
-                    "rtimes" => text.push_str("times.r"),
-                    "rVert" => text.push_str("parallel"),
-                    "rvert" => text.push_str("divides"),
+                    "qquad" => "#h(2em)".to_owned(),
+                    "quad" => "space.quad".to_owned(),
+                    "R" => "RR".to_owned(),
+                    "r" => format!("circle({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "raisebox" => format!(
+                        "#text(baseline: -{})[{}]",
+                        scanner.next_param().unwrap(),
+                        latex_text_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "rang" | "rangle" => "angle.r".to_owned(),
+                    "Rarr" | "rArr" | "Rightarrow" => "=>".to_owned(),
+                    "rarr" | "rightarrow" => "->".to_owned(),
+                    "ratio" => ":".to_owned(),
+                    "rBrace" => "⦄".to_owned(),
+                    "rbrace" => "}".to_owned(),
+                    "rbrack" => "]".to_owned(),
+                    "rceil" => "⌉".to_owned(),
+                    "Reals" | "reals" => "RR".to_owned(),
+                    "restriction" => "harpoon.tr".to_owned(),
+                    "rfloor" => "⌋".to_owned(),
+                    "rgroup" => "turtle.r".to_owned(),
+                    "rhd" => "ld.tri".to_owned(),
+                    "rightarrowtail" => ">->".to_owned(),
+                    "rightharpoondown" => "harpoon.rb".to_owned(),
+                    "rightharpoonup" => "harpoon.rt".to_owned(),
+                    "rightleftarrows" => "arrows.rl".to_owned(),
+                    "rightleftharpoons" => "harpoons.rtlb".to_owned(),
+                    "rightrightarrows" => "arrows.rr".to_owned(),
+                    "rightsquigarrow" => "arrow.r.squiggly".to_owned(),
+                    "rightthreetimes" => "times.three.r".to_owned(),
+                    "risingdotseq" => "≓".to_owned(),
+                    "rmoustache" => "⎱".to_owned(),
+                    "rparen" => ")".to_owned(),
+                    "rrbracket" => "bracket.r.double".to_owned(),
+                    "Rrightarrow" => "arrow.r.triple".to_owned(),
+                    "Rsh" => "↱".to_owned(),
+                    "rtimes" => "times.r".to_owned(),
+                    "rVert" => "parallel".to_owned(),
+                    "rvert" => "divides".to_owned(),
                     // S
-                    word => text.push_str(word),
-                }
+                    "S" | "sect" => "section".to_owned(),
+                    "searrow" => "arrow.br".to_owned(),
+                    "Set" | "set" => {
+                        format!("{{{}}}", latex_to_typst(scanner.next_param().unwrap()))
+                    }
+                    "setminus" => "without".to_owned(),
+                    "sharp" => "♯".to_owned(),
+                    "sim" => "tilde.op".to_owned(),
+                    "simcolon" => "tilde.op:".to_owned(),
+                    "simcoloncolon" => "tilde.op::".to_owned(),
+                    "simeq" => "tilde.eq".to_owned(),
+                    "sh" => "#math.op(\"sh\")".to_owned(),
+                    "smallsmile" => "⌣".to_owned(),
+                    "spades" | "spadesuit" => "suit.spade".to_owned(),
+                    "sphericalangle" => "angle.spheric".to_owned(),
+                    "sqcap" => "sect.sq".to_owned(),
+                    "sqcup" => "union.sq".to_owned(),
+                    "square" => "square.stroked".to_owned(),
+                    "sqrt" => {
+                        if let Some(p) = scanner.next_param_optional() {
+                            format!(
+                                "root({}, {})",
+                                latex_to_typst(p),
+                                latex_to_typst(scanner.next_param().unwrap())
+                            )
+                        } else {
+                            format!("sqrt({})", latex_to_typst(scanner.next_param().unwrap()))
+                        }
+                    }
+                    "sqsubset" => "subset.sq".to_owned(),
+                    "sqsubseteq" => "subset.eq.sq".to_owned(),
+                    "sqsupset" => "superset.sq".to_owned(),
+                    "sqsupseteq" => "superset.eq.sq".to_owned(),
+                    "ss" => "ß".to_owned(),
+                    "star" => "star.op".to_owned(),
+                    "sub" => "subset".to_owned(),
+                    "sube" | "subseteq" => "subset.eq".to_owned(),
+                    "Subset" => "subset.double".to_owned(),
+                    "subseteqq" => "⫅".to_owned(),
+                    "subsetneq" => "subset.neq".to_owned(),
+                    "subsetneqq" => "⫋".to_owned(),
+                    "succapprox" => "succ.approx".to_owned(),
+                    "succcurlyeq" => "succ.eq".to_owned(),
+                    "succeq" => "⪰".to_owned(),
+                    "succnapprox" => "succ.napprox".to_owned(),
+                    "succneqq" => "succ.nequiv".to_owned(),
+                    "succnsim" => "succ.ntilde".to_owned(),
+                    "supe" | "supseteq" => "supset.eq".to_owned(),
+                    "Supset" => "superset.double".to_owned(),
+                    "supseteqq" => "⫆".to_owned(),
+                    "supsetneq" => "superset.neq".to_owned(),
+                    "supsetneqq" => "⫌".to_owned(),
+                    "surd" => "√".to_owned(),
+                    "swarrow" => "arrow.bl".to_owned(),
+                    // T
+                    word => word.to_owned(),
+                });
             }
             '%' => text.push_str("//"),
             '~' => text.push_str("space.nobreak"),
