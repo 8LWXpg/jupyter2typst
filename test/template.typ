@@ -1,4 +1,8 @@
 #import "@preview/ansi-render:0.4.0": *
+#import "@preview/xarrow:0.1.1": xarrow as _xarrow
+
+// workaround before set is implemented
+#let xarrow = _xarrow.with(margin: .5em)
 
 #let radius = 3pt
 #let inset = 8pt

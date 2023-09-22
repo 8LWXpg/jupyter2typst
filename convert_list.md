@@ -300,7 +300,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\epsilon`          | `epsilon.alt`  |
 | `\eqcirc`           | `≖`            |
 | `\Eqcolon`          | `"−::"`        |
-| `\eqcolon`          | `"−:"`         |
+| `\eqcolon`          | `dash.colon`   |
 | `\Eqqcolon`         | `"=::"`        |
 | `\eqqcolon`         | `=:`           |
 | `\eqsim`            | `minus.tilde`  |
@@ -483,7 +483,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\lfloor`                 | `⌊`                  |
 | `\lg`                     | `lg`                 |
 | `\lgroup`                 | `⟮`                  |
-| `\lhd`                    | `ld.tri`             |
+| `\lhd`                    | `lt.tri`             |
 | `\lim`                    | `lim`                |
 | `\liminf`                 | `liminf`             |
 | `\limits`                 | TODO#not sure        |
@@ -565,7 +565,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\mho`             | `ohm.inv`       |
 | `\mid`             | `\|`            |
 | `\middle`          | TODO#lr         |
-| `\minuscolon`      | `"−:"`          |
+| `\minuscolon`      | `dash.colon`    |
 | `\minuscoloncolon` | `"−::"`         |
 | `\minuso`          | `⦵`             |
 | `\mkren`           | TODO#spacing    |
@@ -691,7 +691,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\partial`        | `diff`                                      |
 | `\perp`           | `bot`                                       |
 | `\phantom`        | TODO#spacing                                |
-| `\phase`          | no alternative                              |
+| `\phase`          | TODO#no alternative                         |
 | `\Phi`            | `Phi`                                       |
 | `\phi`            | `phi.alt`                                   |
 | `\Pi`             | `Pi`                                        |
@@ -794,8 +794,8 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\setminus`          | `without`                 |
 | `\sf`                | TODO#affect all           |
 | `sharp`              | `♯`                       |
-| `\shortmid`          | no alternative            |
-| `\shortparallel`     | no alternative            |
+| `\shortmid`          | TODO#no alternative       |
+| `\shortparallel`     | TODO#no alternative       |
 | `\Sigma`             | `Sigma`                   |
 | `\sigma`             | `sigma`                   |
 | `\sim`               | `tilde.op`                |
@@ -932,5 +932,134 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 
 ## U
 
-| LaTeX | Typst |
-| ----- | ----- |
+| LaTeX                  | Typst                                 |
+| ---------------------- | ------------------------------------- |
+| `\u`                   | `breve($1)`                           |
+| `\Uarr`                | `arrow.t.double`                      |
+| `\uArr`                | `arrow.t.double`                      |
+| `\uarr`                | `arrow.t`                             |
+| `\ulcorner`            | `⌜`                                   |
+| `\underbar`            | `underline($1)`                       |
+| `\underbrace`          | `underbrace($1)` `underbrace($1, $2)` |
+| `\undergroup`          | `accent($1, turtle.b)`                |
+| `\underleftarrow`      | TODO#no alternative                   |
+| `\underleftrightarrow` | TODO#no alternative                   |
+| `\underline`           | `underline($1)`                       |
+| `\underlinesegment`    | TODO#no alternative                   |
+| `\underrightarrow`     | TODO#no alternative                   |
+| `\underset`            | TODO#not sure                         |
+| `\unlhd`               | `lt.tri.eq`                           |
+| `\unrhd`               | `gt.tri.eq`                           |
+| `\Uparrow`             | `arrow.t.double`                      |
+| `\uparrow`             | `arrow.t`                             |
+| `\Updownarrow`         | `arrow.t.b.double`                    |
+| `\updownarrow`         | `arrow.t.b`                           |
+| `\upharpoonleft`       | `harpoon.tl`                          |
+| `\upharpoonright`      | `harpoon.tr`                          |
+| `\uplus`               | `union.plus`                          |
+| `\Upsilon`             | `Upsilon`                             |
+| `\upsilon`             | `upsilon`                             |
+| `\upuparrows`          | `arrows.tt`                           |
+| `\urcorner`            | `⌝`                                   |
+| `\url`                 | not supported in ipynb                |
+| `\utilde`              | TODO#no alternative                   |
+
+## V
+
+| LaTeX               | Typst                |
+| ------------------- | -------------------- |
+| `\v`                | `caron($1)`          |
+| `\varDelta`         | `italic(Delta)`      |
+| `\varepsilon`       | `italic(epsilon)`    |
+| `\varGamma`         | `italic(Gamma)`      |
+| `\varinjlim`        | TODO#no alternative  |
+| `\varkappa`         | `italic(kappa)`      |
+| `\varLambda`        | `italic(Lambda)`     |
+| `\varliminf`        | TODO#no alternative  |
+| `\varlimsup`        | TODO#no alternative  |
+| `\varnothing`       | `italic(nothing)`    |
+| `\varOmega`         | `italic(Omega)`      |
+| `\varPhi`           | `italic(Phi)`        |
+| `\varphi`           | `italic(phi)`        |
+| `\varPi`            | `italic(Pi)`         |
+| `\varpi`            | `italic(pi.alt)`     |
+| `\varprojlim`       | TODO#no alternative  |
+| `\varpropto`        | `prop`               |
+| `\varPsi`           | `italic(Psi)`        |
+| `\varrho`           | `italic(rho.alt)`    |
+| `\varSigma`         | `italic(Sigma)`      |
+| `\varsigma`         | `italic(sigma.alt)`  |
+| `\varsubsetneq`     | `subset.neq`         |
+| `\varsubsetneqq`    | `⫋`                  |
+| `\varsupsetneq`     | `supset.neq`         |
+| `\varsupsetneqq`    | `⫌`                  |
+| `\varTheta`         | `italic(Theta)`      |
+| `\vartheta`         | `italic(theta)`      |
+| `\vartriangle`      | `triangle.stroked.t` |
+| `\vartriangleleft`  | `lt.tri`             |
+| `\vartriangleright` | `gt.tri`             |
+| `\varUpsilon`       | `italic(Upsilon)`    |
+| `\varXi`            | `italic(Xi)`         |
+| `\vcentcolon`       | `:`                  |
+| `\vcenter`          | TODO#not sure        |
+| `\Vdash`            | `⊩`                  |
+| `\vDash`            | `tack.r.double`      |
+| `\vdash`            | `tack.r`             |
+| `\vdots`            | `dots.v`             |
+| `\vec`              | `arrow($1)`          |
+| `\vee`              | `or`                 |
+| `\veebar`           | `⊻`                  |
+| `\verb`             | TODO#not sure        |
+| `\Vert`             | `parallel`           |
+| `\vert`             | `divides`            |
+| `\vphantom`         | TODO#spacing         |
+| `\Vvdash`           | `⊪`                  |
+
+## W
+
+| LaTeX        | Typst       |
+| ------------ | ----------- |
+| `\wedge`     | `and`       |
+| `\weierp`    | `℘`         |
+| `\widecheck` | `caron($1)` |
+| `\widehat`   | `hat($1)`   |
+| `\widetilde` | `tilde($1)` |
+| `\wp`        | `℘`         |
+| `\wr`        | `wreath`    |
+
+## X
+
+| LaTeX                 | Typst                               |
+| --------------------- | ----------------------------------- |
+| `\xcancel`            | `cancel(cross: #true, $1)`          |
+| `\xdef`               | TODO#scripting                      |
+| `\Xi`                 | `Xi`                                |
+| `\xi`                 | `xi`                                |
+| `\xhookleftarrow`     | `xarrow(sym: arrow.l.hook, $1)`     |
+| `\xhookrightarrow`    | `xarrow(sym: arrow.r.hook, $1)`     |
+| `\xLeftarrow`         | `xarrow(sym: arrow.l.double, $1)`   |
+| `\xleftarrow`         | `xarrow(sym: arrow.l, $1)`          |
+| `\xleftharpoondown`   | `xarrow(sym: harpoon.lb, $1)`       |
+| `\xleftharpoonup`     | `xarrow(sym: harpoon.lt, $1)`       |
+| `\xLeftrightarrow`    | `xarrow(sym: arrow.l.r.double, $1)` |
+| `\xleftrightarrow`    | `xarrow(sym: arrow.l.r, $1)`        |
+| `\xleftrightharpoons` | `xarrow(sym: harpoons.ltrb, $1)`    |
+| `\xlongequal`         | `xarrow(sym: eq, $1)`               |
+| `\xmapsto`            | `xarrow(sym: arrow.r.bar, $1)`      |
+| `\xRightarrow`        | `xarrow(sym: arrow.r.double, $1)`   |
+| `\xrightarrow`        | `xarrow(sym: arrow.r, $1)`          |
+| `\xrightharpoondown`  | `xarrow(sym: harpoon.rb, $1)`       |
+| `\xrightharpoonup`    | `xarrow(sym: harpoon.rt, $1)`       |
+| `\xrightleftharpoons` | `xarrow(sym: harpoons.rtlb, $1)`    |
+| `\xtofrom`            | `xarrow(sym: arrow.l.r, $1)`        |
+| `\xtwoheadleftarrow`  | `xarrow(sym: arrow.l.twohead, $1)`  |
+| `\xtwoheadrightarrow` | `xarrow(sym: arrow.r.twohead, $1)`  |
+
+## YZ
+
+| LaTeX   | Typst  |
+| ------- | ------ |
+| `\yen`  | `yen`  |
+| `\Z`    | `ZZ`   |
+| `\Zeta` | `Zeta` |
+| `\zeta` | `zeta` |

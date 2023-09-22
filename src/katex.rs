@@ -200,7 +200,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "bigsqcup" => "union.sq.big".to_owned(),
                     "bigstar" => "star.stroked".to_owned(),
                     "bigtriangledown" => "triangle.stroked.b".to_owned(),
-                    "bigtriangleup" => "triangle.stroked.t".to_owned(),
+                    "bigtriangleup" | "vartriangle" | "triangle" => "triangle.stroked.t".to_owned(),
                     "biguplus" => "union.plus.big".to_owned(),
                     "bigvee" => "or.big".to_owned(),
                     "bigwedge" => "and.big".to_owned(),
@@ -229,7 +229,9 @@ pub fn latex_to_typst(latex: String) -> String {
                     "boxminus" => "minus.square".to_owned(),
                     "boxplus" => "plus.square".to_owned(),
                     "boxtimes" => "times.square".to_owned(),
-                    "breve" => format!("breve({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "breve" | "u" => {
+                        format!("breve({})", latex_to_typst(scanner.next_param().unwrap()))
+                    }
                     "bull" | "bullet" => "circle.filled.small".to_owned(),
                     "Bumpeq" => "≎".to_owned(),
                     "bumpeq" => "≏".to_owned(),
@@ -333,8 +335,8 @@ pub fn latex_to_typst(latex: String) -> String {
                     "enspace" => "space.en".to_owned(),
                     "epsilon" => "epsilon.alt".to_owned(),
                     "eqcirc" => "≖".to_owned(),
-                    "Eqcolon" => "\"−::\"".to_owned(),
-                    "eqcolon" => "\"−:\"".to_owned(),
+                    "Eqcolon" | "minuscoloncolon" => "\"−::\"".to_owned(),
+                    "eqcolon" | "minuscolon" => "dash.colon".to_owned(),
                     "Eqqcolon" | "equalscoloncolon" => "\"=::\"".to_owned(),
                     "eqqcolon" | "equalscolon" => "=:".to_owned(),
                     "eqsim" => "eq.tilde".to_owned(),
@@ -423,7 +425,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "leadsto" => "arrow.r.squiggly".to_owned(),
                     "lfloor" => "⌊".to_owned(),
                     "lgroup" => "turtle.l".to_owned(),
-                    "lhd" => "ld.tri".to_owned(),
+                    "lhd" | "vartriangleleft" => "lt.tri".to_owned(),
                     "ll" => "<<".to_owned(),
                     "llbracket" => "bracket.l.double".to_owned(),
                     "llcorner" => "⌞".to_owned(),
@@ -441,7 +443,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "longrightarrow" => "-->".to_owned(),
                     "looparrowleft" => "arrow.l.loop".to_owned(),
                     "looparrowright" => "arrow.r.loop".to_owned(),
-                    "lor" => "or".to_owned(),
+                    "lor" | "vee" => "or".to_owned(),
                     "lozenge" => "lozenge.stroked".to_owned(),
                     "lparen" => "(".to_owned(),
                     "lrcorner" => "⌟".to_owned(),
@@ -449,8 +451,8 @@ pub fn latex_to_typst(latex: String) -> String {
                     "Lsh" => "↰".to_owned(),
                     "lt" => "<".to_owned(),
                     "ltimes" => "times.l".to_owned(),
-                    "lVert" => "parallel".to_owned(),
-                    "lvert" => "divides".to_owned(),
+                    "lVert" | "rVert" | "Vert" => "parallel".to_owned(),
+                    "lvert" | "rvert" | "vert" => "divides".to_owned(),
                     // M
                     "mapsto" => "arrow.r.bar".to_owned(),
                     "mathbb" => format!("bb({})", latex_to_typst(scanner.next_param().unwrap())),
@@ -475,10 +477,8 @@ pub fn latex_to_typst(latex: String) -> String {
                     "medspace" => "space.med".to_owned(),
                     "mho" => "ohm.inv".to_owned(),
                     "mid" => "|".to_owned(),
-                    "minuscolon" => "\"−:\"".to_owned(),
-                    "minuscoloncolon" => "\"−::\"".to_owned(),
                     "minuso" => "⊖".to_owned(),
-                    "models" => "tack.r.double".to_owned(),
+                    "models" | "vDash" => "tack.r.double".to_owned(),
                     "mp" => "minus.plus".to_owned(),
                     // N
                     "N" | "natnums" => "NN".to_owned(),
@@ -569,8 +569,8 @@ pub fn latex_to_typst(latex: String) -> String {
                         "overline({})",
                         latex_to_typst(scanner.next_param().unwrap())
                     ),
-                    "overrightarrow" => {
-                        format!("arrow.r({})", latex_to_typst(scanner.next_param().unwrap()))
+                    "overrightarrow" | "vec" => {
+                        format!("arrow({})", latex_to_typst(scanner.next_param().unwrap()))
                     }
                     // P
                     "P" => "pilcrow".to_owned(),
@@ -591,7 +591,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "prime" | "rq" => "'".to_owned(),
                     "prod" => "product".to_owned(),
                     "projlim" => "#math.op(\"proj\u{2009}lim\", limits: true)".to_owned(),
-                    "propto" => "prop".to_owned(),
+                    "propto" | "varpropto" => "prop".to_owned(),
                     // QR
                     "qquad" => "#h(2em)".to_owned(),
                     "quad" => "space.quad".to_owned(),
@@ -609,7 +609,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "restriction" => "harpoon.tr".to_owned(),
                     "rfloor" => "⌋".to_owned(),
                     "rgroup" => "turtle.r".to_owned(),
-                    "rhd" => "ld.tri".to_owned(),
+                    "rhd" | "vartriangleright" => "gt.tri".to_owned(),
                     "rightarrowtail" => ">->".to_owned(),
                     "rightharpoondown" => "harpoon.rb".to_owned(),
                     "rightharpoonup" => "harpoon.rt".to_owned(),
@@ -625,8 +625,6 @@ pub fn latex_to_typst(latex: String) -> String {
                     "Rrightarrow" => "arrow.r.triple".to_owned(),
                     "Rsh" => "↱".to_owned(),
                     "rtimes" => "times.r".to_owned(),
-                    "rVert" => "parallel".to_owned(),
-                    "rvert" => "divides".to_owned(),
                     // S
                     "S" | "sect" => "section".to_owned(),
                     "searrow" => "arrow.br".to_owned(),
@@ -667,8 +665,8 @@ pub fn latex_to_typst(latex: String) -> String {
                     "sube" | "subseteq" => "subset.eq".to_owned(),
                     "Subset" => "subset.double".to_owned(),
                     "subseteqq" => "⫅".to_owned(),
-                    "subsetneq" => "subset.neq".to_owned(),
-                    "subsetneqq" => "⫋".to_owned(),
+                    "subsetneq" | "varsubsetneq" => "subset.neq".to_owned(),
+                    "subsetneqq" | "varsubsetneqq" => "⫋".to_owned(),
                     "succapprox" => "succ.approx".to_owned(),
                     "succcurlyeq" => "succ.eq".to_owned(),
                     "succeq" => "⪰".to_owned(),
@@ -678,8 +676,8 @@ pub fn latex_to_typst(latex: String) -> String {
                     "supe" | "supseteq" => "supset.eq".to_owned(),
                     "Supset" => "superset.double".to_owned(),
                     "supseteqq" => "⫆".to_owned(),
-                    "supsetneq" => "superset.neq".to_owned(),
-                    "supsetneqq" => "⫌".to_owned(),
+                    "supsetneq" | "varsupsetneq" => "superset.neq".to_owned(),
+                    "supsetneqq" | "varsupsetneqq" => "⫌".to_owned(),
                     "surd" => "√".to_owned(),
                     "swarrow" => "arrow.bl".to_owned(),
                     // T
@@ -728,13 +726,171 @@ pub fn latex_to_typst(latex: String) -> String {
                     "thickspace" => "#h(5em/18)".to_owned(),
                     "thinspace" => "space.sixth".to_owned(),
                     "tilde" => format!("tilde({})", latex_to_typst(scanner.next_param().unwrap())),
-                    "triangle" => "triangle.stroked.t".to_owned(),
                     "triangledown" => "triangle.stroked.b".to_owned(),
                     "triangleleft" => "triangle.stroked.l".to_owned(),
                     "trianglelefteq" => "lt.tri.eq".to_owned(),
                     "triangleq" => "eq.delta".to_owned(),
                     "triangleright" => "triangle.stroked.r".to_owned(),
                     "trianglerighteq" => "gt.tri.eq".to_owned(),
+                    "twoheadleftarrow" => "<<-".to_owned(),
+                    "twoheadrightarrow" => "->>".to_owned(),
+                    // U
+                    "Uarr" | "uArr" | "Uparrow" => "arrow.t.double".to_owned(),
+                    "uarr" | "uparrow" => "arrow.t".to_owned(),
+                    "ulcorner" => "⌜".to_owned(),
+                    "underbar" => format!(
+                        "underline({})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "underbrace" => {
+                        let param1 = latex_to_typst(scanner.next_param().unwrap());
+                        match scanner.peek() {
+                            Some('_') => {
+                                scanner.cursor += 1;
+                                format!(
+                                    "underbrace({}, {})",
+                                    param1,
+                                    latex_to_typst(scanner.next_param().unwrap())
+                                )
+                            }
+                            _ => format!("underbrace({})", param1),
+                        }
+                    }
+                    "undergroup" => format!(
+                        "accent({}, turtle.b)",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "underline" => format!(
+                        "underline({})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "unlhd" => "lt.tri.eq".to_owned(),
+                    "unrhd" => "gt.tri.eq".to_owned(),
+                    "Updownarrow" => "arrow.t.b.double".to_owned(),
+                    "updownarrow" => "arrow.t.b".to_owned(),
+                    "upharpoonleft" => "harpoon.tl".to_owned(),
+                    "upharpoonright" => "harpoon.tr".to_owned(),
+                    "uplus" => "union.plus".to_owned(),
+                    "upuparrows" => "arrows.tt".to_owned(),
+                    "urcorner" => "⌝".to_owned(),
+                    // V
+                    "V" => format!("caron({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "varDelta" => "italic(Delta)".to_owned(),
+                    "varepsilon" => "italic(epsilon)".to_owned(),
+                    "varGamma" => "italic(Gamma)".to_owned(),
+                    "varkappa" => "italic(kappa)".to_owned(),
+                    "varnothing" => "italic(nothing)".to_owned(),
+                    "varOmega" => "italic(Omega)".to_owned(),
+                    "varPhi" => "italic(Phi)".to_owned(),
+                    "varphi" => "italic(phi)".to_owned(),
+                    "varPi" => "italic(Pi)".to_owned(),
+                    "varpi" => "italic(pi.alt)".to_owned(),
+                    "varPsi" => "italic(Psi)".to_owned(),
+                    "varrho" => "italic(rho.alt)".to_owned(),
+                    "varSigma" => "italic(Sigma)".to_owned(),
+                    "varsigma" => "italic(sigma.alt)".to_owned(),
+                    "varTheta" => "italic(Theta)".to_owned(),
+                    "vartheta" => "italic(theta.alt)".to_owned(),
+                    "varUpsilon" => "italic(Upsilon)".to_owned(),
+                    "varXi" => "italic(Xi)".to_owned(),
+                    "vcentcolon" => ":".to_owned(),
+                    "Vdash" => "⊩".to_owned(),
+                    "vdash" => "tack.r".to_owned(),
+                    "vdots" => "dots.v".to_owned(),
+                    "veebar" => "⊻".to_owned(),
+                    "Vvdash" => "⊪".to_owned(),
+                    // W
+                    "wedge" => "and".to_owned(),
+                    "weierp" | "wp" => "℘".to_owned(),
+                    "widecheck" => {
+                        format!("caron({})", latex_to_typst(scanner.next_param().unwrap()))
+                    }
+                    "widehat" => {
+                        format!("hat({})", latex_to_typst(scanner.next_param().unwrap()))
+                    }
+                    "widetilde" => {
+                        format!("tilde({})", latex_to_typst(scanner.next_param().unwrap()))
+                    }
+                    "wr" => "wreath".to_owned(),
+                    // X
+                    "xcancel" => format!(
+                        "cancel(cross: #true, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xhookleftarrow" => format!(
+                        "xarrow(sym: arrow.l.hook, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xhookrightarrow" => format!(
+                        "xarrow(sym: arrow.r.hook, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xLeftarrow" => format!(
+                        "xarrow(sym: arrow.l.double, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xleftarrow" => format!(
+                        "xarrow(sym: arrow.l, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xleftharpoondown" => format!(
+                        "xarrow(sym: harpoon.lb, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xleftharpoonup" => format!(
+                        "xarrow(sym: harpoon.lt, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xLeftrightarrow" => format!(
+                        "xarrow(sym: arrow.l.r.double, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xleftrightarrow" => format!(
+                        "xarrow(sym: arrow.l.r, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xleftrightharpoons" => format!(
+                        "xarrow(sym: harpoons.ltrb, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xlongequal" => format!(
+                        "xarrow(sym: eq, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xmapsto" => format!(
+                        "xarrow(sym: arrow.r.bar, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xRightarrow" => format!(
+                        "xarrow(sym: arrow.r.double, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xrightarrow" => format!(
+                        "xarrow(sym: arrow.r, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xrightharpoondown" => format!(
+                        "xarrow(sym: harpoon.rb, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xrightharpoonup" => format!(
+                        "xarrow(sym: harpoon.rt, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xrightleftharpoons" => format!(
+                        "xarrow(sym: harpoons.rtlb, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xtwoheadleftarrow" => format!(
+                        "xarrow(sym: arrow.l.twohead, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "xtwoheadrightarrow" => format!(
+                        "xarrow(sym: arrow.r.twohead, {})",
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    // YZ
+                    "Z" => "ZZ".to_owned(),
                     word => word.to_owned(),
                 }
             }
@@ -772,7 +928,6 @@ fn latex_color_to_typst(color: String) -> String {
 }
 
 fn latex_text_to_typst(text: String) -> String {
-    // TODO
     let mut scanner = Scanner::new(text);
     let mut ret = String::new();
     while let Some(c) = scanner.next() {
@@ -801,9 +956,6 @@ fn latex_text_to_typst(text: String) -> String {
                 "textregistered" => "®".to_owned(),
                 "textsterling" => "#sym.pound".to_owned(),
                 "textunderscore" => "\\_".to_owned(),
-                "twoheadleftarrow" => "<<-".to_owned(),
-                "twoheadrightarrow" => "->>".to_owned(),
-                // U
                 word => unreachable!("unknown command: {}", word),
             },
             '$' => {
