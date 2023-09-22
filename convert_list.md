@@ -12,6 +12,11 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 - no alternative
 - not sure
 
+## Settings
+it will be too long to put all the settings in the table, so I put them here
+
+- `#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))`
+
 ## Symbols
 
 | LaTeX    | Typst            |

@@ -147,6 +147,15 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                                 .join("")
                         ),
                     ))
+                } else if let Some(text) = data["text/latex"].as_array() {
+                    // TODO only support KaTeX currently
+                    context.push_str(&katex::latex_text_to_typst(
+                        text.iter()
+                            .map(|v| v.as_str().unwrap())
+                            .collect::<Vec<&str>>()
+                            .join("")
+                            .replace("$$", "$"),
+                    ))
                 } else if let Some(text) = data["text/html"].as_array() {
                     // TODO test html
                     context.push_str(&md::html_to_typst(
@@ -155,14 +164,6 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                             .collect::<Vec<&str>>()
                             .join("")
                             .as_str(),
-                    ))
-                } else if let Some(text) = data["text/latex"].as_array() {
-                    // TODO test latex
-                    context.push_str(&katex::latex_to_typst(
-                        text.iter()
-                            .map(|v| v.as_str().unwrap())
-                            .collect::<Vec<&str>>()
-                            .join(""),
                     ))
                 }
             }

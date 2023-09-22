@@ -1,5 +1,5 @@
 use image;
-use markdown::{mdast::Node, to_mdast, ParseOptions};
+use markdown::{mdast::Node, to_mdast, Constructs, ParseOptions};
 use reqwest::blocking;
 use sha1::{Digest, Sha1};
 use std::sync::RwLock;
@@ -18,7 +18,18 @@ static ATTACHMENTS: Lazy<RwLock<HashMap<String, String>>> =
     Lazy::new(|| RwLock::new(HashMap::new()));
 
 pub fn md_to_typst(md: Vec<&str>, attachments: HashMap<String, String>) -> String {
-    let tree = to_mdast(&md.join(""), &ParseOptions::gfm()).unwrap();
+    let tree = to_mdast(
+        &md.join(""),
+        &ParseOptions {
+            constructs: Constructs {
+                math_flow: true,
+                math_text: true,
+                ..Constructs::gfm()
+            },
+            ..Default::default()
+        },
+    )
+    .unwrap();
 
     // write tree to debug file
     let mut file = File::create("debug.txt").unwrap();
@@ -118,7 +129,8 @@ fn ast_parse(node: Node) -> String {
             context.push_str(&format!("`{}`", node.value));
         }
         Node::InlineMath(node) => {
-            context.push_str(&katex::latex_to_typst(node.value));
+            // println!("{}\n", node.value);
+            context.push_str(&format!("${}$", katex::latex_to_typst(node.value)));
         }
         Node::Link(node) => {
             context.push_str(&format!("#link(\"{}\")[", node.url));
@@ -144,7 +156,10 @@ fn ast_parse(node: Node) -> String {
                 context.push_str(&ast_parse(child));
             }
         }
-        Node::Math(node) => context.push_str(&katex::latex_to_typst(node.value)),
+        Node::Math(node) => {
+            // println!("{}\n", node.value);
+            context.push_str(&format!("$\n{}\n$", katex::latex_to_typst(node.value)))
+        }
         Node::Paragraph(node) => {
             for child in node.children {
                 context.push_str(&ast_parse(child));
@@ -334,4 +349,29 @@ pub fn escape_content(s: String) -> String {
 pub fn html_to_typst(html: &str) -> String {
     // TODO html to typst
     html.to_string()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mdast() {
+        let md = "$$\n\\LaTeX\n$$\n$\\KaTeX$";
+        println!(
+            "{:#?}",
+            to_mdast(
+                md,
+                &ParseOptions {
+                    constructs: Constructs {
+                        math_flow: true,
+                        math_text: true,
+                        ..Constructs::gfm()
+                    },
+                    ..Default::default()
+                }
+            )
+            .unwrap()
+        );
+    }
 }

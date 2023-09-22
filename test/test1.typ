@@ -23,7 +23,8 @@ For example, here\'s some sample Matplotlib code:
 #code-block("from matplotlib import rcParams, cycler
 import matplotlib.pyplot as plt
 import numpy as np
-plt.ion()", lang: "python", count: 1)
+plt.ion()"
+, lang: "python", count: 1)
 
 ]
 #block[
@@ -47,7 +48,8 @@ custom_lines = [Line2D([0], [0], color=cmap(0.), lw=4),
 
 fig, ax = plt.subplots(figsize=(10, 5))
 lines = ax.plot(data)
-ax.legend(custom_lines, ['Cold', 'Medium', 'Hot']);", lang: "python", count: 2)
+ax.legend(custom_lines, ['Cold', 'Medium', 'Hot']);"
+, lang: "python", count: 2)
 
 ]
 #block[
@@ -74,7 +76,8 @@ custom_lines = [Line2D([0], [0], color=cmap(0.), lw=4),
 fig, ax = plt.subplots(figsize=(10, 5))
 lines = ax.plot(data)
 ax.legend(custom_lines, ['Cold', 'Medium', 'Hot'])
-ax.set(title=\"Smoother linez\")", lang: "python", count: 3)
+ax.set(title=\"Smoother linez\")"
+, lang: "python", count: 3)
 
 ]
 #block[
@@ -100,7 +103,8 @@ x = np.random.randn(100)
 y = np.random.randn(100)
 ax.scatter(x, y, s=np.abs(x*100), c=x, cmap=plt.cm.coolwarm)
 ax.text(0, .5, thisvariable, fontsize=20, transform=ax.transAxes)
-ax.set_axis_off()", lang: "python", count: 4)
+ax.set_axis_off()"
+, lang: "python", count: 4)
 
 ]
 #block[
@@ -116,7 +120,8 @@ x = np.random.randn(100)
 y = np.random.randn(100)
 ax.scatter(x, y, s=np.abs(x*100), c=x, cmap=plt.cm.coolwarm)
 ax.text(0, .5, thisvariable, fontsize=20, transform=ax.transAxes)
-ax.set_axis_off()", lang: "python", count: 5)
+ax.set_axis_off()"
+, lang: "python", count: 5)
 
 ]
 #block[
@@ -127,7 +132,8 @@ This works for any cell output, like a Pandas DataFrame.
 ]
 #block[
 #code-block("import pandas as pd
-pd.DataFrame([['hi', 'there'], ['this', 'is'], ['a', 'DataFrame']], columns=['Word A', 'Word B'])", lang: "python", count: 6)
+pd.DataFrame([['hi', 'there'], ['this', 'is'], ['a', 'DataFrame']], columns=['Word A', 'Word B'])"
+, lang: "python", count: 6)
 
 ]
 #block[
@@ -177,7 +183,8 @@ folium.Marker(
     icon=folium.Icon(color='red', icon='info-sign')
 ).add_to(m)
 
-m", lang: "python", count: 7)
+m"
+, lang: "python", count: 7)
 
 ]
 #block[
@@ -193,7 +200,8 @@ your Jupyter Book as well! For example, here is the command line help
 menu, see how it is nicely formatted.
 ]
 #block[
-#code-block("!jupyter-book build --help", lang: "python", count: 8)
+#code-block("!jupyter-book build --help"
+, lang: "python", count: 8)
 
 ]
 #block[
@@ -205,7 +213,8 @@ And here is an error. You can mark notebook cells as \"expected to error\" by ad
 `raises-exception` tag to them.
 ]
 #block[
-#code-block("this_will_error", lang: "python", count: 9)
+#code-block("this_will_error"
+, lang: "python", count: 9)
 
 ]
 #block[

@@ -8,8 +8,7 @@
 
 ]
 #block[
-```julia
-using Plots
+#code-block("using Plots
 gr()
 
 p = 0:0.01:1
@@ -17,8 +16,8 @@ p = 0:0.01:1
 I(p) = -p * log2(p)
 H(p) = I(p) + I(1 - p)
 
-plot(p, [I.(p), I.(1 .- p), H.(p)], label=["I(p)" "I(1-p)" "H(p)"])
-```
+plot(p, [I.(p), I.(1 .- p), H.(p)], label=[\"I(p)\" \"I(1-p)\" \"H(p)\"])"
+, lang: "julia", count: 1)
 
 ]
 #block[
@@ -28,13 +27,12 @@ plot(p, [I.(p), I.(1 .- p), H.(p)], label=["I(p)" "I(1-p)" "H(p)"])
 
 ]
 #block[
-```julia
-p = 0:0.01:1
+#code-block("p = 0:0.01:1
 I(p) = -p * log2(abs(p))
 H(p1, p2) = I(p1) + I(p2) + I(1 - p1 - p2)
 
-surface(p, p, H)
-```
+surface(p, p, H)"
+, lang: "julia", count: 2)
 
 ]
 #block[
@@ -51,8 +49,7 @@ The derivative image has a lower entropy than the original image, because most o
 
 ]
 #block[
-```julia
-using Optim
+#code-block("using Optim
 
 function quantize(f::Function, bits::Int, first::Real, last::Real)
     min = optimize(f, first, last).minimum
@@ -65,9 +62,9 @@ end
 bit = 3
 
 f(x) = x
-p1 = plot(f, -1, 1, label="f(x)")
-plot!(quantize(f, bit, -1, 1), -1, 1, label=["quantize(f, $bit)" "error"], legend=:topleft)
-```
+p1 = plot(f, -1, 1, label=\"f(x)\")
+plot!(quantize(f, bit, -1, 1), -1, 1, label=[\"quantize(f, $bit)\" \"error\"], legend=:topleft)"
+, lang: "julia", count: 3)
 
 ]
 #block[
@@ -77,11 +74,10 @@ plot!(quantize(f, bit, -1, 1), -1, 1, label=["quantize(f, $bit)" "error"], legen
 
 ]
 #block[
-```julia
-f(x) = sin(x)
-p2 = plot(f, 0, 2π, label="f(x)")
-plot!(quantize(f, 3, 0, 2π), 0, 2π, label=["quantize(f, $bit)" "error"])
-```
+#code-block("f(x) = sin(x)
+p2 = plot(f, 0, 2π, label=\"f(x)\")
+plot!(quantize(f, 3, 0, 2π), 0, 2π, label=[\"quantize(f, $bit)\" \"error\"])"
+, lang: "julia", count: 4)
 
 ]
 #block[

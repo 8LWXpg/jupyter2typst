@@ -38,6 +38,7 @@ impl Scanner {
     /// Returns the next LaTeX parameter in the scanner.
     pub fn next_param(&mut self) -> Option<String> {
         let mut ret = String::new();
+        const BINARY_OPERATORS: &[char] = &['_', '^'];
 
         // trim whitespace
         while let Some(c) = self.peek() {
@@ -55,6 +56,19 @@ impl Scanner {
                 match self.next_word().as_str() {
                     "" => ret.push(self.next().unwrap()),
                     word => ret.push_str(&word),
+                }
+                loop {
+                    match self.next() {
+                        Some(c) if c.is_whitespace() => {}
+                        Some(c) if BINARY_OPERATORS.contains(&c) => {
+                            ret.push(c);
+                            ret.push_str(&self.next_param().unwrap());
+                        }
+                        _ => {
+                            self.cursor -= 1;
+                            break;
+                        }
+                    }
                 }
             }
             Some('{') => {
@@ -104,6 +118,18 @@ impl Scanner {
         }
         Some(ret)
     }
+
+    /// consumes newline character
+    fn next_line(&mut self) -> String {
+        let mut ret = String::new();
+        while let Some(c) = self.next() {
+            match c {
+                '\n' => break,
+                _ => ret.push(c),
+            }
+        }
+        ret
+    }
 }
 
 impl Iterator for Scanner {
@@ -122,7 +148,6 @@ pub fn latex_to_typst(latex: String) -> String {
     while let Some(c) = scanner.next() {
         let push = match c {
             '\\' => {
-                // TODO giant match of all LaTeX commands
                 match scanner.next_word().as_str() {
                     // same one goes to default
                     "" => {
@@ -223,7 +248,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "Box" => "square.stroked".to_owned(),
                     "boxdot" => "dot.square".to_owned(),
                     "boxed" => format!(
-                        "#box(stroke: 0.5pt)[${}$]",
+                        "#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt), stroke: 0.5pt)[${}$]",
                         latex_to_typst(scanner.next_param().unwrap())
                     ),
                     "boxminus" => "minus.square".to_owned(),
@@ -268,7 +293,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "colonequals" | "coloneqq" => ":=".to_owned(),
                     "colonsim" => ":tilde.op".to_owned(),
                     "colorbox" => format!(
-                        "#text(fill: {})[${}$]",
+                        "#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt), fill: {})[{}]",
                         latex_color_to_typst(scanner.next_param().unwrap()),
                         latex_text_to_typst(scanner.next_param().unwrap())
                     ),
@@ -347,11 +372,11 @@ pub fn latex_to_typst(latex: String) -> String {
                     // F
                     "fallingdotseq" => "≒".to_owned(),
                     "fbox" => format!(
-                        "#box[$upright({})$]",
+                        "#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))[$upright({})$]",
                         latex_text_to_typst(scanner.next_param().unwrap())
                     ),
                     "fcolorbox" => format!(
-                        "#box(stroke: {}, fill: {})[$upright({})$]",
+                        "#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))(stroke: {}, fill: {})[$upright({})$]",
                         latex_color_to_typst(scanner.next_param().unwrap()),
                         latex_color_to_typst(scanner.next_param().unwrap()),
                         latex_text_to_typst(scanner.next_param().unwrap())
@@ -894,17 +919,14 @@ pub fn latex_to_typst(latex: String) -> String {
                     word => word.to_owned(),
                 }
             }
-            '%' => "//".to_owned(),
+            '%' => format!("//{}\n", scanner.next_line()),
             '~' => "space.nobreak".to_owned(),
             '/' | '"' => format!("\\{}", c),
-            _ => {
-                // TODO one to one mapping of LaTeX characters to Typst characters
-                match c {
-                    '{' => '('.to_string(),
-                    '}' => ')'.to_string(),
-                    _ => c.to_string(),
-                }
-            }
+            _ => match c {
+                '{' => '('.to_string(),
+                '}' => ')'.to_string(),
+                _ => c.to_string(),
+            },
         };
         // insert space if current and next character is a alphabetic character
         let first = push.chars().next().unwrap();
@@ -927,7 +949,7 @@ fn latex_color_to_typst(color: String) -> String {
     }
 }
 
-fn latex_text_to_typst(text: String) -> String {
+pub fn latex_text_to_typst(text: String) -> String {
     let mut scanner = Scanner::new(text);
     let mut ret = String::new();
     while let Some(c) = scanner.next() {
@@ -956,7 +978,7 @@ fn latex_text_to_typst(text: String) -> String {
                 "textregistered" => "®".to_owned(),
                 "textsterling" => "#sym.pound".to_owned(),
                 "textunderscore" => "\\_".to_owned(),
-                word => unreachable!("unknown command: {}", word),
+                word => word.to_owned(),
             },
             '$' => {
                 let mut math = String::new();
@@ -1032,5 +1054,10 @@ mod tests {
             "{:?}",
             latex_to_typst("\\overbrace{x+⋯+x}^{n\\text{ times$\\int$}}".to_string())
         );
+    }
+
+    #[test]
+    fn test_parse_typ5() {
+        println!("{:?}", latex_to_typst("\\dot\\sum _ 0 ^n".to_string()));
     }
 }

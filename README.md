@@ -1,5 +1,13 @@
 # Jupyter to Typst converter
 
+not perfect, but works
+
+## Features
+
+- automatic image download/extract
+- nice template
+- support for KaTeX (not complete)
+
 ## Usage
 
 ```

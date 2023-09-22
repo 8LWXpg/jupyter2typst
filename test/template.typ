@@ -1,4 +1,4 @@
-#import "@preview/ansi-render:0.4.0": *
+#import "@preview/ansi-render:0.4.1": *
 #import "@preview/xarrow:0.1.1": xarrow as _xarrow
 
 // workaround before set is implemented
@@ -16,7 +16,7 @@
 
 #let result-block(body) = {
   v(0pt, weak: true)
-  ansi-render(body, radius: radius, inset: inset, width: 100%, size: 9pt)
+  ansi-render(body, radius: radius, inset: inset, width: 100%)
 }
 
 #let block-quote(body) =  style(styles => {
@@ -33,6 +33,5 @@
 
 // template for the whole document
 #let template(doc) = {
-  set box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))
   [#doc]
 }
