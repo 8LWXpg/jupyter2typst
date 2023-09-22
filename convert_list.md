@@ -229,61 +229,61 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 
 ## D
 
-| LaTeX               | Typst                   |
-| ------------------- | ----------------------- |
-| `\dag`              | `dagger`                |
-| `\Dagger`           | `dagger.double`         |
-| `\dagger`           | `dagger`                |
-| `\daleth`           | `ℸ`                     |
-| `\Darr`             | `arrow.b.double`        |
-| `\dArr`             | `arrow.b.double`        |
-| `\darr`             | `arrow.b`               |
-| `\dashleftarrow`    | `arrow.l.dash`          |
-| `\dashrightarrow`   | `arrow.r.dash`          |
-| `\dashv`            | `tack.l`                |
-| `\dbinom`           | `binom($1, $2)`         |
-| `\dbcolon`          | `::`                    |
-| `\ddag`             | `dagger.double`         |
-| `\ddagger`          | `dagger.double`         |
-| `\ddot`             | `dot.double($1)`        |
-| `\ddots`            | `dots.down`             |
-| `\def`              | TODO#scripting          |
-| `\deg`              | `deg`                   |
-| `\degree`           | `degree`                |
-| `\Delta`            | `Delta`                 |
-| `\delta`            | `delta`                 |
-| `\det`              | `det`                   |
-| `\digamma`          | `ϝ`                     |
-| `\dfrac`            | `frac($1, $2)`          |
-| `\diagdown`         | `╲`                     |
-| `\diagup`           | `╱`                     |
-| `\Diamond`          | `lozenge.stroked`       |
-| `\diamond`          | `diamond.stroked.small` |
-| `\diamonds`         | `♢`                     |
-| `\diamondsuit`      | `♢`                     |
-| `\dim`              | `dim`                   |
-| `\displaystyle`     | `display($1)`           |
-| `\div`              | `div`                   |
-| `\divideontimes`    | `times.div`             |
-| `\dot`              | `dot($1)`               |
-| `\Doteq`            | `≑`                     |
-| `\doteq`            | `≐`                     |
-| `\doteqdot`         | `≑`                     |
-| `\dotplus`          | `plus.dot`              |
-| `\dots`             | `dots.h.c`              |
-| `\dotsb`            | `dots.h.c`              |
-| `\dotsc`            | `dots.h.c`              |
-| `\dotsi`            | `dots.h.c`              |
-| `\dotsm`            | `dots.h.c`              |
-| `\dotso`            | `...`                   |
-| `\doublebarwedge`   | `⩞`                     |
-| `\doublecap`        | `sect.double`           |
-| `\doublecup`        | `union.double`          |
-| `\Downarrow`        | `arrow.b.double`        |
-| `\downarrow`        | `arrow.b`               |
-| `\downdownarrows`   | `arrows.bb`             |
-| `\downharpoonleft`  | `harpoon.bl`            |
-| `\downharpoonright` | `harpoon.br`            |
+| LaTeX               | Typst                    |
+| ------------------- | ------------------------ |
+| `\dag`              | `dagger`                 |
+| `\Dagger`           | `dagger.double`          |
+| `\dagger`           | `dagger`                 |
+| `\daleth`           | `ℸ`                      |
+| `\Darr`             | `arrow.b.double`         |
+| `\dArr`             | `arrow.b.double`         |
+| `\darr`             | `arrow.b`                |
+| `\dashleftarrow`    | `arrow.l.dash`           |
+| `\dashrightarrow`   | `arrow.r.dash`           |
+| `\dashv`            | `tack.l`                 |
+| `\dbinom`           | `display(binom($1, $2))` |
+| `\dbcolon`          | `::`                     |
+| `\ddag`             | `dagger.double`          |
+| `\ddagger`          | `dagger.double`          |
+| `\ddot`             | `dot.double($1)`         |
+| `\ddots`            | `dots.down`              |
+| `\def`              | TODO#scripting           |
+| `\deg`              | `deg`                    |
+| `\degree`           | `degree`                 |
+| `\Delta`            | `Delta`                  |
+| `\delta`            | `delta`                  |
+| `\det`              | `det`                    |
+| `\digamma`          | `ϝ`                      |
+| `\dfrac`            | `display(frac($1, $2))`  |
+| `\diagdown`         | `╲`                      |
+| `\diagup`           | `╱`                      |
+| `\Diamond`          | `lozenge.stroked`        |
+| `\diamond`          | `diamond.stroked.small`  |
+| `\diamonds`         | `♢`                      |
+| `\diamondsuit`      | `♢`                      |
+| `\dim`              | `dim`                    |
+| `\displaystyle`     | `display($1)`            |
+| `\div`              | `div`                    |
+| `\divideontimes`    | `times.div`              |
+| `\dot`              | `dot($1)`                |
+| `\Doteq`            | `≑`                      |
+| `\doteq`            | `≐`                      |
+| `\doteqdot`         | `≑`                      |
+| `\dotplus`          | `plus.dot`               |
+| `\dots`             | `dots.h.c`               |
+| `\dotsb`            | `dots.h.c`               |
+| `\dotsc`            | `dots.h.c`               |
+| `\dotsi`            | `dots.h.c`               |
+| `\dotsm`            | `dots.h.c`               |
+| `\dotso`            | `...`                    |
+| `\doublebarwedge`   | `⩞`                      |
+| `\doublecap`        | `sect.double`            |
+| `\doublecup`        | `union.double`           |
+| `\Downarrow`        | `arrow.b.double`         |
+| `\downarrow`        | `arrow.b`                |
+| `\downdownarrows`   | `arrows.bb`              |
+| `\downharpoonleft`  | `harpoon.bl`             |
+| `\downharpoonright` | `harpoon.br`             |
 
 ## E
 
@@ -724,58 +724,58 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 
 ## QR
 
-| LaTeX                | Typst                      |
-| -------------------- | -------------------------- |
-| `\qquad`             | `#h(2em)`                  |
-| `\quad`              | `space.quad`               |
-| `\R`                 | `RR`                       |
-| `\r`                 | `circle($1)`               |
-| `\raisebox`          | `#text(baseline: -$1)[$2]` |
-| `\rang`              | `angle.r`                  |
-| `\rangle`            | `angle.r`                  |
-| `\Rarr`              | `=>`                       |
-| `\rArr`              | `=>`                       |
-| `\rarr`              | `->`                       |
-| `\ratio`             | `:`                        |
-| `\rBrace`            | `⦄`                        |
-| `\rbrace`            | `}`                        |
-| `\rbrack`            | `]`                        |
-| `\rceil`             | `⌉`                        |
-| `\Re`                | `Re`                       |
-| `\real`              | `Re`                       |
-| `\Reals`             | `RR`                       |
-| `\reals`             | `RR`                       |
-| `\renewcommand`      | TODO#scripting             |
-| `\restriction`       | `harpoon.tr`               |
-| `\rfloor`            | `⌋`                        |
-| `\rgroup`            | `turtle.r`                 |
-| `\rhd`               | `gt.tri`                   |
-| `\Rho`               | `Rho`                      |
-| `\rho`               | `rho`                      |
-| `\right`             | TODO#lr                    |
-| `\Rightarrow`        | `=>`                       |
-| `\rightarrow`        | `->`                       |
-| `\rightarrowtail`    | `>->`                      |
-| `\rightharpoondown`  | `harpoon.rb`               |
-| `\rightharpoonup`    | `harpoon.rt`               |
-| `\rightleftarrows`   | `arrows.rl`                |
-| `\rightleftharpoons` | `harpoons.rtlb`            |
-| `\rightrightarrows`  | `arrows.rr`                |
-| `\rightsquigarrow`   | `arrow.r.squiggly`         |
-| `\rightthreetimes`   | `times.three.r`            |
-| `\risingdotseq`      | `≓`                        |
-| `\rlap`              | TODO#spacing               |
-| `\rm`                | TODO#affect all            |
-| `\rmoustache`        | `⎱`                        |
-| `\rparen`            | `)`                        |
-| `\rq`                | `'`                        |
-| `rrbracket`          | `bracket.r.double`         |
-| `\Rrightarrow`       | `arrow.r.triple`           |
-| `\Rsh`               | `↱`                        |
-| `\rtimes`            | `times.r`                  |
-| `\rule`              | TODO#not sure              |
-| `\rVert`             | `parallel`                 |
-| `\rvert`             | `divides`                  |
+| LaTeX                | Typst              |
+| -------------------- | ------------------ |
+| `\qquad`             | `#h(2em)`          |
+| `\quad`              | `space.quad`       |
+| `\R`                 | `RR`               |
+| `\r`                 | `circle($1)`       |
+| `\raisebox`          | TODO#not sure      |
+| `\rang`              | `angle.r`          |
+| `\rangle`            | `angle.r`          |
+| `\Rarr`              | `=>`               |
+| `\rArr`              | `=>`               |
+| `\rarr`              | `->`               |
+| `\ratio`             | `:`                |
+| `\rBrace`            | `⦄`                |
+| `\rbrace`            | `}`                |
+| `\rbrack`            | `]`                |
+| `\rceil`             | `⌉`                |
+| `\Re`                | `Re`               |
+| `\real`              | `Re`               |
+| `\Reals`             | `RR`               |
+| `\reals`             | `RR`               |
+| `\renewcommand`      | TODO#scripting     |
+| `\restriction`       | `harpoon.tr`       |
+| `\rfloor`            | `⌋`                |
+| `\rgroup`            | `turtle.r`         |
+| `\rhd`               | `gt.tri`           |
+| `\Rho`               | `Rho`              |
+| `\rho`               | `rho`              |
+| `\right`             | TODO#lr            |
+| `\Rightarrow`        | `=>`               |
+| `\rightarrow`        | `->`               |
+| `\rightarrowtail`    | `>->`              |
+| `\rightharpoondown`  | `harpoon.rb`       |
+| `\rightharpoonup`    | `harpoon.rt`       |
+| `\rightleftarrows`   | `arrows.rl`        |
+| `\rightleftharpoons` | `harpoons.rtlb`    |
+| `\rightrightarrows`  | `arrows.rr`        |
+| `\rightsquigarrow`   | `arrow.r.squiggly` |
+| `\rightthreetimes`   | `times.three.r`    |
+| `\risingdotseq`      | `≓`                |
+| `\rlap`              | TODO#spacing       |
+| `\rm`                | TODO#affect all    |
+| `\rmoustache`        | `⎱`                |
+| `\rparen`            | `)`                |
+| `\rq`                | `'`                |
+| `rrbracket`          | `bracket.r.double` |
+| `\Rrightarrow`       | `arrow.r.triple`   |
+| `\Rsh`               | `↱`                |
+| `\rtimes`            | `times.r`          |
+| `\rule`              | TODO#not sure      |
+| `\rVert`             | `parallel`         |
+| `\rvert`             | `divides`          |
 
 ## S
 
@@ -855,6 +855,82 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 | `\swarrow`           | `arrow.bl`                |
 
 ## T
+
+*some command is text mode only*
+
+| LaTeX                | Typst                   |
+| -------------------- | ----------------------- |
+| `\tag`               | TODO#not sure           |
+| `\tag*`              | TODO#not sure           |
+| `\tan`               | `tan`                   |
+| `\tanh`              | `tanh`                  |
+| `\Tau`               | `Tau`                   |
+| `\tau`               | `tau`                   |
+| `\tbinom`            | `inline(binom($1, $2))` |
+| `\TeX`               | `"TeX"`                 |
+| `\text`              | `#[$1]`                 |
+| `\textasciitilde`    | `~`                     |
+| `\textasciicircum`   | `\^`                    |
+| `\textbackslash`     | `\\`                    |
+| `\textbar`           | `\|`                    |
+| `\textbardbl`        | `‖`                     |
+| `\textbf`            | `bold(#[$1])`           |
+| `\textbraceleft`     | `{`                     |
+| `\textbraceright`    | `}`                     |
+| `\textcircled`       | TODO#not sure           |
+| `\textcolor`         | `text(fill: $1)[$2]`    |
+| `\textdagger`        | `#sym.dagger`           |
+| `\textdaggerdbl`     | `#sym.dagger.double`    |
+| `\textdegree`        | `#sym.degree`           |
+| `\textdollarsign`    | `\$`                    |
+| `\textellipsis`      | `...`                   |
+| `\textemdash`        | `---`                   |
+| `\textendash`        | `--`                    |
+| `\textgreater`       | `#sym.gt`               |
+| `\textit`            | `italic(#[$1])`         |
+| `\textless`          | `#sym.lt`               |
+| `\textmd`            | `#[$1]`                 |
+| `\textnormal`        | `#[$1]`                 |
+| `\textquotedblleft`  | `#sym.quote.l.double`   |
+| `\textquotedblright` | `#sym.quote.r.double`   |
+| `\textquoteleft`     | `#sym.quote.l.single`   |
+| `\textquoteright`    | `#sym.quote.r.single`   |
+| `\textregistered`    | `®`                     |
+| `\textrm`            | `#[$1]`                 |
+| `\textsf`            | `sans(#[$1])`           |
+| `\textsterling`      | `#sym.pound`            |
+| `\textsyle`          | `inline($1)`            |
+| `\texttt`            | `mono(#[$1])`           |
+| `\textunderscore`    | `\_`                    |
+| `\textup`            | `#[$1]`                 |
+| `\tfrac`             | `inline(frac($1, $2))`  |
+| `\tg`                | `tg`                    |
+| `\th`                | `#math.op("th")`        |
+| `\therefore`         | `therefore`             |
+| `\Theta`             | `Theta`                 |
+| `\theta`             | `theta`                 |
+| `\thetasym`          | `theta.alt`             |
+| `\thickapprox`       | `bold(approx)`          |
+| `\thicksim`          | `bold(tilde)`           |
+| `\thickspace`        | `#h(5em/18)`            |
+| `\thinspace`         | `space.sixth`           |
+| `\tilde`             | `tilde($1)`             |
+| `\times`             | `times`                 |
+| `\tiny`              | TODO#affect all         |
+| `\to`                | `->`                    |
+| `\top`               | `top`                   |
+| `\triangle`          | `triangle.stroked.t`    |
+| `\triangledown`      | `triangle.stroked.b`    |
+| `\triangleleft`      | `triangle.stroked.l`    |
+| `\trianglelefteq`    | `lt.tri.eq`             |
+| `\triangleq`         | `eq.delta`              |
+| `\triangleright`     | `triangle.stroked.r`    |
+| `\trianglerighteq`   | `gt.tri.eq`             |
+| `\tt`                | TODO#affect all         |
+| `\twoheadleftarrow`  | `<<-`                   |
+| `\twoheadrightarrow` | `->>`                   |
+
+## U
 
 | LaTeX | Typst |
 | ----- | ----- |

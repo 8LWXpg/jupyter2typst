@@ -120,10 +120,10 @@ pub fn latex_to_typst(latex: String) -> String {
     let mut scanner = Scanner::new(latex);
     let mut text = String::new();
     while let Some(c) = scanner.next() {
-        match c {
+        let push = match c {
             '\\' => {
                 // TODO giant match of all LaTeX commands
-                text.push_str(&match scanner.next_word().as_str() {
+                match scanner.next_word().as_str() {
                     // same one goes to default
                     "" => {
                         let c = scanner.next().unwrap();
@@ -151,7 +151,7 @@ pub fn latex_to_typst(latex: String) -> String {
                             ' ' => "space".to_owned(),
                             '(' | ')' => "".to_owned(),
                             ',' => "space.sixth".to_owned(),
-                            ':' | '>' => "#h(2em/9)".to_owned(),
+                            ':' | '>' => "space.med".to_owned(),
                             ';' => "#h(5em/18)".to_owned(),
                             '|' => "||".to_owned(),
                             '\\' => "\\".to_owned(),
@@ -268,7 +268,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "colorbox" => format!(
                         "#text(fill: {})[${}$]",
                         latex_color_to_typst(scanner.next_param().unwrap()),
-                        latex_to_typst(scanner.next_param().unwrap())
+                        latex_text_to_typst(scanner.next_param().unwrap())
                     ),
                     "complexes" => "CC".to_owned(),
                     "cong" => "tilde.equiv".to_owned(),
@@ -293,7 +293,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "dashrightarrow" => "arrow.r.dash".to_owned(),
                     "dashv" => "tack.l".to_owned(),
                     "dbinom" => format!(
-                        "dbinom({}, {})",
+                        "display(dbinom({}, {}))",
                         latex_to_typst(scanner.next_param().unwrap()),
                         latex_to_typst(scanner.next_param().unwrap())
                     ),
@@ -305,7 +305,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "ddots" => "dots.down".to_owned(),
                     "digaamma" => "ϝ".to_owned(),
                     "dfrac" => format!(
-                        "frac({}, {})",
+                        "display(frac({}, {}))",
                         latex_to_typst(scanner.next_param().unwrap()),
                         latex_to_typst(scanner.next_param().unwrap())
                     ),
@@ -346,13 +346,13 @@ pub fn latex_to_typst(latex: String) -> String {
                     "fallingdotseq" => "≒".to_owned(),
                     "fbox" => format!(
                         "#box[$upright({})$]",
-                        latex_to_typst(scanner.next_param().unwrap())
+                        latex_text_to_typst(scanner.next_param().unwrap())
                     ),
                     "fcolorbox" => format!(
                         "#box(stroke: {}, fill: {})[$upright({})$]",
                         latex_color_to_typst(scanner.next_param().unwrap()),
                         latex_color_to_typst(scanner.next_param().unwrap()),
-                        scanner.next_param().unwrap()
+                        latex_text_to_typst(scanner.next_param().unwrap())
                     ),
                     "Finv" => "Ⅎ".to_owned(),
                     "flat" => "♭".to_owned(),
@@ -472,7 +472,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     "mathsf" => format!("sans({})", latex_to_typst(scanner.next_param().unwrap())),
                     "mathsterling" => "pound".to_owned(),
                     "measuredangle" => "angle.arc".to_owned(),
-                    "medspace" => "#h(2em/9)".to_owned(),
+                    "medspace" => "space.med".to_owned(),
                     "mho" => "ohm.inv".to_owned(),
                     "mid" => "|".to_owned(),
                     "minuscolon" => "\"−:\"".to_owned(),
@@ -550,12 +550,12 @@ pub fn latex_to_typst(latex: String) -> String {
                             Some('^') => {
                                 scanner.cursor += 1;
                                 format!(
-                                    "overline({}, {})",
+                                    "overbrace({}, {})",
                                     param1,
                                     latex_to_typst(scanner.next_param().unwrap())
                                 )
                             }
-                            _ => format!("overline({})", param1),
+                            _ => format!("overbrace({})", param1),
                         }
                     }
                     "overgroup" => format!(
@@ -597,14 +597,9 @@ pub fn latex_to_typst(latex: String) -> String {
                     "quad" => "space.quad".to_owned(),
                     "R" => "RR".to_owned(),
                     "r" => format!("circle({})", latex_to_typst(scanner.next_param().unwrap())),
-                    "raisebox" => format!(
-                        "#text(baseline: -{})[{}]",
-                        scanner.next_param().unwrap(),
-                        latex_text_to_typst(scanner.next_param().unwrap())
-                    ),
                     "rang" | "rangle" => "angle.r".to_owned(),
                     "Rarr" | "rArr" | "Rightarrow" => "=>".to_owned(),
-                    "rarr" | "rightarrow" => "->".to_owned(),
+                    "rarr" | "rightarrow" | "to" => "->".to_owned(),
                     "ratio" => ":".to_owned(),
                     "rBrace" => "⦄".to_owned(),
                     "rbrace" => "}".to_owned(),
@@ -688,28 +683,81 @@ pub fn latex_to_typst(latex: String) -> String {
                     "surd" => "√".to_owned(),
                     "swarrow" => "arrow.bl".to_owned(),
                     // T
+                    "tbinom" => format!(
+                        "inline(binom({}, {}))",
+                        latex_to_typst(scanner.next_param().unwrap()),
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "TeX" => "\"TeX\"".to_owned(),
+                    "text" | "textmd" | "textnormal" | "textrm" | "textup" => {
+                        format!("#[{}]", latex_text_to_typst(scanner.next_param().unwrap()))
+                    }
+                    "textbf" => format!(
+                        "bold(#[{}])",
+                        latex_text_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "textcolor" => format!(
+                        "#text(fill: {})[{}]",
+                        latex_color_to_typst(scanner.next_param().unwrap()),
+                        latex_text_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "textit" => format!(
+                        "italic(#[{}])",
+                        latex_text_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "textsf" => format!(
+                        "sans(#[{}])",
+                        latex_text_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "textstyle" => {
+                        format!("inline({})", latex_to_typst(scanner.next_param().unwrap()))
+                    }
+                    "texttt" => format!(
+                        "mono(#[{}])",
+                        latex_text_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "tfrac" => format!(
+                        "inline(frac({}, {}))",
+                        latex_to_typst(scanner.next_param().unwrap()),
+                        latex_to_typst(scanner.next_param().unwrap())
+                    ),
+                    "th" => "#math.op(\"th\")".to_owned(),
+                    "thetasym" => "theta.alt".to_owned(),
+                    "thickapprox" => "bold(approx)".to_owned(),
+                    "thicksim" => "bold(tilde)".to_owned(),
+                    "thickspace" => "#h(5em/18)".to_owned(),
+                    "thinspace" => "space.sixth".to_owned(),
+                    "tilde" => format!("tilde({})", latex_to_typst(scanner.next_param().unwrap())),
+                    "triangle" => "triangle.stroked.t".to_owned(),
+                    "triangledown" => "triangle.stroked.b".to_owned(),
+                    "triangleleft" => "triangle.stroked.l".to_owned(),
+                    "trianglelefteq" => "lt.tri.eq".to_owned(),
+                    "triangleq" => "eq.delta".to_owned(),
+                    "triangleright" => "triangle.stroked.r".to_owned(),
+                    "trianglerighteq" => "gt.tri.eq".to_owned(),
                     word => word.to_owned(),
-                });
+                }
             }
-            '%' => text.push_str("//"),
-            '~' => text.push_str("space.nobreak"),
-            '/' | '"' => text.push_str(&format!("\\{}", c)),
+            '%' => "//".to_owned(),
+            '~' => "space.nobreak".to_owned(),
+            '/' | '"' => format!("\\{}", c),
             _ => {
                 // TODO one to one mapping of LaTeX characters to Typst characters
-                let c = match c {
-                    '{' => '(',
-                    '}' => ')',
-                    _ => c,
-                };
-                // insert space if current and next character is a alphabetic character
-                if let Some(prev) = text.chars().last() {
-                    if prev.is_alphabetic() && (c.is_alphabetic() || c.is_ascii_digit()) {
-                        text.push(' ');
-                    }
+                match c {
+                    '{' => '('.to_string(),
+                    '}' => ')'.to_string(),
+                    _ => c.to_string(),
                 }
-                text.push(c);
+            }
+        };
+        // insert space if current and next character is a alphabetic character
+        let first = push.chars().next().unwrap();
+        if let Some(prev) = text.chars().last() {
+            if prev.is_alphabetic() && (first.is_alphabetic() || first.is_ascii_digit()) {
+                text.push(' ');
             }
         }
+        text.push_str(&push);
     }
 
     text
@@ -725,7 +773,54 @@ fn latex_color_to_typst(color: String) -> String {
 
 fn latex_text_to_typst(text: String) -> String {
     // TODO
-    text
+    let mut scanner = Scanner::new(text);
+    let mut ret = String::new();
+    while let Some(c) = scanner.next() {
+        let push = match c {
+            '\\' => match scanner.next_word().as_str() {
+                "textasciitilde" => "~".to_owned(),
+                "textasciicircum" => "\\^".to_owned(),
+                "textbackslash" => "\\\\".to_owned(),
+                "textbar" => "|".to_owned(),
+                "textbardbl" => "‖".to_owned(),
+                "textbraceleft" => "{".to_owned(),
+                "textbraceright" => "}".to_owned(),
+                "textdagger" => "#sym.dagger".to_owned(),
+                "textdaggerdbl" => "#sym.dagger.double".to_owned(),
+                "textdegree" => "#sym.degree".to_owned(),
+                "textdollar" => "\\$".to_owned(),
+                "textellipsis" => "...".to_owned(),
+                "textemdash" => "---".to_owned(),
+                "textendash" => "--".to_owned(),
+                "textgreater" => "#sym.gt".to_owned(),
+                "textless" => "#sym.lt".to_owned(),
+                "textquotedblleft" => "#sym.quote.l.double".to_owned(),
+                "textquotedblright" => "#sym.quote.r.double".to_owned(),
+                "textquoteleft" => "#sym.quote.l.single".to_owned(),
+                "textquoteright" => "#sym.quote.r.single".to_owned(),
+                "textregistered" => "®".to_owned(),
+                "textsterling" => "#sym.pound".to_owned(),
+                "textunderscore" => "\\_".to_owned(),
+                "twoheadleftarrow" => "<<-".to_owned(),
+                "twoheadrightarrow" => "->>".to_owned(),
+                // U
+                word => unreachable!("unknown command: {}", word),
+            },
+            '$' => {
+                let mut math = String::new();
+                while let Some(c) = scanner.next() {
+                    if c == '$' {
+                        break;
+                    }
+                    math.push(c);
+                }
+                format!("${}$", latex_to_typst(math))
+            }
+            _ => c.to_string(),
+        };
+        ret.push_str(&push);
+    }
+    ret
 }
 
 #[cfg(test)]
@@ -771,7 +866,7 @@ mod tests {
 
     #[test]
     fn test_parse_typ2() {
-        println!("{:?}", latex_to_typst("\\^a".to_string()));
+        println!("{:?}", latex_to_typst("hello".to_string()));
     }
 
     #[test]
@@ -783,7 +878,7 @@ mod tests {
     fn test_parse_typ4() {
         println!(
             "{:?}",
-            latex_to_typst("\\overbrace{x+⋯+x}^{n\\text{ times}}".to_string())
+            latex_to_typst("\\overbrace{x+⋯+x}^{n\\text{ times$\\int$}}".to_string())
         );
     }
 }
