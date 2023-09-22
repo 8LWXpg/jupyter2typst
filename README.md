@@ -1,12 +1,10 @@
 # Jupyter to Typst converter
 
-not perfect, but works
-
 ## Features
 
 - automatic image download/extract
 - nice template
-- support for KaTeX (not complete)
+- support for KaTeX in markdown convert (not complete)
 
 ## Usage
 
