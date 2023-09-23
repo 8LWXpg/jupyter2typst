@@ -711,7 +711,7 @@ pub fn latex_to_typst(latex: String) -> String {
                         ),
                         p => format!(
                             "#box(inset: (bottom: {}), box(fill: black, width: {}, height: {}))",
-                            latex_color_to_typst(p),
+                            p,
                             latex_to_typst(scanner.next_param().unwrap()),
                             latex_to_typst(scanner.next_param().unwrap()),
                         ),
