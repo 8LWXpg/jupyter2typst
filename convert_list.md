@@ -13,6 +13,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 - not sure
 
 ## Settings
+
 it will be too long to put all the settings in the table, so I put them here
 
 - `#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))`
@@ -599,7 +600,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\negthinmedspace`  | `#h(-1em/6)`           |
 | `\neq`              | `!=`                   |
 | `\newcommand`       | TODO#scripting         |
-| `\newline`          | `\ `                   |
+| `\newline`          | `\`                    |
 | `nexist`            | `exists.not`           |
 | `\ngeq`             | `gt.eq.not`            |
 | `\ngeqq`            | not found in unicode   |
@@ -677,13 +678,13 @@ it will be too long to put all the settings in the table, so I put them here
 | `\overbrace`              | `overbrace($1)` `overbrace($1, $2)` |
 | `\overgroup`              | `accent($1, turtle.t)`              |
 | `\overleftarrow`          | `arrow.l($1)`                       |
-| `\overleftharpoon`        | TODO#no alternative                 |
-| `\overleftrightarrow`     | TODO#no alternative                 |
+| `\overleftharpoon`        | `accent($1, \u{20d0})`              |
+| `\overleftrightarrow`     | `accent($1, \u{20e1})`              |
 | `\overline`               | `overline($1)`                      |
 | `\overlinesegment`        | TODO#no alternative                 |
 | `\Overrightarrow`         | TODO#no alternative                 |
 | `\overrightarrow`         | `arrow.r($1)`                       |
-| `\overrightharpoon`       | TODO#no alternative                 |
+| `\overrightharpoon`       | `accent($1, \u{20d1})`              |
 | `\overset`                | TODO#not sure                       |
 | `\owns`                   | `in.rev`                            |
 
@@ -861,7 +862,7 @@ it will be too long to put all the settings in the table, so I put them here
 
 ## T
 
-*some command is text mode only*
+some command here is text mode only
 
 | LaTeX                | Typst                   |
 | -------------------- | ----------------------- |
