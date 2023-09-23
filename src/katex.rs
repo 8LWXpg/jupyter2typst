@@ -167,14 +167,28 @@ impl Scanner {
         }
     }
 
-    /// consumes newline character
-    fn next_line(&mut self) -> String {
+    /// Return characters until one of the characters in `chars` is found.
+    /// The ending character is consumed
+    pub fn until_chars(&mut self, chars: &str) -> String {
         let mut ret = String::new();
         while let Some(c) = self.next() {
-            match c {
-                '\n' => break,
-                _ => ret.push(c),
+            if chars.contains(c) {
+                break;
             }
+            ret.push(c);
+        }
+        ret
+    }
+
+    /// Return characters until one of the characters **not** in `chars` is found.
+    /// The ending character is consumed
+    pub fn until_chars_not(&mut self, chars: &str) -> String {
+        let mut ret = String::new();
+        while let Some(c) = self.next() {
+            if !chars.contains(c) {
+                break;
+            }
+            ret.push(c);
         }
         ret
     }
@@ -308,6 +322,32 @@ pub fn latex_to_typst(latex: String) -> String {
                 "Cap" | "doublecap" => "sect.double".to_owned(),
                 "cap" => "sect".to_owned(),
                 "cdot" | "cdotp" | "centerdot" | "sdot" => "dot.op".to_owned(),
+                "cfrac" => format!("display(frac({}, {}))",
+                    latex_to_typst(scanner.next_param().unwrap()),
+                    latex_to_typst(scanner.next_param().unwrap())
+                ),
+                "char" => {
+                    let code = match scanner.peek().unwrap() {
+                        '"' => {
+                            scanner.cursor += 1;
+                            scanner.until_chars_not("0123456789abcdefABCDEF")
+                        }
+                        '\''=>{
+                            scanner.cursor += 1;
+                            format!(
+                                "{:x}",
+                                u32::from_str_radix(&scanner.until_chars_not("01234567"), 8).unwrap()
+                            )
+                        }
+                        _ => format!(
+                            "{:x}",
+                            u32::from_str_radix(&scanner.until_chars_not("0123456789"), 10).unwrap()
+                        )
+                    };
+                    scanner.cursor -= 1;
+                    format!("\\u{{{}}}", code)
+                }
+                ,
                 "cdots" | "dots" | "dotsb" | "dotsc" | "dotsi" | "dotsm" => "dots.h.c".to_owned(),
                 "check" => format!("caron({})", latex_to_typst(scanner.next_param().unwrap())),
                 "circ" => "compose".to_owned(),
@@ -489,6 +529,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "lfloor" => "⌊".to_owned(),
                 "lgroup" => "turtle.l".to_owned(),
                 "lhd" | "vartriangleleft" => "lt.tri".to_owned(),
+                "limits" | "nolimits" => "".to_owned(),
                 "ll" => "<<".to_owned(),
                 "llbracket" => "bracket.l.double".to_owned(),
                 "llcorner" => "⌞".to_owned(),
@@ -935,7 +976,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "Z" => "ZZ".to_owned(),
                 word => word.to_owned(),
             }
-            '%' => format!("//{}\n", scanner.next_line()),
+            '%' => format!("//{}\n", scanner.until_chars("\n")),
             '~' => "space.nobreak".to_owned(),
             '/' | '"' => format!("\\{}", c),
             _ => match c {
@@ -1088,9 +1129,6 @@ mod tests {
 
     #[test]
     fn test_parse_typ6() {
-        println!(
-            "{:?}",
-            latex_to_typst("\\overleftrightarrow{AB}".to_string())
-        );
+        println!("{:?}", latex_to_typst("\\char'333".to_string()));
     }
 }

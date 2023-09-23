@@ -164,77 +164,77 @@ it will be too long to put all the settings in the table, so I put them here
 
 ## C
 
-| LaTeX               | Typst                  |
-| ------------------- | ---------------------- |
-| `\cal`              | TODO#affect all        |
-| `\cancel`           | `cancel($1)`           |
-| `\Cap`              | `sect.double`          |
-| `\cap`              | `sect`                 |
-| `\cdot`             | `dot.op`               |
-| `\cdotp`            | `dot.op`               |
-| `\cdots`            | `dots.h.c`             |
-| `\ce`               | not supported in ipynb |
-| `\centerdot`        | `dot.op`               |
-| `\cfrac`            | TODO#not sure          |
-| `\char`             | TODO#not sure          |
-| `\check`            | `caron($1)`            |
-| `\ch`               | not supported in ipynb |
-| `\Chi`              | `Chi`                  |
-| `\chi`              | `chi`                  |
-| `\choose`           | TODO#binary            |
-| `\circ`             | `compose`              |
-| `\circeq`           | `≗`                    |
-| `\circlearrowleft`  | `arrow.ccw`            |
-| `\circlearrowright` | `arrow.cw`             |
-| `\circledast`       | `ast.circle`           |
-| `\circledcirc`      | `circle.nested`        |
-| `\circleddash`      | `dash.circle`          |
-| `\circledR`         | `®`                    |
-| `\circledS`         | `Ⓢ`                    |
-| `\clubs`            | `suit.club`            |
-| `\clubsuit`         | `suit.club`            |
-| `\cnums`            | `CC`                   |
-| `\colon`            | `colon`                |
-| `\Colonapprox`      | `::approx`             |
-| `\colonapprox`      | `:approx`              |
-| `\coloncolon`       | `::`                   |
-| `\coloncolonapprox` | `::approx`             |
-| `\coloncolonequals` | `::=`                  |
-| `\coloncolonminus`  | `"::−"`                |
-| `\coloncolonsim`    | `::tilde.op`           |
-| `\Coloneq`          | `"::−"`                |
-| `\coloneq`          | `":−"`                 |
-| `\colonequals`      | `:=`                   |
-| `\Coloneqq`         | `::=`                  |
-| `\coloneqq`         | `:=`                   |
-| `\colonminus`       | `":−"`                 |
-| `\Colonsim`         | `::tilde.op`           |
-| `\colonsim`         | `:tilde.op`            |
-| `\color`            | TODO#affect all        |
-| `\colorbox`         | `#box(fill: $1)[$2]`   |
-| `\complement`       | `complement`           |
-| `\Complex`          | `CC`                   |
-| `\cong`             | `tilde.equiv`          |
-| `\coprod`           | `product.co`           |
-| `\copyright`        | `copyright`            |
-| `\cos`              | `cos`                  |
-| `\cosec`            | `#math.op("cosec")`    |
-| `\cosh`             | `cosh`                 |
-| `\cot`              | `cot`                  |
-| `\cotg`             | `#math.op("cotg")`     |
-| `\coth`             | `coth`                 |
-| `\cr`               | TODO#begin             |
-| `\csc`              | `csc`                  |
-| `\ctg`              | `ctg`                  |
-| `\cth`              | `#math.op("cth")`      |
-| `\Cup`              | `union.double`         |
-| `\cup`              | `union`                |
-| `\curlyeqprec`      | `eq.prec`              |
-| `\curlyeqsucc`      | `eq.succ`              |
-| `\curlyvee`         | `or.curly`             |
-| `\curlywedge`       | `and.curly`            |
-| `\curvearrowleft`   | `arrow.ccw.half`       |
-| `\curvearrowright`  | `arrow.cw.half`        |
+| LaTeX               | Typst                   |
+| ------------------- | ----------------------- |
+| `\cal`              | TODO#affect all         |
+| `\cancel`           | `cancel($1)`            |
+| `\Cap`              | `sect.double`           |
+| `\cap`              | `sect`                  |
+| `\cdot`             | `dot.op`                |
+| `\cdotp`            | `dot.op`                |
+| `\cdots`            | `dots.h.c`              |
+| `\ce`               | not supported in ipynb  |
+| `\centerdot`        | `dot.op`                |
+| `\cfrac`            | `display(frac($1, $2))` |
+| `\char`             | `\u{$1}` in hex         |
+| `\check`            | `caron($1)`             |
+| `\ch`               | not supported in ipynb  |
+| `\Chi`              | `Chi`                   |
+| `\chi`              | `chi`                   |
+| `\choose`           | TODO#binary             |
+| `\circ`             | `compose`               |
+| `\circeq`           | `≗`                     |
+| `\circlearrowleft`  | `arrow.ccw`             |
+| `\circlearrowright` | `arrow.cw`              |
+| `\circledast`       | `ast.circle`            |
+| `\circledcirc`      | `circle.nested`         |
+| `\circleddash`      | `dash.circle`           |
+| `\circledR`         | `®`                     |
+| `\circledS`         | `Ⓢ`                     |
+| `\clubs`            | `suit.club`             |
+| `\clubsuit`         | `suit.club`             |
+| `\cnums`            | `CC`                    |
+| `\colon`            | `colon`                 |
+| `\Colonapprox`      | `::approx`              |
+| `\colonapprox`      | `:approx`               |
+| `\coloncolon`       | `::`                    |
+| `\coloncolonapprox` | `::approx`              |
+| `\coloncolonequals` | `::=`                   |
+| `\coloncolonminus`  | `"::−"`                 |
+| `\coloncolonsim`    | `::tilde.op`            |
+| `\Coloneq`          | `"::−"`                 |
+| `\coloneq`          | `":−"`                  |
+| `\colonequals`      | `:=`                    |
+| `\Coloneqq`         | `::=`                   |
+| `\coloneqq`         | `:=`                    |
+| `\colonminus`       | `":−"`                  |
+| `\Colonsim`         | `::tilde.op`            |
+| `\colonsim`         | `:tilde.op`             |
+| `\color`            | TODO#affect all         |
+| `\colorbox`         | `#box(fill: $1)[$2]`    |
+| `\complement`       | `complement`            |
+| `\Complex`          | `CC`                    |
+| `\cong`             | `tilde.equiv`           |
+| `\coprod`           | `product.co`            |
+| `\copyright`        | `copyright`             |
+| `\cos`              | `cos`                   |
+| `\cosec`            | `#math.op("cosec")`     |
+| `\cosh`             | `cosh`                  |
+| `\cot`              | `cot`                   |
+| `\cotg`             | `#math.op("cotg")`      |
+| `\coth`             | `coth`                  |
+| `\cr`               | TODO#begin              |
+| `\csc`              | `csc`                   |
+| `\ctg`              | `ctg`                   |
+| `\cth`              | `#math.op("cth")`       |
+| `\Cup`              | `union.double`          |
+| `\cup`              | `union`                 |
+| `\curlyeqprec`      | `eq.prec`               |
+| `\curlyeqsucc`      | `eq.succ`               |
+| `\curlyvee`         | `or.curly`              |
+| `\curlywedge`       | `and.curly`             |
+| `\curvearrowleft`   | `arrow.ccw.half`        |
+| `\curvearrowright`  | `arrow.cw.half`         |
 
 ## D
 
@@ -303,7 +303,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\empty`            | `emptyset`     |
 | `\emptyset`         | `emptyset`     |
 | `\end`              | TODO#begin     |
-| `\endgroup`         | TODO#not sure  |
+| `\endgroup`         | TODO#scripting |
 | `\enspace`          | `space.en`     |
 | `\Epsilon`          | `Epsilon`      |
 | `\epsilon`          | `epsilon.alt`  |
@@ -360,7 +360,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\ggg`       | `>>>`                |
 | `\gggtr`     | `>>>`                |
 | `\gimel`     | `gimel`              |
-| `\global`    | TODO#not sure        |
+| `\global`    | TODO#scripting       |
 | `\gnapprox`  | `⪊`                  |
 | `\gneq`      | `⪈`                  |
 | `\gneqq`     | `gt.nequiv`          |
@@ -495,7 +495,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\lhd`                    | `lt.tri`             |
 | `\lim`                    | `lim`                |
 | `\liminf`                 | `liminf`             |
-| `\limits`                 | TODO#not sure        |
+| `\limits`                 | ommited              |
 | `\limsup`                 | `limsup`             |
 | `\ll`                     | `<<`                 |
 | `\llap`                   | TODO#spacing         |
@@ -622,7 +622,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\nobreak`          | TODO#spacing           |
 | `\nobreakspace`     | `space.nobreak`        |
 | `\noexpand`         | TODO#scripting         |
-| `\nolimits`         | TODO#not sure          |
+| `\nolimits`         | ommited                |
 | `\nonumber`         | TODO#begin             |
 | `\normalsize`       | TODO#affect all        |
 | `\notin`            | `in.not`               |
@@ -688,7 +688,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\Overrightarrow`         | TODO#no alternative                 |
 | `\overrightarrow`         | `arrow.r($1)`                       |
 | `\overrightharpoon`       | `accent($1, \u{20d1})`              |
-| `\overset`                | TODO#not sure                       |
+| `\overset`                | TODO#spacing                        |
 | `\owns`                   | `in.rev`                            |
 
 ## P
