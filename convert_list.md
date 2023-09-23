@@ -4,19 +4,24 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 
 ## TODOs
 
-- scripting
-- begin
-- lr
-- binary
 - affect all
+- begin
+- binary
+- lr
 - no alternative
 - not sure
+- spacing
+- scripting
+- stacking
 
-## Settings
+## References
 
-it will be too long to put all the settings in the table, so I put them here
+something too long to fit in a table
 
-- `#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))`
+- `boxed`, `colorbox`, `fbox`, `fcolorbox`: 
+  `#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))`
+- `rule`: `$1` is optional
+  `#box(inset: (bottom: $1), box(fill: black, width: $2, height: $3))`
 
 ## Symbols
 
@@ -498,7 +503,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\limits`                 | ommited              |
 | `\limsup`                 | `limsup`             |
 | `\ll`                     | `<<`                 |
-| `\llap`                   | TODO#spacing         |
+| `\llap`                   | TODO#stacking        |
 | `\llbracket`              | `bracket.l.double`   |
 | `\llcorner`               | `⌞`                  |
 | `\Lleftarrow`             | `arrow.l.triple`     |
@@ -553,14 +558,14 @@ it will be too long to put all the settings in the table, so I put them here
 | `\mathfrak`        | `frak($1)`      |
 | `\mathinner`       | TODO#spacing    |
 | `\mathit`          | `italic($1)`    |
-| `\mathllap`        | TODO#spacing    |
+| `\mathllap`        | TODO#stacking   |
 | `\mathnormal`      | ommited         |
 | `\mathop`          | ommited         |
 | `\mathopen`        | `$1 #h(0pt)`    |
 | `\mathord`         | TODO#spacing    |
 | `\mathpunct`       | TODO#spacing    |
 | `\mathrel`         | TODO#spacing    |
-| `\mathrlap`        | TODO#spacing    |
+| `\mathrlap`        | TODO#stacking   |
 | `\mathring`        | `circle($1)`    |
 | `\mathrm`          | `upright($1)`   |
 | `\mathscr`         | TODO#font       |
@@ -688,7 +693,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\Overrightarrow`         | TODO#no alternative                 |
 | `\overrightarrow`         | `arrow.r($1)`                       |
 | `\overrightharpoon`       | `accent($1, \u{20d1})`              |
-| `\overset`                | TODO#spacing                        |
+| `\overset`                | TODO#stacking                       |
 | `\owns`                   | `in.rev`                            |
 
 ## P
@@ -773,7 +778,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\rightsquigarrow`   | `arrow.r.squiggly` |
 | `\rightthreetimes`   | `times.three.r`    |
 | `\risingdotseq`      | `≓`                |
-| `\rlap`              | TODO#spacing       |
+| `\rlap`              | TODO#stacking      |
 | `\rm`                | TODO#affect all    |
 | `\rmoustache`        | `⎱`                |
 | `\rparen`            | `)`                |
@@ -782,7 +787,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\Rrightarrow`       | `arrow.r.triple`   |
 | `\Rsh`               | `↱`                |
 | `\rtimes`            | `times.r`          |
-| `\rule`              | TODO#not sure      |
+| `\rule`              | [ref](#references) |
 | `\rVert`             | `parallel`         |
 | `\rvert`             | `divides`          |
 
@@ -816,8 +821,8 @@ it will be too long to put all the settings in the table, so I put them here
 | `\sixptsize`         | TODO#affect all           |
 | `\sh`                | `#math.op("sh")`          |
 | `\small`             | TODO#affect all           |
-| `\smallint`          | TODO#not sure             |
-| `\smallsetminus`     | TODO#not sure             |
+| `\smallint`          | `inline(integral)`        |
+| `\smallsetminus`     | `without`                 |
 | `\smallsmile`        | `⌣`                       |
 | `\sout`              | TODO#not sure             |
 | `\space`             | `space`                   |
@@ -833,7 +838,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\sqsupset`          | `supset.sq`               |
 | `\sqsupseteq`        | `supset.eq.sq`            |
 | `\ss`                | `ß`                       |
-| `\stackrel`          | TODO#not sure             |
+| `\stackrel`          | TODO#stacking             |
 | `\star`              | `star.op`                 |
 | `\sub`               | `subset`                  |
 | `\sube`              | `subset.eq`               |
@@ -843,7 +848,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\subseteqq`         | `⫅`                       |
 | `\subsetneq`         | `subset.neq`              |
 | `\subsetneqq`        | `⫋`                       |
-| `\substack`          | TODO#not sure             |
+| `\substack`          | TODO#stacking             |
 | `\succ`              | `succ`                    |
 | `\succapprox`        | `succ.approx`             |
 | `\succcurlyeq`       | `succ.eq`                 |
@@ -956,7 +961,7 @@ some command here is text mode only
 | `\underline`           | `underline($1)`                       |
 | `\underlinesegment`    | TODO#no alternative                   |
 | `\underrightarrow`     | TODO#no alternative                   |
-| `\underset`            | TODO#not sure                         |
+| `\underset`            | TODO#stacking                         |
 | `\unlhd`               | `lt.tri.eq`                           |
 | `\unrhd`               | `gt.tri.eq`                           |
 | `\Uparrow`             | `arrow.t.double`                      |

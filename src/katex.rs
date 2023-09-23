@@ -124,14 +124,7 @@ impl Scanner {
                 ))
             }
         }
-        if ret.is_empty() {
-            Err(ScannerError::new(
-                "No parameter found".to_string(),
-                self.clone(),
-            ))
-        } else {
-            Ok(ret)
-        }
+        Ok(ret)
     }
 
     pub fn next_param_optional(&mut self) -> Result<String, ScannerError> {
@@ -157,14 +150,7 @@ impl Scanner {
             }
             _ => return Err(ScannerError::new("Expected '['".to_string(), self.clone())),
         }
-        if ret.is_empty() {
-            Err(ScannerError::new(
-                "No parameter found".to_string(),
-                self.clone(),
-            ))
-        } else {
-            Ok(ret)
-        }
+        Ok(ret)
     }
 
     /// Return characters until one of the characters in `chars` is found.
@@ -716,17 +702,33 @@ pub fn latex_to_typst(latex: String) -> String {
                 "Rrightarrow" => "arrow.r.triple".to_owned(),
                 "Rsh" => "↱".to_owned(),
                 "rtimes" => "times.r".to_owned(),
+                "rule" => {
+                    match scanner.next_param_optional().unwrap().as_str() {
+                        "" => format!(
+                            "#box(fill: black, width: {}, height: {})",
+                            latex_to_typst(scanner.next_param().unwrap()),
+                            latex_to_typst(scanner.next_param().unwrap())
+                        ),
+                        p => format!(
+                            "#box(inset: (bottom: {}), box(fill: black, width: {}, height: {}))",
+                            latex_color_to_typst(p),
+                            latex_to_typst(scanner.next_param().unwrap()),
+                            latex_to_typst(scanner.next_param().unwrap()),
+                        ),
+                    }
+                }
                 // S
                 "S" | "sect" => "section".to_owned(),
                 "searrow" => "arrow.br".to_owned(),
                 "Set" | "set" => format!("{{{}}}", latex_to_typst(scanner.next_param().unwrap())),
-                "setminus" => "without".to_owned(),
+                "setminus" | "smallsetminus" => "without".to_owned(),
                 "sharp" => "♯".to_owned(),
                 "sim" => "tilde.op".to_owned(),
                 "simcolon" => "tilde.op:".to_owned(),
                 "simcoloncolon" => "tilde.op::".to_owned(),
                 "simeq" => "tilde.eq".to_owned(),
                 "sh" => "#math.op(\"sh\")".to_owned(),
+                "smallint" => "inline(integral)".to_owned(),
                 "smallsmile" => "⌣".to_owned(),
                 "spades" | "spadesuit" => "suit.spade".to_owned(),
                 "sphericalangle" => "angle.spheric".to_owned(),
