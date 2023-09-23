@@ -1,7 +1,34 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Scanner {
     cursor: usize,
     characters: Vec<char>,
+}
+
+#[derive(Debug)]
+pub struct ScannerError {
+    message: String,
+    cursor: usize,
+    characters: String,
+}
+
+impl ScannerError {
+    fn new(message: String, scanner: Scanner) -> Self {
+        Self {
+            message,
+            cursor: scanner.cursor,
+            characters: scanner.characters.iter().collect(),
+        }
+    }
+}
+
+impl std::fmt::Display for ScannerError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(
+            f,
+            "{} at position {} in {}",
+            self.message, self.cursor, self.characters
+        )
+    }
 }
 
 impl Scanner {
@@ -17,7 +44,7 @@ impl Scanner {
         self.characters.get(self.cursor).copied()
     }
 
-    /// Returns the next word (ascii alphabet only) in the scanner..
+    /// Returns the next word (ascii alphabet only) in the scanner.
     pub fn next_word(&mut self) -> String {
         let mut ret = String::new();
         while let Some(c) = self.peek() {
@@ -36,7 +63,7 @@ impl Scanner {
     }
 
     /// Returns the next LaTeX parameter in the scanner.
-    pub fn next_param(&mut self) -> Option<String> {
+    pub fn next_param(&mut self) -> Result<String, ScannerError> {
         let mut ret = String::new();
         const BINARY_OPERATORS: &[char] = &['_', '^'];
 
@@ -52,9 +79,11 @@ impl Scanner {
         match self.next() {
             Some('\\') => {
                 ret.push('\\');
-                // TODO next param contains binary operators as well
                 match self.next_word().as_str() {
-                    "" => ret.push(self.next().unwrap()),
+                    "" => ret.push(self.next().ok_or(ScannerError::new(
+                        "Expected a character after '\\'".to_string(),
+                        self.clone(),
+                    ))?),
                     word => ret.push_str(&word),
                 }
                 loop {
@@ -62,7 +91,7 @@ impl Scanner {
                         Some(c) if c.is_whitespace() => {}
                         Some(c) if BINARY_OPERATORS.contains(&c) => {
                             ret.push(c);
-                            ret.push_str(&self.next_param().unwrap());
+                            ret.push_str(&self.next_param()?);
                         }
                         _ => {
                             self.cursor -= 1;
@@ -88,12 +117,24 @@ impl Scanner {
                 }
             }
             Some(c) => ret.push(c),
-            None => unreachable!(),
+            None => {
+                return Err(ScannerError::new(
+                    "Unexpected end of input".to_string(),
+                    self.clone(),
+                ))
+            }
         }
-        Some(ret).filter(|s| !s.is_empty())
+        if ret.is_empty() {
+            Err(ScannerError::new(
+                "No parameter found".to_string(),
+                self.clone(),
+            ))
+        } else {
+            Ok(ret)
+        }
     }
 
-    fn next_param_optional(&mut self) -> Option<String> {
+    pub fn next_param_optional(&mut self) -> Result<String, ScannerError> {
         let mut ret = String::new();
 
         // trim whitespace
@@ -114,9 +155,16 @@ impl Scanner {
                     }
                 }
             }
-            _ => return None,
+            _ => return Err(ScannerError::new("Expected '['".to_string(), self.clone())),
         }
-        Some(ret)
+        if ret.is_empty() {
+            Err(ScannerError::new(
+                "No parameter found".to_string(),
+                self.clone(),
+            ))
+        } else {
+            Ok(ret)
+        }
     }
 
     /// consumes newline character
@@ -250,6 +298,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "boxminus" => "minus.square".to_owned(),
                 "boxplus" => "plus.square".to_owned(),
                 "boxtimes" => "times.square".to_owned(),
+                "Bra" | "bra" => format!("lr(angle.l {} |)", latex_to_typst(scanner.next_param().unwrap())),
                 "breve" | "u" => format!("breve({})", latex_to_typst(scanner.next_param().unwrap())),
                 "bull" | "bullet" => "circle.filled.small".to_owned(),
                 "Bumpeq" => "≎".to_owned(),
@@ -425,6 +474,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 // JK
                 "j" | "jmath" => "dotless.j".to_owned(),
                 "KaTeX" => "\"KaTeX\"".to_owned(),
+                "Ket" | "ket" => format!("lr(| {} angle.r)", latex_to_typst(scanner.next_param().unwrap())),
                 // L
                 "lang" | "langle" => "angle.l".to_owned(),
                 "Larr" | "lArr" | "Leftarrow" => "arrow.l.double".to_owned(),
@@ -471,9 +521,11 @@ pub fn latex_to_typst(latex: String) -> String {
                 "mathbb" => format!("bb({})", latex_to_typst(scanner.next_param().unwrap())),
                 "mathbf" => format!("bold({})", latex_to_typst(scanner.next_param().unwrap())),
                 "mathcal" => format!("cal({})", latex_to_typst(scanner.next_param().unwrap())),
+                "mathclose" => format!("#h(0pt) {}", latex_to_typst(scanner.next_param().unwrap())),
                 "mathfrak" => format!("frak({})", latex_to_typst(scanner.next_param().unwrap())),
                 "mathit" => format!("italic({})", latex_to_typst(scanner.next_param().unwrap())),
                 "mathnormal" | "mathop" => latex_to_typst(scanner.next_param().unwrap()),
+                "mathopen" => format!("{} #h(0pt)", latex_to_typst(scanner.next_param().unwrap())),
                 "mathring" => format!("circle({})", latex_to_typst(scanner.next_param().unwrap())),
                 "mathrm" => format!("upright({})", latex_to_typst(scanner.next_param().unwrap())),
                 "mathsf" => format!("sans({})", latex_to_typst(scanner.next_param().unwrap())),
@@ -641,7 +693,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "sqcup" => "union.sq".to_owned(),
                 "square" => "square.stroked".to_owned(),
                 "sqrt" => {
-                    if let Some(p) = scanner.next_param_optional() {
+                    if let Ok(p) = scanner.next_param_optional() {
                         format!(
                             "root({}, {})",
                             latex_to_typst(p),
@@ -982,7 +1034,7 @@ mod scanner_tests {
     #[test]
     fn next_param_test() {
         let mut scanner = Scanner::new("\n\t\\land\\%=3aa\\\\".to_string());
-        while let Some(c) = scanner.next_param() {
+        while let Ok(c) = scanner.next_param() {
             println!("{}", c);
         }
     }
@@ -996,6 +1048,15 @@ mod scanner_tests {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_scanner_error() {
+        let scanner = Scanner::new("Hello, World!".to_string());
+        let error = ScannerError::new("test".to_string(), scanner);
+        let result: Result<String, ScannerError> = Err(error);
+
+        result.unwrap();
+    }
 
     #[test]
     fn test_parse_typ() {

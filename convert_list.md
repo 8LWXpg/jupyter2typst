@@ -78,8 +78,8 @@ it will be too long to put all the settings in the table, so I put them here
 | `\alpha`            | `alpha`              |
 | `\amalg`            | `product.co`         |
 | `\And`              | `\&`                 |
-| `\angl`             | TODO#not sure        |
-| `\angln`            | TODO#not sure        |
+| `\angl`             | no alternative       |
+| `\angln`            | no alternative       |
 | `\angle`            | `angle`              |
 | `\approx`           | `approx`             |
 | `\approxeq`         | `approx.eq`          |
@@ -150,7 +150,10 @@ it will be too long to put all the settings in the table, so I put them here
 | `\boxminus`             | `minus.square`              |
 | `\boxplus`              | `plus.square`               |
 | `\boxtimes`             | `times.square`              |
-| `\bra` and its variants | TODO#lr                     |
+| `\Bra`                  | `lr(angle.l $1 \|)`         |
+| `\bra`                  | `lr(angle.l $1 \|)`         |
+| `\Braket`               | TODO#lr                     |
+| `\braket`               | TODO#lr                     |
 | `\brace`                | TODO#binary                 |
 | `\brack`                | TODO#binary                 |
 | `\breve`                | `breve($1)`                 |
@@ -428,18 +431,18 @@ it will be too long to put all the settings in the table, so I put them here
 
 ## JK
 
-| LaTeX    | Typst        |
-| -------- | ------------ |
-| `\j`     | `dotless.j`  |
-| `\jmath` | `dotless.j`  |
-| `\Join`  | `⋈`          |
-| `\Kappa` | `Kappa`      |
-| `\kappa` | `kappa`      |
-| `\KaTeX` | `"KaTeX"`    |
-| `\ker`   | `ker`        |
-| `\kern`  | TODO#spacing |
-| `\Ket`   | TODO#lr      |
-| `\ket`   | TODO#lr      |
+| LaTeX    | Typst               |
+| -------- | ------------------- |
+| `\j`     | `dotless.j`         |
+| `\jmath` | `dotless.j`         |
+| `\Join`  | `⋈`                 |
+| `\Kappa` | `Kappa`             |
+| `\kappa` | `kappa`             |
+| `\KaTeX` | `"KaTeX"`           |
+| `\ker`   | `ker`               |
+| `\kern`  | TODO#spacing        |
+| `\Ket`   | `lr(\| $1 angle.r)` |
+| `\ket`   | `lr(\| $1 angle.r)` |
 
 ## L
 
@@ -508,7 +511,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\lnot`                   | `not`                |
 | `\lnsim`                  | `lt.ntilde`          |
 | `\log`                    | `log`                |
-| `\long`                   | TODO#lr              |
+| `\long`                   | TODO#scripting       |
 | `\Longleftarrow`          | `<==`                |
 | `\longleftarrow`          | `<--`                |
 | `\Longleftrightarrow`     | `<==>`               |
@@ -545,7 +548,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\mathcal`         | `cal($1)`       |
 | `\mathchoise`      | TODO#spacing    |
 | `\mathclap`        | TODO#spacing    |
-| `\mathclose`       | TODO#lr         |
+| `\mathclose`       | `#h(0pt) $1`    |
 | `\mathellipsis`    | `...`           |
 | `\mathfrak`        | `frak($1)`      |
 | `\mathinner`       | TODO#spacing    |
@@ -553,7 +556,7 @@ it will be too long to put all the settings in the table, so I put them here
 | `\mathllap`        | TODO#spacing    |
 | `\mathnormal`      | ommited         |
 | `\mathop`          | ommited         |
-| `\mathopen`        | TODO#lr         |
+| `\mathopen`        | `$1 #h(0pt)`    |
 | `\mathord`         | TODO#spacing    |
 | `\mathpunct`       | TODO#spacing    |
 | `\mathrel`         | TODO#spacing    |
