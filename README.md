@@ -6,6 +6,8 @@
 - nice template
 - support for KaTeX in markdown convert (not complete)
 
+Look for demos in [test](test) folder.
+
 ## Usage
 
 ```
