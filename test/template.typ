@@ -33,5 +33,6 @@
 
 // template for the whole document
 #let template(doc) = {
+  set block(width: 100%)
   [#doc]
 }

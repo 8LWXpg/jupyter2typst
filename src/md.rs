@@ -158,7 +158,7 @@ fn ast_parse(node: Node) -> String {
         }
         Node::Math(node) => {
             // println!("{}\n", node.value);
-            context.push_str(&format!("$\n{}\n$", katex::latex_to_typst(node.value)))
+            context.push_str(&format!("$ {} $", katex::latex_to_typst(node.value)))
         }
         Node::Paragraph(node) => {
             for child in node.children {

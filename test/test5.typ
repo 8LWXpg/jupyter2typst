@@ -2,7 +2,7 @@
 #show: template
 
 #block[
-<font color="red"><H1>LATEX INFO</H1></font>
+// <font color="red"><H1>LATEX INFO</H1></font>
 ]
 #block[
 In new Jupyter notebooks I have been working you can just type latex in markdown cells and it works.
@@ -13,20 +13,16 @@ Example of new way on next line, but won\'t work in old canopy I have on home co
 To see it work, easiest way is to upload to tmpnb.org and use there.
 ]
 #block[
-$
-// \begin{aligned}
-nabla times arrow(bold(B)) -space.sixth frac(1, c)space.sixth frac(diff arrow(bold(E)), diff t) & = frac(4pi, c)arrow(bold(j)) \
+$ nabla times arrow(bold(B)) -space.sixth frac(1, c)space.sixth frac(diff arrow(bold(E)), diff t) & = frac(4pi, c)arrow(bold(j)) \
 nabla dot.op arrow(bold(E)) & = 4 pi rho \
 nabla times arrow(bold(E))space.sixth +space.sixth frac(1, c)space.sixth frac(diff arrow(bold(B)), diff t) & = arrow(bold(0)) \
-nabla dot.op arrow(bold(B)) & = 0
-// \end{aligned}
-
-$]
+nabla dot.op arrow(bold(B)) & = 0 $
+]
 #block[
 *Easy Equation writing examples*
-$c = sqrt(a)^2 + b^2)$
+$ c = sqrt(a)^2 + b^2 $
 Logarithmic growth of a population of cells can be described mathematically as
-$N = N_o e^(l n 2(t\/t_2))$
+$ N = N_o e^(l n 2(t\/t_2)) $
 (from page 177 of Methods in Yeast Genetics, 205 Edition)
 *See #link("http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference")[here] for an awesome reference for MathJax*
 ]
@@ -35,9 +31,9 @@ $N = N_o e^(l n 2(t\/t_2))$
 ]
 #block[
 Based on #link("https://tex.stackexchange.com/questions/158897/how-do-i-get-a-hyphen-in-mathrm")[here] I figured out (probably again) how to add hyphen when in math mode in Jupyter notebooks and not have it loolike a minus sign.
-$frac(m i t o space p u r i f i c a t i o n space R N A#[-]S e q space d a t a, t o t a l space c e l l space R N A#[-]s e q space d a t a)$
+$ frac(m i t o space p u r i f i c a t i o n space R N A#[-]S e q space d a t a, t o t a l space c e l l space R N A#[-]s e q space d a t a) $
 VS.
-$frac(o b s_a - o b s_b, e x p_a - e x p_b)$
+$ frac(o b s_a - o b s_b, e x p_a - e x p_b) $
 ]
 #block[
 #code-block("#from JupyterLab demo notebook November 2, 2016
