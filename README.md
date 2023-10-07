@@ -1,5 +1,7 @@
 # Jupyter to Typst converter
 
+Feel free to open a issue or PR!
+
 ## Features
 
 - automatic image download/extract
