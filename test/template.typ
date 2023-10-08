@@ -1,4 +1,4 @@
-#import "@preview/ansi-render:0.4.1": *
+#import "@preview/ansi-render:0.5.0": *
 #import "@preview/xarrow:0.1.1": xarrow as _xarrow
 
 // workaround before set is implemented
@@ -7,12 +7,13 @@
 #let radius = 3pt
 #let inset = 8pt
 
-#let code-block(body, lang: "python", count: 0) = {
+#let code-block(body, lang: "python", count: 0) = style(styles => {
   block(raw(body, lang: lang), fill: luma(230), inset: inset, radius: radius, width: 100%)
   v(0pt, weak: true)
-  show: box.with(height: 0pt)
-  move(dx: -2.2em, dy: -1em, text(size: 1em, raw("[" + str(count) + "]:")))
-}
+  let c = raw("[" + str(count) + "]:")
+  let size = measure(c, styles)
+  box(height: 0pt, move(dx: -size.width, dy: -size.height - inset, c))
+})
 
 #let result-block(body) = {
   v(0pt, weak: true)

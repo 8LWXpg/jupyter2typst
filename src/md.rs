@@ -32,8 +32,8 @@ pub fn md_to_typst(md: Vec<&str>, attachments: HashMap<String, String>) -> Strin
     .unwrap();
 
     // write tree to debug file
-    let mut file = File::create("debug.txt").unwrap();
-    file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
+    // let mut file = File::create("debug.txt").unwrap();
+    // file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
     {
         let mut w_fd = FOOTNOTE_DEFINITIONS.write().unwrap();
         *w_fd = footnote_grep(tree.clone());
@@ -103,7 +103,7 @@ fn ast_parse(node: Node) -> String {
             context.push_str("\n\n");
         }
         Node::Html(node) => {
-            context.push_str(&html_to_typst(&node.value));
+            context.push_str(&escape_content(html_to_typst(&node.value)));
         }
         Node::Image(node) => match Url::parse(&node.url) {
             Ok(url) => match url.scheme() {
@@ -373,5 +373,28 @@ mod tests {
             )
             .unwrap()
         );
+    }
+}
+
+#[cfg(test)]
+mod mdast_test {
+    use super::*;
+
+    #[test]
+    fn math_test() {
+        println!(
+            "{:?}",
+            to_mdast(
+                "$$\nnot inline\n$$\n$$not inline$$\n$inline$",
+                &ParseOptions {
+                    constructs: Constructs {
+                        math_flow: true,
+                        math_text: true,
+                        ..Constructs::gfm()
+                    },
+                    ..Default::default()
+                }
+            )
+        )
     }
 }
