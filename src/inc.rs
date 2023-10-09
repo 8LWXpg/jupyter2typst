@@ -17,7 +17,7 @@ mod typ;
 mod katex;
 
 static LANG: OnceCell<String> = OnceCell::new();
-static TEMPLATE: &str = "#import \"template.typ\": *\n#show: template\n\n";
+static TEMPLATE: &str = "#import \"template.typ\": *\n\n";
 
 pub fn ipynb_parse(json: Value) -> String {
     // https://nbformat.readthedocs.io/en/latest/format_description.html

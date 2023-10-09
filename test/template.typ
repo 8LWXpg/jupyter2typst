@@ -21,19 +21,12 @@
 }
 
 #let block-quote(body) =  style(styles => {
-  let ctx = block(fill: luma(240), inset: inset, radius: (right: radius))[#body]
-  let size = measure(ctx, styles)
+  let size = measure(body, styles)
   grid(
     columns: (4pt, auto),
     rows: auto,
     gutter: 0pt,
-    rect(fill: luma(180), height: size.height,radius: (left: radius)),
-    ctx,
+    rect(fill: luma(180), height: size.height + 2*inset, radius: (left: radius)),
+    block(fill: luma(240), height: size.height + 2*inset, inset: inset, radius: (right: radius), width: 100%, body),
   )
 })
-
-// template for the whole document
-#let template(doc) = {
-  set block(width: 100%)
-  [#doc]
-}

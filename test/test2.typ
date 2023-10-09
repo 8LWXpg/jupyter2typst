@@ -1,5 +1,4 @@
 #import "template.typ": *
-#show: template
 
 #block[
 = 1.

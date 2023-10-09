@@ -1,3 +1,4 @@
 /target
 *.txt
 /test/img
+/test/template.pdf

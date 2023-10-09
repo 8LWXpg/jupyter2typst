@@ -1,5 +1,4 @@
 #import "template.typ": *
-#show: template
 
 #block[
 \<font color\=\"red\"\>\<H1\>LATEX INFO\<\/H1\>\<\/font\>
@@ -13,14 +12,12 @@ Example of new way on next line, but won\'t work in old canopy I have on home co
 To see it work, easiest way is to upload to tmpnb.org and use there.
 ]
 #block[
-$ 
-// begin(a l i g n e d)
+$ begin(a l i g n e d)
 nabla times arrow(bold(B)) -space.sixth frac(1, c)space.sixth frac(diff arrow(bold(E)), diff t) & = frac(4pi, c)arrow(bold(j)) \
 nabla dot.op arrow(bold(E)) & = 4 pi rho \
 nabla times arrow(bold(E))space.sixth +space.sixth frac(1, c)space.sixth frac(diff arrow(bold(B)), diff t) & = arrow(bold(0)) \
 nabla dot.op arrow(bold(B)) & = 0
-// end(a l i g n e d) 
-$]
+end(a l i g n e d) $]
 #block[
 *Easy Equation writing examples*
 $c = sqrt(a)^2 + b^2)$
