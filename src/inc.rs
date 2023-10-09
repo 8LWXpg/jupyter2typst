@@ -10,6 +10,8 @@ use std::{
 
 #[path = "md.rs"]
 mod md;
+#[path = "typ.rs"]
+mod typ;
 
 #[path = "katex.rs"]
 mod katex;
@@ -89,7 +91,7 @@ fn code_parse(code: Vec<&str>, count: i64) -> String {
     let mut context = String::new();
 
     context.push_str("#code-block(\"");
-    context.push_str(&&escape_string(code.join("")));
+    context.push_str(&typ::escape_string(code.join("")));
     context.push_str(
         format!(
             "\"\n, lang: \"{}\", count: {})\n",
@@ -140,7 +142,7 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                 } else if let Some(text) = data["text/plain"].as_array() {
                     context.push_str(&format!(
                         "#result-block(\"{}\")\n",
-                        escape_string(
+                        typ::escape_string(
                             text.iter()
                                 .map(|v| v.as_str().unwrap())
                                 .collect::<Vec<&str>>()
@@ -184,15 +186,4 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
     }
 
     context
-}
-
-fn escape_string(s: String) -> String {
-    let mut result = String::new();
-    for c in s.chars() {
-        if c == '"' || c == '\\' {
-            result.push('\\');
-        }
-        result.push(c);
-    }
-    result
 }

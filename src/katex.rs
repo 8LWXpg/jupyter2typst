@@ -1,3 +1,6 @@
+#[path = "typ.rs"]
+mod typ;
+
 #[derive(Debug, Clone)]
 struct Scanner {
     cursor: usize,
@@ -258,10 +261,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "barwedge" => "⊼".to_owned(),
                 "Bbb" => format!("bb({})", latex_to_typst(scanner.next_param().unwrap())),
                 "Bbbk" => "bb(k)".to_owned(),
-                "bcancel" => format!(
-                    "cancel(inverted: #true, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
+                "bcancel" => format!("cancel(inverted: #true, {})", latex_to_typst(scanner.next_param().unwrap())),
                 "between" => "≬".to_owned(),
                 "bigcap" => "sect.big".to_owned(),
                 "bigcirc" => "circle.stroked.big".to_owned(),
@@ -390,10 +390,7 @@ pub fn latex_to_typst(latex: String) -> String {
                     latex_to_typst(scanner.next_param().unwrap())
                 ),
                 "dbcolon" => "::".to_owned(),
-                "ddot" => format!(
-                    "dot.double({})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
+                "ddot" => format!("dot.double({})", latex_to_typst(scanner.next_param().unwrap())),
                 "ddots" => "dots.down".to_owned(),
                 "digaamma" => "ϝ".to_owned(),
                 "dfrac" => format!(
@@ -473,10 +470,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "gtrless" => "gt.lt".to_owned(),
                 "gtrsim" => "gt.tilde".to_owned(),
                 // H
-                "H" => format!(
-                    "acute.double({})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
+                "H" => format!("acute.double({})", latex_to_typst(scanner.next_param().unwrap())),
                 "Harr" | "hArr" | "Leftrightarrow" | "Lrarr" | "lrArr" => "<=>".to_owned(),
                 "harr" | "leftrightarrow" | "lrarr" => "<->".to_owned(),
                 "hat" => format!("hat({})", latex_to_typst(scanner.next_param().unwrap())),
@@ -484,6 +478,8 @@ pub fn latex_to_typst(latex: String) -> String {
                 "hearts" | "heartsuit" => "♡".to_owned(),
                 "hookleftarrow" => "arrow.l.hook".to_owned(),
                 "hookrightarrow" => "arrow.r.hook".to_owned(),
+                "hphantom" => format!("#box(height: 0pt, hide[${}$])", latex_to_typst(scanner.next_param().unwrap())),
+                "hspace" => format!("#h({})", scanner.next_param().unwrap()),
                 // I
                 "i" | "imath" => "dotless.i".to_owned(),
                 "iff" | "Longleftrightarrow" => "<==>".to_owned(),
@@ -547,7 +543,9 @@ pub fn latex_to_typst(latex: String) -> String {
                 "mapsto" => "arrow.r.bar".to_owned(),
                 "mathbb" => format!("bb({})", latex_to_typst(scanner.next_param().unwrap())),
                 "mathbf" => format!("bold({})", latex_to_typst(scanner.next_param().unwrap())),
+                "mathbin" => format!("#math.op(\"{}\")", typ::escape_string(scanner.next_param().unwrap())),
                 "mathcal" => format!("cal({})", latex_to_typst(scanner.next_param().unwrap())),
+                "mathclap" => format!("#box(width: 0pt, {})", latex_to_typst(scanner.next_param().unwrap())),
                 "mathclose" => format!("#h(0pt) {}", latex_to_typst(scanner.next_param().unwrap())),
                 "mathfrak" => format!("frak({})", latex_to_typst(scanner.next_param().unwrap())),
                 "mathit" => format!("italic({})", latex_to_typst(scanner.next_param().unwrap())),
@@ -557,6 +555,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "mathrm" => format!("upright({})", latex_to_typst(scanner.next_param().unwrap())),
                 "mathsf" => format!("sans({})", latex_to_typst(scanner.next_param().unwrap())),
                 "mathsterling" => "pound".to_owned(),
+                "mathstrut" => "#hide(box(width: 0pt, \")\"))".to_owned(),
                 "measuredangle" => "angle.arc".to_owned(),
                 "medspace" => "space.med".to_owned(),
                 "mho" => "ohm.inv".to_owned(),
@@ -564,6 +563,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "minuso" => "⊖".to_owned(),
                 "models" | "vDash" => "tack.r.double".to_owned(),
                 "mp" => "minus.plus".to_owned(),
+                "mskip" => format!("#h({})", scanner.next_param().unwrap()),
                 // N
                 "N" | "natnums" => "NN".to_owned(),
                 "natural" => "♮".to_owned(),
@@ -616,13 +616,10 @@ pub fn latex_to_typst(latex: String) -> String {
                 "oiint" => "integral.surf".to_owned(),
                 "oint" => "integral.cont".to_owned(),
                 "ominus" => "minus.circle".to_owned(),
-                "operatorname" => format!(
-                    "#math.op(\"{}\")",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
+                "operatorname" => format!("#math.op(\"{}\")", typ::escape_string(scanner.next_param().unwrap())),
                 "operatorname*" | "operatornamewithlimits" => format!(
                     "#math.op(\"{}\", limits: true)",
-                    latex_to_typst(scanner.next_param().unwrap())
+                    typ::escape_string(scanner.next_param().unwrap())
                 ),
                 "oplus" => "plus.circle".to_owned(),
                 "origof" => "⊶".to_owned(),
@@ -652,7 +649,8 @@ pub fn latex_to_typst(latex: String) -> String {
                 // P
                 "P" => "pilcrow".to_owned(),
                 "partial" => "diff".to_owned(),
-                "prep" => "bot".to_owned(),
+                "perp" => "bot".to_owned(),
+                "phantom" => format!("#hide[${}$]", latex_to_typst(scanner.next_param().unwrap())),
                 "phi" => "phi.alt".to_owned(),
                 "pitchfork" => "⋔".to_owned(),
                 "plim" => "#math.op(\"plim\", limits: true)".to_owned(),
@@ -781,30 +779,16 @@ pub fn latex_to_typst(latex: String) -> String {
                 "text" | "textmd" | "textnormal" | "textrm" | "textup" => {
                     format!("#[{}]", latex_text_to_typst(scanner.next_param().unwrap()))
                 }
-                "textbf" => format!(
-                    "bold(#[{}])",
-                    latex_text_to_typst(scanner.next_param().unwrap())
-                ),
+                "textbf" => format!("bold(#[{}])", latex_text_to_typst(scanner.next_param().unwrap())),
                 "textcolor" => format!(
                     "#text(fill: {})[{}]",
                     latex_color_to_typst(scanner.next_param().unwrap()),
                     latex_text_to_typst(scanner.next_param().unwrap())
                 ),
-                "textit" => format!(
-                    "italic(#[{}])",
-                    latex_text_to_typst(scanner.next_param().unwrap())
-                ),
-                "textsf" => format!(
-                    "sans(#[{}])",
-                    latex_text_to_typst(scanner.next_param().unwrap())
-                ),
-                "textstyle" => {
-                    format!("inline({})", latex_to_typst(scanner.next_param().unwrap()))
-                }
-                "texttt" => format!(
-                    "mono(#[{}])",
-                    latex_text_to_typst(scanner.next_param().unwrap())
-                ),
+                "textit" => format!("italic(#[{}])", latex_text_to_typst(scanner.next_param().unwrap())),
+                "textsf" => format!("sans(#[{}])", latex_text_to_typst(scanner.next_param().unwrap())),
+                "textstyle" => format!("inline({})", latex_to_typst(scanner.next_param().unwrap())),
+                "texttt" => format!("mono(#[{}])", latex_text_to_typst(scanner.next_param().unwrap())),
                 "tfrac" => format!(
                     "inline(frac({}, {}))",
                     latex_to_typst(scanner.next_param().unwrap()),
@@ -829,10 +813,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "Uarr" | "uArr" | "Uparrow" => "arrow.t.double".to_owned(),
                 "uarr" | "uparrow" => "arrow.t".to_owned(),
                 "ulcorner" => "⌜".to_owned(),
-                "underbar" => format!(
-                    "underline({})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
+                "underbar" => format!("underline({})", latex_to_typst(scanner.next_param().unwrap())),
                 "underbrace" => {
                     let param1 = latex_to_typst(scanner.next_param().unwrap());
                     match scanner.peek() {
@@ -847,14 +828,8 @@ pub fn latex_to_typst(latex: String) -> String {
                         _ => format!("underbrace({})", param1),
                     }
                 }
-                "undergroup" => format!(
-                    "accent({}, turtle.b)",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "underline" => format!(
-                    "underline({})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
+                "undergroup" => format!("accent({}, turtle.b)", latex_to_typst(scanner.next_param().unwrap())),
+                "underline" => format!("underline({})", latex_to_typst(scanner.next_param().unwrap())),
                 "unlhd" => "lt.tri.eq".to_owned(),
                 "unrhd" => "gt.tri.eq".to_owned(),
                 "Updownarrow" => "arrow.t.b.double".to_owned(),
@@ -889,6 +864,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "vdash" => "tack.r".to_owned(),
                 "vdots" => "dots.v".to_owned(),
                 "veebar" => "⊻".to_owned(),
+                "vphantom" => format!("#box(width: 0pt, hide[${}$])", latex_to_typst(scanner.next_param().unwrap())),
                 "Vvdash" => "⊪".to_owned(),
                 // W
                 "wedge" => "and".to_owned(),
@@ -898,82 +874,25 @@ pub fn latex_to_typst(latex: String) -> String {
                 "widetilde" => format!("tilde({})", latex_to_typst(scanner.next_param().unwrap())),
                 "wr" => "wreath".to_owned(),
                 // X
-                "xcancel" => format!(
-                    "cancel(cross: #true, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xhookleftarrow" => format!(
-                    "xarrow(sym: arrow.l.hook, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xhookrightarrow" => format!(
-                    "xarrow(sym: arrow.r.hook, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xLeftarrow" => format!(
-                    "xarrow(sym: arrow.l.double, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xleftarrow" => format!(
-                    "xarrow(sym: arrow.l, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xleftharpoondown" => format!(
-                    "xarrow(sym: harpoon.lb, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xleftharpoonup" => format!(
-                    "xarrow(sym: harpoon.lt, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xLeftrightarrow" => format!(
-                    "xarrow(sym: arrow.l.r.double, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xleftrightarrow" => format!(
-                    "xarrow(sym: arrow.l.r, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xleftrightharpoons" => format!(
-                    "xarrow(sym: harpoons.ltrb, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xlongequal" => format!(
-                    "xarrow(sym: eq, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xmapsto" => format!(
-                    "xarrow(sym: arrow.r.bar, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xRightarrow" => format!(
-                    "xarrow(sym: arrow.r.double, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xrightarrow" => format!(
-                    "xarrow(sym: arrow.r, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xrightharpoondown" => format!(
-                    "xarrow(sym: harpoon.rb, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xrightharpoonup" => format!(
-                    "xarrow(sym: harpoon.rt, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xrightleftharpoons" => format!(
-                    "xarrow(sym: harpoons.rtlb, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xtwoheadleftarrow" => format!(
-                    "xarrow(sym: arrow.l.twohead, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
-                "xtwoheadrightarrow" => format!(
-                    "xarrow(sym: arrow.r.twohead, {})",
-                    latex_to_typst(scanner.next_param().unwrap())
-                ),
+                "xcancel" => format!("cancel(cross: #true, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xhookleftarrow" => format!("xarrow(sym: arrow.l.hook, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xhookrightarrow" => format!("xarrow(sym: arrow.r.hook, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xLeftarrow" => format!("xarrow(sym: arrow.l.double, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xleftarrow" => format!("xarrow(sym: arrow.l, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xleftharpoondown" => format!("xarrow(sym: harpoon.lb, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xleftharpoonup" => format!("xarrow(sym: harpoon.lt, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xLeftrightarrow" => format!("xarrow(sym: arrow.l.r.double, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xleftrightarrow" => format!("xarrow(sym: arrow.l.r, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xleftrightharpoons" => format!("xarrow(sym: harpoons.ltrb, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xlongequal" => format!("xarrow(sym: eq, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xmapsto" => format!("xarrow(sym: arrow.r.bar, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xRightarrow" => format!("xarrow(sym: arrow.r.double, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xrightarrow" => format!("xarrow(sym: arrow.r, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xrightharpoondown" => format!("xarrow(sym: harpoon.rb, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xrightharpoonup" => format!("xarrow(sym: harpoon.rt, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xrightleftharpoons" => format!("xarrow(sym: harpoons.rtlb, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xtwoheadleftarrow" => format!("xarrow(sym: arrow.l.twohead, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "xtwoheadrightarrow" => format!("xarrow(sym: arrow.r.twohead, {})", latex_to_typst(scanner.next_param().unwrap())),
                 // YZ
                 "Z" => "ZZ".to_owned(),
                 word => word.to_owned(),

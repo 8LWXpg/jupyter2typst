@@ -4,15 +4,16 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 
 ## TODOs
 
-- affect all
-- begin
-- binary
-- lr
-- no alternative
-- not sure
-- spacing
-- scripting
-- stacking
+- affect all - 18
+- begin - 9
+- binary - 6
+- lr - 5
+- no alternative - 16
+- not sure - 12
+- spacing - 7
+- scripting - 14
+- overlap - 8
+- TeX - 3
 
 ## References
 
@@ -22,6 +23,42 @@ something too long to fit in a table
   `#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))`
 - `rule`: `$1` is optional
   `#box(inset: (bottom: $1), box(fill: black, width: $2, height: $3))`
+
+## Begins
+
+| LaTeX         | Typst |
+| ------------- | ----- |
+| `align`       |       |
+| `align*`      |       |
+| `aligned`     |       |
+| `alignat`     |       |
+| `alignat*`    |       |
+| `alignedat`   |       |
+| `array`       |       |
+| `Bmatrix`     |       |
+| `Bmatrix*`    |       |
+| `bmatrix`     |       |
+| `bmatrix*`    |       |
+| `cases`       |       |
+| `CD`          |       |
+| `darray`      |       |
+| `dcases`      |       |
+| `equation`    |       |
+| `equation*`   |       |
+| `gather`      |       |
+| `gathered`    |       |
+| `matrix`      |       |
+| `matrix*`     |       |
+| `pmatrix`     |       |
+| `pmatrix*`    |       |
+| `rcases`      |       |
+| `smallmatrix` |       |
+| `split`       |       |
+| `Vmatrix`     |       |
+| `Vmatrix*`    |       |
+| `vmatrix`     |       |
+| `vmatrix*`    |       |
+
 
 ## Symbols
 
@@ -381,30 +418,30 @@ something too long to fit in a table
 
 ## H
 
-| LaTeX                         | Typst                  |
-| ----------------------------- | ---------------------- |
-| `\H`                          | `acute.double($1)`     |
-| `\Harr`                       | `<=>`                  |
-| `\hArr`                       | `<=>`                  |
-| `\harr`                       | `<->`                  |
-| `\hat`                        | `hat($1)`              |
-| `\hbar`                       | `planck.reduce`        |
-| `\hbox`                       | TODO#not sure          |
-| `\hdashline`                  | TODO#begin             |
-| `\hearts`                     | `♡`                    |
-| `\heartsuit`                  | `♡`                    |
-| `\hline`                      | TODO#begin             |
-| `\hom`                        | `hom`                  |
-| `\hookleftarrow`              | `arrow.l.hook`         |
-| `\hookrightarrow`             | `arrow.r.hook`         |
-| `\hphantom`                   | TODO#spacing           |
-| `\href`                       | not supported in ipynb |
-| `\hskip`                      | TODO#spacing           |
-| `\hslash`                     | `planck.reduce`        |
-| `\hspace`                     | TODO#spacing           |
-| `\htmlClass` and its variants | not supported in ipynb |
-| `\huge`                       | TODO#affect all        |
-| `\Huge`                       | TODO#affect all        |
+| LaTeX                         | Typst                           |
+| ----------------------------- | ------------------------------- |
+| `\H`                          | `acute.double($1)`              |
+| `\Harr`                       | `<=>`                           |
+| `\hArr`                       | `<=>`                           |
+| `\harr`                       | `<->`                           |
+| `\hat`                        | `hat($1)`                       |
+| `\hbar`                       | `planck.reduce`                 |
+| `\hbox`                       | TODO#not sure                   |
+| `\hdashline`                  | TODO#begin                      |
+| `\hearts`                     | `♡`                             |
+| `\heartsuit`                  | `♡`                             |
+| `\hline`                      | TODO#begin                      |
+| `\hom`                        | `hom`                           |
+| `\hookleftarrow`              | `arrow.l.hook`                  |
+| `\hookrightarrow`             | `arrow.r.hook`                  |
+| `\hphantom`                   | `#box(height: 0pt, hide[$$1$])` |
+| `\href`                       | not supported in ipynb          |
+| `\hskip`                      | TODO#TeX                        |
+| `\hslash`                     | `planck.reduce`                 |
+| `\hspace`                     | `#h($1)`                        |
+| `\htmlClass` and its variants | not supported in ipynb          |
+| `\huge`                       | TODO#affect all                 |
+| `\Huge`                       | TODO#affect all                 |
 
 ## I
 
@@ -445,7 +482,7 @@ something too long to fit in a table
 | `\kappa` | `kappa`             |
 | `\KaTeX` | `"KaTeX"`           |
 | `\ker`   | `ker`               |
-| `\kern`  | TODO#spacing        |
+| `\kern`  | TODO#TeX            |
 | `\Ket`   | `lr(\| $1 angle.r)` |
 | `\ket`   | `lr(\| $1 angle.r)` |
 
@@ -503,7 +540,7 @@ something too long to fit in a table
 | `\limits`                 | ommited              |
 | `\limsup`                 | `limsup`             |
 | `\ll`                     | `<<`                 |
-| `\llap`                   | TODO#stacking        |
+| `\llap`                   | TODO#overlap         |
 | `\llbracket`              | `bracket.l.double`   |
 | `\llcorner`               | `⌞`                  |
 | `\Lleftarrow`             | `arrow.l.triple`     |
@@ -543,53 +580,53 @@ something too long to fit in a table
 
 ## M
 
-| LaTeX              | Typst           |
-| ------------------ | --------------- |
-| `\maltese`         | `maltese`       |
-| `\mapsto`          | `arrow.r.bar`   |
-| `\mathbb`          | `bb($1)`        |
-| `\mathbf`          | `bold($1)`      |
-| `\mathbin`         | TODO#spacing    |
-| `\mathcal`         | `cal($1)`       |
-| `\mathchoise`      | TODO#spacing    |
-| `\mathclap`        | TODO#spacing    |
-| `\mathclose`       | `#h(0pt) $1`    |
-| `\mathellipsis`    | `...`           |
-| `\mathfrak`        | `frak($1)`      |
-| `\mathinner`       | TODO#spacing    |
-| `\mathit`          | `italic($1)`    |
-| `\mathllap`        | TODO#stacking   |
-| `\mathnormal`      | ommited         |
-| `\mathop`          | ommited         |
-| `\mathopen`        | `$1 #h(0pt)`    |
-| `\mathord`         | TODO#spacing    |
-| `\mathpunct`       | TODO#spacing    |
-| `\mathrel`         | TODO#spacing    |
-| `\mathrlap`        | TODO#stacking   |
-| `\mathring`        | `circle($1)`    |
-| `\mathrm`          | `upright($1)`   |
-| `\mathscr`         | TODO#font       |
-| `\mathsf`          | `sans($1)`      |
-| `\mathsterling`    | `pound`         |
-| `\mathstrut`       | TODO#spacing    |
-| `\mathtt`          | `mono($1)`      |
-| `\max`             | `max`           |
-| `\measuredangle`   | `angle.arc`     |
-| `\medspace`        | `#h(2em/9)`     |
-| `\mho`             | `ohm.inv`       |
-| `\mid`             | `\|`            |
-| `\middle`          | TODO#lr         |
-| `\minuscolon`      | `dash.colon`    |
-| `\minuscoloncolon` | `"−::"`         |
-| `\minuso`          | `⦵`             |
-| `\mkren`           | TODO#spacing    |
-| `\mod`             | `mod`           |
-| `\models`          | `tack.r.double` |
-| `\mp`              | `minus.plus`    |
-| `\mskip`           | TODO#spacing    |
-| `\Mu`              | `Mu`            |
-| `\mu`              | `mu`            |
-| `\multimap`        | `multimap`      |
+| LaTeX              | Typst                         |
+| ------------------ | ----------------------------- |
+| `\maltese`         | `maltese`                     |
+| `\mapsto`          | `arrow.r.bar`                 |
+| `\mathbb`          | `bb($1)`                      |
+| `\mathbf`          | `bold($1)`                    |
+| `\mathbin`         | `#math.op("$1")`              |
+| `\mathcal`         | `cal($1)`                     |
+| `\mathchoise`      | TODO#spacing                  |
+| `\mathclap`        | `#box(width: 0pt, $1)`        |
+| `\mathclose`       | `#h(0pt) $1`                  |
+| `\mathellipsis`    | `...`                         |
+| `\mathfrak`        | `frak($1)`                    |
+| `\mathinner`       | TODO#spacing                  |
+| `\mathit`          | `italic($1)`                  |
+| `\mathllap`        | TODO#overlap                  |
+| `\mathnormal`      | ommited                       |
+| `\mathop`          | ommited                       |
+| `\mathopen`        | `$1 #h(0pt)`                  |
+| `\mathord`         | TODO#spacing                  |
+| `\mathpunct`       | TODO#spacing                  |
+| `\mathrel`         | TODO#spacing                  |
+| `\mathrlap`        | TODO#overlap                  |
+| `\mathring`        | `circle($1)`                  |
+| `\mathrm`          | `upright($1)`                 |
+| `\mathscr`         | TODO#font                     |
+| `\mathsf`          | `sans($1)`                    |
+| `\mathsterling`    | `pound`                       |
+| `\mathstrut`       | `#hide(box(width: 0pt, ")"))` |
+| `\mathtt`          | `mono($1)`                    |
+| `\max`             | `max`                         |
+| `\measuredangle`   | `angle.arc`                   |
+| `\medspace`        | `#h(2em/9)`                   |
+| `\mho`             | `ohm.inv`                     |
+| `\mid`             | `\|`                          |
+| `\middle`          | TODO#lr                       |
+| `\minuscolon`      | `dash.colon`                  |
+| `\minuscoloncolon` | `"−::"`                       |
+| `\minuso`          | `⦵`                           |
+| `\mkren`           | TODO#TeX                      |
+| `\mod`             | `mod`                         |
+| `\models`          | `tack.r.double`               |
+| `\mp`              | `minus.plus`                  |
+| `\mskip`           | `#h($1)`                      |
+| `\Mu`              | `Mu`                          |
+| `\mu`              | `mu`                          |
+| `\multimap`        | `multimap`                    |
 
 ## N
 
@@ -693,7 +730,7 @@ something too long to fit in a table
 | `\Overrightarrow`         | TODO#no alternative                 |
 | `\overrightarrow`         | `arrow.r($1)`                       |
 | `\overrightharpoon`       | `accent($1, \u{20d1})`              |
-| `\overset`                | TODO#stacking                       |
+| `\overset`                | TODO#overlap                        |
 | `\owns`                   | `in.rev`                            |
 
 ## P
@@ -704,7 +741,7 @@ something too long to fit in a table
 | `\parallel`       | `parallel`                                  |
 | `\partial`        | `diff`                                      |
 | `\perp`           | `bot`                                       |
-| `\phantom`        | TODO#spacing                                |
+| `\phantom`        | `#hide[$$1$]`                               |
 | `\phase`          | TODO#no alternative                         |
 | `\Phi`            | `Phi`                                       |
 | `\phi`            | `phi.alt`                                   |
@@ -778,7 +815,7 @@ something too long to fit in a table
 | `\rightsquigarrow`   | `arrow.r.squiggly` |
 | `\rightthreetimes`   | `times.three.r`    |
 | `\risingdotseq`      | `≓`                |
-| `\rlap`              | TODO#stacking      |
+| `\rlap`              | TODO#overlap       |
 | `\rm`                | TODO#affect all    |
 | `\rmoustache`        | `⎱`                |
 | `\rparen`            | `)`                |
@@ -838,7 +875,7 @@ something too long to fit in a table
 | `\sqsupset`          | `supset.sq`               |
 | `\sqsupseteq`        | `supset.eq.sq`            |
 | `\ss`                | `ß`                       |
-| `\stackrel`          | TODO#stacking             |
+| `\stackrel`          | TODO#overlap              |
 | `\star`              | `star.op`                 |
 | `\sub`               | `subset`                  |
 | `\sube`              | `subset.eq`               |
@@ -848,7 +885,7 @@ something too long to fit in a table
 | `\subseteqq`         | `⫅`                       |
 | `\subsetneq`         | `subset.neq`              |
 | `\subsetneqq`        | `⫋`                       |
-| `\substack`          | TODO#stacking             |
+| `\substack`          | TODO#overlap              |
 | `\succ`              | `succ`                    |
 | `\succapprox`        | `succ.approx`             |
 | `\succcurlyeq`       | `succ.eq`                 |
@@ -961,7 +998,7 @@ some command here is text mode only
 | `\underline`           | `underline($1)`                       |
 | `\underlinesegment`    | TODO#no alternative                   |
 | `\underrightarrow`     | TODO#no alternative                   |
-| `\underset`            | TODO#stacking                         |
+| `\underset`            | TODO#overlap                          |
 | `\unlhd`               | `lt.tri.eq`                           |
 | `\unrhd`               | `gt.tri.eq`                           |
 | `\Uparrow`             | `arrow.t.double`                      |
@@ -980,54 +1017,54 @@ some command here is text mode only
 
 ## V
 
-| LaTeX               | Typst                |
-| ------------------- | -------------------- |
-| `\v`                | `caron($1)`          |
-| `\varDelta`         | `italic(Delta)`      |
-| `\varepsilon`       | `italic(epsilon)`    |
-| `\varGamma`         | `italic(Gamma)`      |
-| `\varinjlim`        | TODO#no alternative  |
-| `\varkappa`         | `italic(kappa)`      |
-| `\varLambda`        | `italic(Lambda)`     |
-| `\varliminf`        | TODO#no alternative  |
-| `\varlimsup`        | TODO#no alternative  |
-| `\varnothing`       | `italic(nothing)`    |
-| `\varOmega`         | `italic(Omega)`      |
-| `\varPhi`           | `italic(Phi)`        |
-| `\varphi`           | `italic(phi)`        |
-| `\varPi`            | `italic(Pi)`         |
-| `\varpi`            | `italic(pi.alt)`     |
-| `\varprojlim`       | TODO#no alternative  |
-| `\varpropto`        | `prop`               |
-| `\varPsi`           | `italic(Psi)`        |
-| `\varrho`           | `italic(rho.alt)`    |
-| `\varSigma`         | `italic(Sigma)`      |
-| `\varsigma`         | `italic(sigma.alt)`  |
-| `\varsubsetneq`     | `subset.neq`         |
-| `\varsubsetneqq`    | `⫋`                  |
-| `\varsupsetneq`     | `supset.neq`         |
-| `\varsupsetneqq`    | `⫌`                  |
-| `\varTheta`         | `italic(Theta)`      |
-| `\vartheta`         | `italic(theta)`      |
-| `\vartriangle`      | `triangle.stroked.t` |
-| `\vartriangleleft`  | `lt.tri`             |
-| `\vartriangleright` | `gt.tri`             |
-| `\varUpsilon`       | `italic(Upsilon)`    |
-| `\varXi`            | `italic(Xi)`         |
-| `\vcentcolon`       | `:`                  |
-| `\vcenter`          | TODO#not sure        |
-| `\Vdash`            | `⊩`                  |
-| `\vDash`            | `tack.r.double`      |
-| `\vdash`            | `tack.r`             |
-| `\vdots`            | `dots.v`             |
-| `\vec`              | `arrow($1)`          |
-| `\vee`              | `or`                 |
-| `\veebar`           | `⊻`                  |
-| `\verb`             | TODO#not sure        |
-| `\Vert`             | `parallel`           |
-| `\vert`             | `divides`            |
-| `\vphantom`         | TODO#spacing         |
-| `\Vvdash`           | `⊪`                  |
+| LaTeX               | Typst                          |
+| ------------------- | ------------------------------ |
+| `\v`                | `caron($1)`                    |
+| `\varDelta`         | `italic(Delta)`                |
+| `\varepsilon`       | `italic(epsilon)`              |
+| `\varGamma`         | `italic(Gamma)`                |
+| `\varinjlim`        | TODO#no alternative            |
+| `\varkappa`         | `italic(kappa)`                |
+| `\varLambda`        | `italic(Lambda)`               |
+| `\varliminf`        | TODO#no alternative            |
+| `\varlimsup`        | TODO#no alternative            |
+| `\varnothing`       | `italic(nothing)`              |
+| `\varOmega`         | `italic(Omega)`                |
+| `\varPhi`           | `italic(Phi)`                  |
+| `\varphi`           | `italic(phi)`                  |
+| `\varPi`            | `italic(Pi)`                   |
+| `\varpi`            | `italic(pi.alt)`               |
+| `\varprojlim`       | TODO#no alternative            |
+| `\varpropto`        | `prop`                         |
+| `\varPsi`           | `italic(Psi)`                  |
+| `\varrho`           | `italic(rho.alt)`              |
+| `\varSigma`         | `italic(Sigma)`                |
+| `\varsigma`         | `italic(sigma.alt)`            |
+| `\varsubsetneq`     | `subset.neq`                   |
+| `\varsubsetneqq`    | `⫋`                            |
+| `\varsupsetneq`     | `supset.neq`                   |
+| `\varsupsetneqq`    | `⫌`                            |
+| `\varTheta`         | `italic(Theta)`                |
+| `\vartheta`         | `italic(theta)`                |
+| `\vartriangle`      | `triangle.stroked.t`           |
+| `\vartriangleleft`  | `lt.tri`                       |
+| `\vartriangleright` | `gt.tri`                       |
+| `\varUpsilon`       | `italic(Upsilon)`              |
+| `\varXi`            | `italic(Xi)`                   |
+| `\vcentcolon`       | `:`                            |
+| `\vcenter`          | TODO#not sure                  |
+| `\Vdash`            | `⊩`                            |
+| `\vDash`            | `tack.r.double`                |
+| `\vdash`            | `tack.r`                       |
+| `\vdots`            | `dots.v`                       |
+| `\vec`              | `arrow($1)`                    |
+| `\vee`              | `or`                           |
+| `\veebar`           | `⊻`                            |
+| `\verb`             | TODO#not sure                  |
+| `\Vert`             | `parallel`                     |
+| `\vert`             | `divides`                      |
+| `\vphantom`         | `#box(width: 0pt, hide[$$!$])` |
+| `\Vvdash`           | `⊪`                            |
 
 ## W
 

@@ -8,6 +8,7 @@ use url::Url;
 
 use crate::IMG_PATH;
 mod katex;
+mod typ;
 
 use once_cell::sync::Lazy;
 
@@ -103,7 +104,7 @@ fn ast_parse(node: Node) -> String {
             context.push_str("\n\n");
         }
         Node::Html(node) => {
-            context.push_str(&escape_content(html_to_typst(&node.value)));
+            context.push_str(&typ::escape_content(html_to_typst(&node.value)));
         }
         Node::Image(node) => match Url::parse(&node.url) {
             Ok(url) => match url.scheme() {
@@ -217,7 +218,7 @@ fn ast_parse(node: Node) -> String {
             context.push_str("\n");
         }
         Node::Text(node) => {
-            context.push_str(&escape_content(node.value));
+            context.push_str(&typ::escape_content(node.value));
         }
         Node::ThematicBreak(_) => {
             context.push_str("#line(length: 100%)\n");
@@ -328,22 +329,6 @@ fn download_image(url: Url) -> String {
     file.write_all(&img_bytes).unwrap();
     println!("Downloaded image to {}", path);
     path
-}
-
-pub fn escape_content(s: String) -> String {
-    // https://typst.app/docs/reference/syntax/#markup
-    const ESCAPE: &[char] = &[
-        '*', '_', '`', '<', '>', '@', '=', '-', '+', '/', '$', '\\', '\'', '"', '~', '#',
-    ];
-
-    let mut result = String::new();
-    for c in s.chars() {
-        if ESCAPE.contains(&c) {
-            result.push('\\');
-        }
-        result.push(c);
-    }
-    result
 }
 
 pub fn html_to_typst(html: &str) -> String {
