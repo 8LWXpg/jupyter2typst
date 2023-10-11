@@ -53,7 +53,7 @@ pub fn ipynb_parse(json: Value) -> String {
         output.push_str("#block[\n");
         match cell["cell_type"].as_str().unwrap() {
             "markdown" => {
-                output.push_str(&&md::md_to_typst(
+                output.push_str(&md::md_to_typst(
                     cell["source"]
                         .as_array()
                         .unwrap()

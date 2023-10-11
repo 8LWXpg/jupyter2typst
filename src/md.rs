@@ -59,7 +59,7 @@ fn ast_parse(node: Node) -> String {
             context.push_str("]\n\n");
         }
         Node::Break(_) => {
-            context.push_str("\n");
+            context.push('\n');
         }
         Node::Code(node) => {
             context.push_str(&format!(
@@ -74,14 +74,14 @@ fn ast_parse(node: Node) -> String {
             for child in node.children {
                 context.push_str(&ast_parse(child));
             }
-            context.push_str("]");
+            context.push(']');
         }
         Node::Emphasis(node) => {
             context.push_str("#emph[");
             for child in node.children {
                 context.push_str(&ast_parse(child));
             }
-            context.push_str("]");
+            context.push(']');
         }
         Node::FootnoteDefinition(_) => {
             // do nothing
@@ -138,7 +138,7 @@ fn ast_parse(node: Node) -> String {
             for child in node.children {
                 context.push_str(&ast_parse(child));
             }
-            context.push_str("]");
+            context.push(']');
         }
         Node::List(node) => {
             for child in node.children {
@@ -147,10 +147,10 @@ fn ast_parse(node: Node) -> String {
                 item = item.trim_end_matches("\n").replace("\n", "\n  ") + "\n";
                 context.push_str(&item);
                 if node.spread {
-                    context.push_str("\n");
+                    context.push('\n');
                 }
             }
-            context.push_str("\n");
+            context.push('\n');
         }
         Node::ListItem(node) => {
             for child in node.children {
@@ -165,7 +165,7 @@ fn ast_parse(node: Node) -> String {
             for child in node.children {
                 context.push_str(&ast_parse(child));
             }
-            context.push_str("\n");
+            context.push('\n');
         }
         Node::Root(node) => {
             for child in node.children {
@@ -173,11 +173,11 @@ fn ast_parse(node: Node) -> String {
             }
         }
         Node::Strong(node) => {
-            context.push_str("*");
+            context.push('*');
             for child in node.children {
                 context.push_str(&ast_parse(child));
             }
-            context.push_str("*");
+            context.push('*');
         }
         Node::Table(node) => {
             context.push_str("#table(\n");
@@ -203,7 +203,7 @@ fn ast_parse(node: Node) -> String {
             context.push_str(")\n\n");
         }
         Node::TableCell(node) => {
-            context.push_str("[");
+            context.push('[');
             for child in node.children {
                 context.push_str(&ast_parse(child));
             }
@@ -215,7 +215,7 @@ fn ast_parse(node: Node) -> String {
                 context.push_str(&ast_parse(child));
             }
             context.pop();
-            context.push_str("\n");
+            context.push('\n');
         }
         Node::Text(node) => {
             context.push_str(&typ::escape_content(node.value));
@@ -227,7 +227,8 @@ fn ast_parse(node: Node) -> String {
             println!("unhandled node: {:?}", node);
         }
     }
-    return context;
+
+    context
 }
 
 fn footnote_grep(node: Node) -> HashMap<String, String> {
