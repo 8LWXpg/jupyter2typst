@@ -360,26 +360,3 @@ mod tests {
         );
     }
 }
-
-#[cfg(test)]
-mod mdast_test {
-    use super::*;
-
-    #[test]
-    fn math_test() {
-        println!(
-            "{:?}",
-            to_mdast(
-                "$$\nnot inline\n$$\n$$not inline$$\n$inline$",
-                &ParseOptions {
-                    constructs: Constructs {
-                        math_flow: true,
-                        math_text: true,
-                        ..Constructs::gfm()
-                    },
-                    ..Default::default()
-                }
-            )
-        )
-    }
-}
