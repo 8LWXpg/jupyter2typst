@@ -489,7 +489,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "impliedby" | "Longleftarrow" => "<==".to_owned(),
                 "implies" => "==>".to_owned(),
                 "infin" | "infty" => "infinity".to_owned(),
-                "injlim" => "#math.op(\"inj\u{2009}lim\", limits: true)".to_owned(),
+                "injlim" => "#math.op(\"inj\\u{{2009}}lim\", limits: true)".to_owned(),
                 "int" | "intop" => "integral".to_owned(),
                 "intercal" => "⊺".to_owned(),
                 "isin" => "in".to_owned(),
@@ -639,11 +639,12 @@ pub fn latex_to_typst(latex: String) -> String {
                         _ => format!("overbrace({})", param1),
                     }
                 }
-                "overgroup" => format!("accent({}, turtle.t)", latex_to_typst(scanner.next_param().unwrap())),
+                "overgroup" => format!("accent({}, \\u{{0311}})", latex_to_typst(scanner.next_param().unwrap())),
                 "overleftarrow" => format!("arrow.l({})", latex_to_typst(scanner.next_param().unwrap())),
                 "overleftharpoon" => format!("accent({}, \\u{{20d0}}", latex_to_typst(scanner.next_param().unwrap())),
                 "overleftrightarrow" => format!("accent({}, \\u{{20e1}})", latex_to_typst(scanner.next_param().unwrap())),
                 "overline" => format!("overline({})", latex_to_typst(scanner.next_param().unwrap())),
+                "overlinesegment" => format!("accent({}, \\u{{20e9}})", latex_to_typst(scanner.next_param().unwrap())),
                 "overrightarrow" | "vec" => format!("arrow({})", latex_to_typst(scanner.next_param().unwrap())),
                 "overrightharpoon" => format!("accent({}, \\u{{20d1}})", latex_to_typst(scanner.next_param().unwrap())),
                 // P
@@ -665,7 +666,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "precsim" => "prec.tilde".to_owned(),
                 "prime" | "rq" => "'".to_owned(),
                 "prod" => "product".to_owned(),
-                "projlim" => "#math.op(\"proj\u{2009}lim\", limits: true)".to_owned(),
+                "projlim" => "#math.op(\"proj\\u{{2009}}lim\", limits: true)".to_owned(),
                 "propto" | "varpropto" => "prop".to_owned(),
                 // QR
                 "qquad" => "#h(2em)".to_owned(),
@@ -828,7 +829,8 @@ pub fn latex_to_typst(latex: String) -> String {
                         _ => format!("underbrace({})", param1),
                     }
                 }
-                "undergroup" => format!("accent({}, turtle.b)", latex_to_typst(scanner.next_param().unwrap())),
+                "undergroup" => format!("accent({}, \\u{{032e}})", latex_to_typst(scanner.next_param().unwrap())),
+                "underleftrightarrow" => format!("accent({}, \\u{{034d}})", latex_to_typst(scanner.next_param().unwrap())),
                 "underline" => format!("underline({})", latex_to_typst(scanner.next_param().unwrap())),
                 "unlhd" => "lt.tri.eq".to_owned(),
                 "unrhd" => "gt.tri.eq".to_owned(),

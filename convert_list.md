@@ -8,7 +8,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 - begin - 9
 - binary - 6
 - lr - 5
-- no alternative - 16
+- no alternative - 12
 - not sure - 12
 - spacing - 7
 - scripting - 14
@@ -721,12 +721,12 @@ something too long to fit in a table
 | `\otimes`                 | `times.circle`                      |
 | `\over`                   | TODO#binary                         |
 | `\overbrace`              | `overbrace($1)` `overbrace($1, $2)` |
-| `\overgroup`              | `accent($1, turtle.t)`              |
+| `\overgroup`              | `accent($1, \u{0311})`              |
 | `\overleftarrow`          | `arrow.l($1)`                       |
 | `\overleftharpoon`        | `accent($1, \u{20d0})`              |
 | `\overleftrightarrow`     | `accent($1, \u{20e1})`              |
 | `\overline`               | `overline($1)`                      |
-| `\overlinesegment`        | TODO#no alternative                 |
+| `\overlinesegment`        | `accent($1, \u{20e9})`              |
 | `\Overrightarrow`         | TODO#no alternative                 |
 | `\overrightarrow`         | `arrow.r($1)`                       |
 | `\overrightharpoon`       | `accent($1, \u{20d1})`              |
@@ -992,9 +992,9 @@ some command here is text mode only
 | `\ulcorner`            | `⌜`                                   |
 | `\underbar`            | `underline($1)`                       |
 | `\underbrace`          | `underbrace($1)` `underbrace($1, $2)` |
-| `\undergroup`          | `accent($1, turtle.b)`                |
+| `\undergroup`          | `accent($1, \u{032e})`                |
 | `\underleftarrow`      | TODO#no alternative                   |
-| `\underleftrightarrow` | TODO#no alternative                   |
+| `\underleftrightarrow` | `accent($1, \u{034d})`                |
 | `\underline`           | `underline($1)`                       |
 | `\underlinesegment`    | TODO#no alternative                   |
 | `\underrightarrow`     | TODO#no alternative                   |
