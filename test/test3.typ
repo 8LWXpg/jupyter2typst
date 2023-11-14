@@ -62,7 +62,11 @@ Let\'s produce an error:
 
 ]
 #block[
-#result-block("UndefVarError: `i` not definedStacktrace: [1] top-level scope   @ In[24]:1")
+#result-block("UndefVarError: `i` not defined
+
+Stacktrace:
+ [1] top-level scope
+   @ In[24]:1")
 ]
 #block[
 == Rich Outputs

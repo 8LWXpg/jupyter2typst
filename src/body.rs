@@ -177,7 +177,7 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                     .iter()
                     .map(|v| v.as_str().unwrap())
                     .collect::<Vec<&str>>()
-                    .join(""),
+                    .join("\n"),
             )),
             other => {
                 println!("unhandled output type: {other}\n");

@@ -218,8 +218,11 @@ And here is an error. You can mark notebook cells as \"expected to error\" by ad
 
 ]
 #block[
-#result-block("[1;31m---------------------------------------------------------------------------[0m[1;31mNameError[0m                                 Traceback (most recent call last)Cell [1;32mIn[9], line 1[0m
+#result-block("[1;31m---------------------------------------------------------------------------[0m
+[1;31mNameError[0m                                 Traceback (most recent call last)
+Cell [1;32mIn[9], line 1[0m
 [1;32m----> 1[0m this_will_error
+
 [1;31mNameError[0m: name 'this_will_error' is not defined")
 ]
 #block[
