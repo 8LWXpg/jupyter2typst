@@ -1,4 +1,5 @@
 #import "template.typ": *
+#show: template
 
 #block[
 \<font color\=\"red\"\>\<H1\>LATEX INFO\<\/H1\>\<\/font\>

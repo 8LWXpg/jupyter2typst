@@ -30,3 +30,8 @@
     block(fill: luma(240), height: size.height + 2*inset, inset: inset, radius: (right: radius), width: 100%, body),
   )
 })
+
+#let template(body) = {
+  set page(height: auto)
+  body
+}

@@ -1,4 +1,4 @@
-mod inc;
+mod body;
 
 use once_cell::sync::OnceCell;
 use serde_json::Value;
@@ -52,7 +52,7 @@ fn main() {
     env::set_current_dir(Path::new(&args.input).parent().unwrap())
         .expect("Failed to set current directory");
     fs::create_dir_all(IMG_PATH.get().unwrap()).expect("Failed to create image directory");
-    let output = inc::ipynb_parse(json);
+    let output = body::ipynb_parse(json);
 
     let out_file = args.output.unwrap_or_else(|| {
         Path::new(&args.input)
