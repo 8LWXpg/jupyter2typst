@@ -26,6 +26,8 @@ Don't forget to download the [template](https://github.com/8LWXpg/jupyter2typst/
 curl 'https://raw.githubusercontent.com/8LWXpg/jupyter2typst/master/test/template.typ' > template.typ
 ```
 
+modify the `template.typ` to fit your needs.
+
 ## Usage
 
 ```bash
