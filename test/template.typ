@@ -1,4 +1,4 @@
-#import "@preview/ansi-render:0.5.0": *
+#import "@preview/ansi-render:0.5.1": *
 #import "@preview/xarrow:0.1.1": xarrow as _xarrow
 
 // workaround before set is implemented

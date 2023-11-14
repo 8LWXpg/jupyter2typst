@@ -22,7 +22,7 @@ struct Args {
     #[argh(option, short = 'o')]
     output: Option<String>,
 
-    /// the output image path
+    /// the output image path, defaults to "img"
     #[argh(option, short = 'i', default = "String::from(\"img\")")]
     img_path: String,
 }
