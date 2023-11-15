@@ -5,11 +5,11 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 ## TODOs
 
 - affect all - 18
-- begin - 9
+- begin - 4
 - binary - 6
 - lr - 5
 - no alternative - 12
-- not sure - 12
+- not sure - 11
 - spacing - 7
 - scripting - 14
 - overlap - 8
@@ -70,7 +70,7 @@ something too long to fit in a table
 | `\#`     | `\#`             |
 | `%`      | `//`             |
 | `\%`     | `%`              |
-| `&`      | TODO#begin       |
+| `&`      | `&`              |
 | `\&`     | `\&`             |
 | `'`      | `'`              |
 | `\'`     | `acute($1)`      |
@@ -92,7 +92,7 @@ something too long to fit in a table
 | `\>`     | `#h(2em/9)`      |
 | `[`      | `[`              |
 | `]`      | `]`              |
-| `{}`     | TODO#not sure    |
+| `{}`     | ignored          |
 | `\{`     | `{`              |
 | `\}`     | `}`              |
 | `\|`     | `\|`             |
@@ -152,8 +152,8 @@ something too long to fit in a table
 | `\barwedge`             | `⊼`                         |
 | `\Bbb`                  | `bb($1)`                    |
 | `\bcancel`              | `cancel(inverted: #true)`   |
-| `\begin`                | TODO#begin                  |
-| `\begingroup`           | TODO#begin                  |
+| `\begin`                | see [begins](#Begins)       |
+| `\begingroup`           | ignored                     |
 | `Beta`                  | `Beta`                      |
 | `\beta`                 | `beta`                      |
 | `\beth`                 | `beth`                      |
@@ -265,7 +265,7 @@ something too long to fit in a table
 | `\cot`              | `cot`                   |
 | `\cotg`             | `#math.op("cotg")`      |
 | `\coth`             | `coth`                  |
-| `\cr`               | TODO#begin              |
+| `\cr`               | `;`                     |
 | `\csc`              | `csc`                   |
 | `\ctg`              | `ctg`                   |
 | `\cth`              | `#math.op("cth")`       |
@@ -338,35 +338,35 @@ something too long to fit in a table
 
 ## E
 
-| LaTeX               | Typst          |
-| ------------------- | -------------- |
-| `\edef`             | TODO#scripting |
-| `\ell`              | `ell`          |
-| `\empty`            | `emptyset`     |
-| `\emptyset`         | `emptyset`     |
-| `\end`              | TODO#begin     |
-| `\endgroup`         | TODO#scripting |
-| `\enspace`          | `space.en`     |
-| `\Epsilon`          | `Epsilon`      |
-| `\epsilon`          | `epsilon.alt`  |
-| `\eqcirc`           | `≖`            |
-| `\Eqcolon`          | `"−::"`        |
-| `\eqcolon`          | `dash.colon`   |
-| `\Eqqcolon`         | `"=::"`        |
-| `\eqqcolon`         | `=:`           |
-| `\eqsim`            | `minus.tilde`  |
-| `\eqslantgtr`       | `⪖`            |
-| `\eqslantless`      | `⪕`            |
-| `\equalscolon`      | `=:`           |
-| `\equalscoloncolon` | `"=::"`        |
-| `\equiv`            | `equiv`        |
-| `\Eta`              | `Eta`          |
-| `\eta`              | `eta`          |
-| `\eth`              | `ð`            |
-| `\exist`            | `exists`       |
-| `\exists`           | `exists`       |
-| `\exp`              | `exp`          |
-| `\expandafter`      | TODO#scripting |
+| LaTeX               | Typst                 |
+| ------------------- | --------------------- |
+| `\edef`             | TODO#scripting        |
+| `\ell`              | `ell`                 |
+| `\empty`            | `emptyset`            |
+| `\emptyset`         | `emptyset`            |
+| `\end`              | see [begins](#Begins) |
+| `\endgroup`         | TODO#scripting        |
+| `\enspace`          | `space.en`            |
+| `\Epsilon`          | `Epsilon`             |
+| `\epsilon`          | `epsilon.alt`         |
+| `\eqcirc`           | `≖`                   |
+| `\Eqcolon`          | `"−::"`               |
+| `\eqcolon`          | `dash.colon`          |
+| `\Eqqcolon`         | `"=::"`               |
+| `\eqqcolon`         | `=:`                  |
+| `\eqsim`            | `minus.tilde`         |
+| `\eqslantgtr`       | `⪖`                   |
+| `\eqslantless`      | `⪕`                   |
+| `\equalscolon`      | `=:`                  |
+| `\equalscoloncolon` | `"=::"`               |
+| `\equiv`            | `equiv`               |
+| `\Eta`              | `Eta`                 |
+| `\eta`              | `eta`                 |
+| `\eth`              | `ð`                   |
+| `\exist`            | `exists`              |
+| `\exists`           | `exists`              |
+| `\exp`              | `exp`                 |
+| `\expandafter`      | TODO#scripting        |
 
 ## F
 
@@ -537,7 +537,7 @@ something too long to fit in a table
 | `\lhd`                    | `lt.tri`             |
 | `\lim`                    | `lim`                |
 | `\liminf`                 | `liminf`             |
-| `\limits`                 | ommited              |
+| `\limits`                 | ignored              |
 | `\limsup`                 | `limsup`             |
 | `\ll`                     | `<<`                 |
 | `\llap`                   | TODO#overlap         |
@@ -596,8 +596,8 @@ something too long to fit in a table
 | `\mathinner`       | TODO#spacing                  |
 | `\mathit`          | `italic($1)`                  |
 | `\mathllap`        | TODO#overlap                  |
-| `\mathnormal`      | ommited                       |
-| `\mathop`          | ommited                       |
+| `\mathnormal`      | ignored                       |
+| `\mathop`          | ignored                       |
 | `\mathopen`        | `$1 #h(0pt)`                  |
 | `\mathord`         | TODO#spacing                  |
 | `\mathpunct`       | TODO#spacing                  |
@@ -664,7 +664,7 @@ something too long to fit in a table
 | `\nobreak`          | TODO#spacing           |
 | `\nobreakspace`     | `space.nobreak`        |
 | `\noexpand`         | TODO#scripting         |
-| `\nolimits`         | ommited                |
+| `\nolimits`         | ignored                |
 | `\nonumber`         | TODO#begin             |
 | `\normalsize`       | TODO#affect all        |
 | `\notin`            | `in.not`               |
@@ -775,58 +775,58 @@ something too long to fit in a table
 
 ## QR
 
-| LaTeX                | Typst              |
-| -------------------- | ------------------ |
-| `\qquad`             | `#h(2em)`          |
-| `\quad`              | `space.quad`       |
-| `\R`                 | `RR`               |
-| `\r`                 | `circle($1)`       |
-| `\raisebox`          | TODO#not sure      |
-| `\rang`              | `angle.r`          |
-| `\rangle`            | `angle.r`          |
-| `\Rarr`              | `=>`               |
-| `\rArr`              | `=>`               |
-| `\rarr`              | `->`               |
-| `\ratio`             | `:`                |
-| `\rBrace`            | `⦄`                |
-| `\rbrace`            | `}`                |
-| `\rbrack`            | `]`                |
-| `\rceil`             | `⌉`                |
-| `\Re`                | `Re`               |
-| `\real`              | `Re`               |
-| `\Reals`             | `RR`               |
-| `\reals`             | `RR`               |
-| `\renewcommand`      | TODO#scripting     |
-| `\restriction`       | `harpoon.tr`       |
-| `\rfloor`            | `⌋`                |
-| `\rgroup`            | `turtle.r`         |
-| `\rhd`               | `gt.tri`           |
-| `\Rho`               | `Rho`              |
-| `\rho`               | `rho`              |
-| `\right`             | TODO#lr            |
-| `\Rightarrow`        | `=>`               |
-| `\rightarrow`        | `->`               |
-| `\rightarrowtail`    | `>->`              |
-| `\rightharpoondown`  | `harpoon.rb`       |
-| `\rightharpoonup`    | `harpoon.rt`       |
-| `\rightleftarrows`   | `arrows.rl`        |
-| `\rightleftharpoons` | `harpoons.rtlb`    |
-| `\rightrightarrows`  | `arrows.rr`        |
-| `\rightsquigarrow`   | `arrow.r.squiggly` |
-| `\rightthreetimes`   | `times.three.r`    |
-| `\risingdotseq`      | `≓`                |
-| `\rlap`              | TODO#overlap       |
-| `\rm`                | TODO#affect all    |
-| `\rmoustache`        | `⎱`                |
-| `\rparen`            | `)`                |
-| `\rq`                | `'`                |
-| `rrbracket`          | `bracket.r.double` |
-| `\Rrightarrow`       | `arrow.r.triple`   |
-| `\Rsh`               | `↱`                |
-| `\rtimes`            | `times.r`          |
-| `\rule`              | [ref](#references) |
-| `\rVert`             | `parallel`         |
-| `\rvert`             | `divides`          |
+| LaTeX                | Typst                      |
+| -------------------- | -------------------------- |
+| `\qquad`             | `#h(2em)`                  |
+| `\quad`              | `space.quad`               |
+| `\R`                 | `RR`                       |
+| `\r`                 | `circle($1)`               |
+| `\raisebox`          | `#text(baseline: -$1)[$2]` |
+| `\rang`              | `angle.r`                  |
+| `\rangle`            | `angle.r`                  |
+| `\Rarr`              | `=>`                       |
+| `\rArr`              | `=>`                       |
+| `\rarr`              | `->`                       |
+| `\ratio`             | `:`                        |
+| `\rBrace`            | `⦄`                        |
+| `\rbrace`            | `}`                        |
+| `\rbrack`            | `]`                        |
+| `\rceil`             | `⌉`                        |
+| `\Re`                | `Re`                       |
+| `\real`              | `Re`                       |
+| `\Reals`             | `RR`                       |
+| `\reals`             | `RR`                       |
+| `\renewcommand`      | TODO#scripting             |
+| `\restriction`       | `harpoon.tr`               |
+| `\rfloor`            | `⌋`                        |
+| `\rgroup`            | `turtle.r`                 |
+| `\rhd`               | `gt.tri`                   |
+| `\Rho`               | `Rho`                      |
+| `\rho`               | `rho`                      |
+| `\right`             | TODO#lr                    |
+| `\Rightarrow`        | `=>`                       |
+| `\rightarrow`        | `->`                       |
+| `\rightarrowtail`    | `>->`                      |
+| `\rightharpoondown`  | `harpoon.rb`               |
+| `\rightharpoonup`    | `harpoon.rt`               |
+| `\rightleftarrows`   | `arrows.rl`                |
+| `\rightleftharpoons` | `harpoons.rtlb`            |
+| `\rightrightarrows`  | `arrows.rr`                |
+| `\rightsquigarrow`   | `arrow.r.squiggly`         |
+| `\rightthreetimes`   | `times.three.r`            |
+| `\risingdotseq`      | `≓`                        |
+| `\rlap`              | TODO#overlap               |
+| `\rm`                | TODO#affect all            |
+| `\rmoustache`        | `⎱`                        |
+| `\rparen`            | `)`                        |
+| `\rq`                | `'`                        |
+| `rrbracket`          | `bracket.r.double`         |
+| `\Rrightarrow`       | `arrow.r.triple`           |
+| `\Rsh`               | `↱`                        |
+| `\rtimes`            | `times.r`                  |
+| `\rule`              | [ref](#references)         |
+| `\rVert`             | `parallel`                 |
+| `\rvert`             | `divides`                  |
 
 ## S
 

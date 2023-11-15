@@ -8,13 +8,12 @@ use std::{
     io::Write,
 };
 
+#[path = "katex.rs"]
+mod katex;
 #[path = "md.rs"]
 mod md;
 #[path = "typ.rs"]
 mod typ;
-
-#[path = "katex.rs"]
-mod katex;
 
 static LANG: OnceCell<String> = OnceCell::new();
 static TEMPLATE: &str = "#import \"template.typ\": *\n#show: template\n\n";
@@ -150,7 +149,6 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                         ),
                     ))
                 } else if let Some(text) = data["text/latex"].as_array() {
-                    // TODO only support KaTeX currently
                     context.push_str(&katex::text_to_typst(
                         text.iter()
                             .map(|v| v.as_str().unwrap())
@@ -159,7 +157,6 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                             .replace("$$", "$"),
                     ))
                 } else if let Some(text) = data["text/html"].as_array() {
-                    // TODO test html
                     context.push_str(&md::html_to_typst(
                         text.iter()
                             .map(|v| v.as_str().unwrap())

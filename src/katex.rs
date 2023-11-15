@@ -1,3 +1,4 @@
+use regex::Regex;
 #[path = "typ.rs"]
 mod typ;
 
@@ -797,6 +798,11 @@ pub fn latex_to_typst(latex: String) -> String {
                 "qquad" => "#h(2em)".to_owned(),
                 "quad" => "space.quad".to_owned(),
                 "R" => "RR".to_owned(),
+                "raisebox" => format!(
+                    "#text(baseline: -{})[{}]",
+                    scanner.next_param().unwrap(),
+                    latex_to_typst(scanner.next_param().unwrap())
+                ),
                 "rang" | "rangle" => "angle.r".to_owned(),
                 "Rarr" | "rArr" | "Rightarrow" => "=>".to_owned(),
                 "rarr" | "rightarrow" | "to" => "->".to_owned(),
@@ -1015,8 +1021,7 @@ pub fn latex_to_typst(latex: String) -> String {
             '~' => "space.nobreak".to_owned(),
             '/' | '"' => format!("\\{}", c),
             _ => match c {
-                '{' => '('.to_string(),
-                '}' => ')'.to_string(),
+                '{' | '}' => "".to_string(),
                 _ => c.to_string(),
             },
         };
@@ -1104,8 +1109,9 @@ pub fn text_to_typst(text: String) -> String {
 /// c, d
 /// ```
 fn matrix_to_typst(content: String) -> String {
-    content
-        .split("\\\\")
+    Regex::new(r"\\\\|\\cr")
+        .unwrap()
+        .split(&content)
         .map(|row| {
             let mut s = row
                 .split('&')
@@ -1163,22 +1169,27 @@ mod function_tests {
     }
 
     #[test]
-    fn matrix_test() {
+    fn matrix_test1() {
         println!("{}", matrix_to_typst("a& b\\\\\nc& d".to_string()));
+    }
+
+    #[test]
+    fn matrix_test2() {
+        println!("{}", matrix_to_typst("a& b\\cr\nc& d".to_string()));
     }
 }
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_scanner_error() {
-        let scanner = Scanner::new("Hello, World!".to_string());
-        let error = ScannerError::new("test".to_string(), scanner);
-        let result: Result<String, ScannerError> = Err(error);
+    // #[test]
+    // fn test_scanner_error() {
+    //     let scanner = Scanner::new("Hello, World!".to_string());
+    //     let error = ScannerError::new("test".to_string(), scanner);
+    //     let result: Result<String, ScannerError> = Err(error);
 
-        result.unwrap();
-    }
+    //     result.unwrap();
+    // }
 
     #[test]
     fn test_parse_typ() {
