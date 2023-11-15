@@ -130,7 +130,7 @@ impl Scanner {
         Ok(ret)
     }
 
-    pub fn next_param_optional(&mut self) -> Result<String, ScannerError> {
+    pub fn next_param_optional(&mut self) -> String {
         let mut ret = String::new();
 
         // trim whitespace
@@ -151,9 +151,9 @@ impl Scanner {
                     }
                 }
             }
-            _ => return Err(ScannerError::new("Expected '['".to_string(), self.clone())),
+            _ => return "".to_string(),
         }
-        Ok(ret)
+        ret
     }
 
     /// Return characters until one of the characters in `chars` is found.
@@ -178,6 +178,20 @@ impl Scanner {
                 break;
             }
             ret.push(c);
+        }
+        ret
+    }
+
+    /// Return characters until match the input string.
+    /// The ending string is consumed
+    pub fn until_string(&mut self, string: String) -> String {
+        let mut ret = String::new();
+        while let Some(c) = self.next() {
+            ret.push(c);
+            if ret.ends_with(&string) {
+                ret.truncate(ret.len() - string.len());
+                break;
+            }
         }
         ret
     }
@@ -262,6 +276,41 @@ pub fn latex_to_typst(latex: String) -> String {
                 "Bbb" => format!("bb({})", latex_to_typst(scanner.next_param().unwrap())),
                 "Bbbk" => "bb(k)".to_owned(),
                 "bcancel" => format!("cancel(inverted: #true, {})", latex_to_typst(scanner.next_param().unwrap())),
+                "begin" => {
+                    // skip numbering because there's a issue for numbering equation separately in Typst
+                    let param = scanner.next_param().unwrap();
+                    match param.as_str() {
+                        "align" | "align*" | "aligned" => latex_to_typst(scanner.until_string(format!("\\end{{{}}}", param))),
+                        "alignat" | "alignat*" | "alignedat" => {
+                            scanner.next_param().unwrap();
+                            latex_to_typst(scanner.until_string(format!("\\end{{{}}}", param)))
+                        }
+                        "array" => {
+                            // no alignment in matrix currently
+                            scanner.next_param().unwrap();
+                            format!(
+                                "mat({})",
+                                matrix_to_typst(scanner.until_string(format!("\\end{{{}}}", param)))
+                            )
+                        }
+                        "Bmatrix" | "Bmatrix*" => {
+                            // no alignment in matrix currently
+                            scanner.next_param_optional();
+                            format!(
+                                "mat(dilm: \"{{\", {})",
+                                matrix_to_typst(scanner.until_string(format!("\\end{{{}}}", param)))
+                            )
+                        }
+                        "bmatrix" | "bmatrix*" => {
+                            scanner.next_param_optional();
+                            format!(
+                                "mat(dilm: \"[\", {})",
+                                matrix_to_typst(scanner.until_string(format!("\\end{{{}}}", param)))
+                            )
+                        }
+                        _ => unreachable!()
+                    }
+                }
                 "between" => "≬".to_owned(),
                 "bigcap" => "sect.big".to_owned(),
                 "bigcirc" => "circle.stroked.big".to_owned(),
@@ -359,8 +408,8 @@ pub fn latex_to_typst(latex: String) -> String {
                 "colonsim" => ":tilde.op".to_owned(),
                 "colorbox" => format!(
                     "#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt), fill: {})[{}]",
-                    latex_color_to_typst(scanner.next_param().unwrap()),
-                    latex_text_to_typst(scanner.next_param().unwrap())
+                    color_to_typst(scanner.next_param().unwrap()),
+                    text_to_typst(scanner.next_param().unwrap())
                 ),
                 "complexes" => "CC".to_owned(),
                 "cong" => "tilde.equiv".to_owned(),
@@ -433,13 +482,13 @@ pub fn latex_to_typst(latex: String) -> String {
                 "fallingdotseq" => "≒".to_owned(),
                 "fbox" => format!(
                     "#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))[$upright({})$]",
-                    latex_text_to_typst(scanner.next_param().unwrap())
+                    text_to_typst(scanner.next_param().unwrap())
                 ),
                 "fcolorbox" => format!(
                     "#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))(stroke: {}, fill: {})[$upright({})$]",
-                    latex_color_to_typst(scanner.next_param().unwrap()),
-                    latex_color_to_typst(scanner.next_param().unwrap()),
-                    latex_text_to_typst(scanner.next_param().unwrap())
+                    color_to_typst(scanner.next_param().unwrap()),
+                    color_to_typst(scanner.next_param().unwrap()),
+                    text_to_typst(scanner.next_param().unwrap())
                 ),
                 "Finv" => "Ⅎ".to_owned(),
                 "flat" => "♭".to_owned(),
@@ -702,7 +751,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "Rsh" => "↱".to_owned(),
                 "rtimes" => "times.r".to_owned(),
                 "rule" => {
-                    match scanner.next_param_optional().unwrap().as_str() {
+                    match scanner.next_param_optional().as_str() {
                         "" => format!(
                             "#box(fill: black, width: {}, height: {})",
                             latex_to_typst(scanner.next_param().unwrap()),
@@ -735,7 +784,8 @@ pub fn latex_to_typst(latex: String) -> String {
                 "sqcup" => "union.sq".to_owned(),
                 "square" => "square.stroked".to_owned(),
                 "sqrt" => {
-                    if let Ok(p) = scanner.next_param_optional() {
+                    let p = scanner.next_param_optional();
+                    if p != "" {
                         format!(
                             "root({}, {})",
                             latex_to_typst(p),
@@ -778,18 +828,18 @@ pub fn latex_to_typst(latex: String) -> String {
                 ),
                 "TeX" => "\"TeX\"".to_owned(),
                 "text" | "textmd" | "textnormal" | "textrm" | "textup" => {
-                    format!("#[{}]", latex_text_to_typst(scanner.next_param().unwrap()))
+                    format!("#[{}]", text_to_typst(scanner.next_param().unwrap()))
                 }
-                "textbf" => format!("bold(#[{}])", latex_text_to_typst(scanner.next_param().unwrap())),
+                "textbf" => format!("bold(#[{}])", text_to_typst(scanner.next_param().unwrap())),
                 "textcolor" => format!(
                     "#text(fill: {})[{}]",
-                    latex_color_to_typst(scanner.next_param().unwrap()),
-                    latex_text_to_typst(scanner.next_param().unwrap())
+                    color_to_typst(scanner.next_param().unwrap()),
+                    text_to_typst(scanner.next_param().unwrap())
                 ),
-                "textit" => format!("italic(#[{}])", latex_text_to_typst(scanner.next_param().unwrap())),
-                "textsf" => format!("sans(#[{}])", latex_text_to_typst(scanner.next_param().unwrap())),
+                "textit" => format!("italic(#[{}])", text_to_typst(scanner.next_param().unwrap())),
+                "textsf" => format!("sans(#[{}])", text_to_typst(scanner.next_param().unwrap())),
                 "textstyle" => format!("inline({})", latex_to_typst(scanner.next_param().unwrap())),
-                "texttt" => format!("mono(#[{}])", latex_text_to_typst(scanner.next_param().unwrap())),
+                "texttt" => format!("mono(#[{}])", text_to_typst(scanner.next_param().unwrap())),
                 "tfrac" => format!(
                     "inline(frac({}, {}))",
                     latex_to_typst(scanner.next_param().unwrap()),
@@ -921,7 +971,7 @@ pub fn latex_to_typst(latex: String) -> String {
     text
 }
 
-fn latex_color_to_typst(color: String) -> String {
+fn color_to_typst(color: String) -> String {
     if color.chars().next().unwrap() == '#' {
         format!("rgb(\"{}\")", color)
     } else {
@@ -929,7 +979,7 @@ fn latex_color_to_typst(color: String) -> String {
     }
 }
 
-pub fn latex_text_to_typst(text: String) -> String {
+pub fn text_to_typst(text: String) -> String {
     let mut scanner = Scanner::new(text);
     let mut ret = String::new();
     while let Some(c) = scanner.next() {
@@ -977,8 +1027,48 @@ pub fn latex_text_to_typst(text: String) -> String {
     ret
 }
 
+/// split with '\\', then split with '&' (not '\&'), finally process element by element
+///
+/// for example:
+/// ```
+/// a& b\\
+/// c& d\\
+/// ```
+///
+/// will be converted to:
+/// ```
+/// a, b;
+/// c, d
+/// ```
+fn matrix_to_typst(content: String) -> String {
+    content
+        .split("\\\\")
+        .map(|row| {
+            let mut s = row
+                .split('&')
+                .map(|s| s.to_string())
+                .collect::<Vec<String>>();
+            let mut i = 0;
+            while i < s.len() {
+                if s[i].ends_with('\\') {
+                    let temp = s[i + 1].clone();
+                    s[i].push('&');
+                    s[i].push_str(&temp);
+                    s.remove(i + 1);
+                }
+                i += 1;
+            }
+            s.iter()
+                .map(|col| latex_to_typst(col.to_string()))
+                .collect::<Vec<String>>()
+                .join(",")
+        })
+        .collect::<Vec<String>>()
+        .join(";")
+}
+
 #[cfg(test)]
-mod scanner_tests {
+mod function_tests {
     use super::*;
 
     #[test]
@@ -1005,8 +1095,13 @@ mod scanner_tests {
 
     #[test]
     fn color_test() {
-        println!("{}", latex_color_to_typst("#00ff00".to_string()));
-        println!("{}", latex_color_to_typst("red".to_string()));
+        println!("{}", color_to_typst("#00ff00".to_string()));
+        println!("{}", color_to_typst("red".to_string()));
+    }
+
+    #[test]
+    fn matrix_test() {
+        println!("{}", matrix_to_typst("a& b\\\\\nc& d".to_string()));
     }
 }
 #[cfg(test)]

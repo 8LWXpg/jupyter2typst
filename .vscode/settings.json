@@ -8,8 +8,5 @@
 		"reqwest",
 		"traceback",
 		"Typst"
-	],
-	"cSpell.enableFiletypes": [
-		"!rust"
 	]
 }
