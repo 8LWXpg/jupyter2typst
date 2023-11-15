@@ -212,11 +212,11 @@ impl Iterator for Scanner {
 
 macro_rules! matrix {
     // no alignment in matrix currently
-    ($scanner:expr, $param:expr, $dilm:expr) => {{
+    ($scanner:expr, $param:expr, $delim:expr) => {{
         $scanner.next_param_optional();
         format!(
-            "mat(dilm: \"{}\", {})",
-            $dilm,
+            "mat(delim: {}, {})",
+            $delim,
             matrix_to_typst($scanner.until_string(format!("\\end{{{}}}", $param)))
         )
     }};
@@ -254,6 +254,25 @@ macro_rules! double {
             $fn,
             latex_to_typst($scanner.next_param().unwrap()),
             latex_to_typst($scanner.next_param().unwrap())
+        )
+    }};
+    ($scanner:expr, $fn1:expr, $fn2:expr) => {{
+        format!(
+            "{}({}({}, {}))",
+            $fn1,
+            $fn2,
+            latex_to_typst($scanner.next_param().unwrap()),
+            latex_to_typst($scanner.next_param().unwrap())
+        )
+    }};
+}
+
+macro_rules! accent {
+    ($scanner:expr, $accent:expr) => {{
+        format!(
+            "accent({}, {})",
+            latex_to_typst($scanner.next_param().unwrap()),
+            $accent
         )
     }};
 }
@@ -328,21 +347,27 @@ pub fn latex_to_typst(latex: String) -> String {
                     let param = scanner.next_param().unwrap();
                     match param.as_str() {
                         "align" | "align*" | "aligned" | "equation" | "equation*" | "gather" | "gathered" | "split" => {
-                            latex_to_typst(scanner.until_string(format!("\\end{{{}}}", param)))
+                            format!(
+                                "$${}$$",
+                                latex_to_typst(scanner.until_string(format!("\\end{{{}}}", param)))
+                            )
                         },
                         "alignat" | "alignat*" | "alignedat" => {
                             scanner.next_param().unwrap();
-                            latex_to_typst(scanner.until_string(format!("\\end{{{}}}", param)))
+                            format!(
+                                "$${}$$",
+                                latex_to_typst(scanner.until_string(format!("\\end{{{}}}", param)))
+                            )
                         }
                         "array" | "darray" => {
                             let _ = scanner.next_param();
                             format!(
-                                "mat(dilm: #none, {})",
+                                "mat(delim: #none, {})",
                                 matrix_to_typst(scanner.until_string(format!("\\end{{{}}}", param)))
                             )
                         }
-                        "Bmatrix" | "Bmatrix*" => matrix!(scanner, param, "{"),
-                        "bmatrix" | "bmatrix*" => matrix!(scanner, param, "["),
+                        "Bmatrix" | "Bmatrix*" => matrix!(scanner, param, "\"{\""),
+                        "bmatrix" | "bmatrix*" => matrix!(scanner, param, "\"[\""),
                         "cases" | "dcases" => format!(
                             "cases({})",    
                             scanner.until_string(format!("\\end{{{}}}", param))
@@ -361,7 +386,7 @@ pub fn latex_to_typst(latex: String) -> String {
                             )
                         }
                         "matrix" | "matrix*" => matrix!(scanner, param, "#none"),
-                        "pmatrix" | "pmatrix*" => matrix!(scanner, param, "("),
+                        "pmatrix" | "pmatrix*" => matrix!(scanner, param, "\"(\""),
                         "rcases" => format!(
                             "cases(reverse: #true, {})",    
                             scanner.until_string(format!("\\end{{{}}}", param))
@@ -373,11 +398,11 @@ pub fn latex_to_typst(latex: String) -> String {
                                 .join(",")
                         ),
                         "smallmatrix" => format!(
-                            "inline(mat(dilm: #none, {}))",
+                            "inline(mat(delim: #none, {}))",
                             matrix_to_typst(scanner.until_string(format!("\\end{{{}}}", param)))
                         ),
-                        "Vmatrix" | "Vmatrix*" => matrix!(scanner, param, "||"),
-                        "vmatrix" | "vmatrix*" => matrix!(scanner, param, "|"),
+                        "Vmatrix" | "Vmatrix*" => matrix!(scanner, param, "\"||\""),
+                        "vmatrix" | "vmatrix*" => matrix!(scanner, param, "\"|\""),
                         _ => unreachable!()
                     }
                 }
@@ -396,7 +421,8 @@ pub fn latex_to_typst(latex: String) -> String {
                 "bigvee" => "or.big".to_owned(),
                 "bigwedge" => "and.big".to_owned(),
                 "binom" => double!(scanner, "binom"),
-                "blacklozenge" => "lozenge.filled".to_owned(),
+                "blacklozenge" => "lozen
+                ge.filled".to_owned(),
                 "blacksquare" => "square.filled".to_owned(),
                 "blacktriangle" => "triangle.filled.t".to_owned(),
                 "blacktriangledown" => "triangle.filled.b".to_owned(),
@@ -424,7 +450,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "Cap" | "doublecap" => "sect.double".to_owned(),
                 "cap" => "sect".to_owned(),
                 "cdot" | "cdotp" | "centerdot" | "sdot" => "dot.op".to_owned(),
-                "cfrac" => double!(scanner, "display(frac"),
+                "cfrac" => double!(scanner, "display", "frac"),
                 "char" => {
                     let code = match scanner.peek().unwrap() {
                         '"' => {
@@ -497,12 +523,12 @@ pub fn latex_to_typst(latex: String) -> String {
                 "dashleftarrow" => "arrow.l.dash".to_owned(),
                 "dashrightarrow" => "arrow.r.dash".to_owned(),
                 "dashv" => "tack.l".to_owned(),
-                "dbinom" => double!(scanner, "display(dbinom"),
+                "dbinom" => double!(scanner, "display", "binom"),
                 "dbcolon" => "::".to_owned(),
                 "ddot" => single!(scanner, "dot.double"),
                 "ddots" => "dots.down".to_owned(),
                 "digaamma" => "ϝ".to_owned(),
-                "dfrac" => double!(scanner, "display(frac"),
+                "dfrac" => double!(scanner, "display", "frac"),
                 "diagdown" => "╲".to_owned(),
                 "diagup" => "╱".to_owned(),
                 "Diamond" => "lozenge.stroked".to_owned(),
@@ -738,14 +764,14 @@ pub fn latex_to_typst(latex: String) -> String {
                         _ => format!("overbrace({})", param1),
                     }
                 }
-                "overgroup" => format!("accent({}, \\u{{0311}})", latex_to_typst(scanner.next_param().unwrap())),
+                "overgroup" => accent!(scanner, "\\u{{0311}}"),
                 "overleftarrow" => single!(scanner, "arrow.l"),
-                "overleftharpoon" => format!("accent({}, \\u{{20d0}}", latex_to_typst(scanner.next_param().unwrap())),
-                "overleftrightarrow" => format!("accent({}, \\u{{20e1}})", latex_to_typst(scanner.next_param().unwrap())),
+                "overleftharpoon" => accent!(scanner, "harpoon.lt"),
+                "overleftrightarrow" => accent!(scanner, "arrow.l.r"),
                 "overline" => single!(scanner, "overline"),
-                "overlinesegment" => format!("accent({}, \\u{{20e9}})", latex_to_typst(scanner.next_param().unwrap())),
+                "overlinesegment" => accent!(scanner, "\\u{{20e9}}"),
                 "overrightarrow" | "vec" => single!(scanner, "arrow"),
-                "overrightharpoon" => format!("accent({}, \\u{{20d1}})", latex_to_typst(scanner.next_param().unwrap())),
+                "overrightharpoon" => accent!(scanner, "harpoon.rt"),
                 // P
                 "P" => "pilcrow".to_owned(),
                 "partial" => "diff".to_owned(),
@@ -803,14 +829,14 @@ pub fn latex_to_typst(latex: String) -> String {
                     match scanner.next_param_optional().as_str() {
                         "" => format!(
                             "#box(fill: black, width: {}, height: {})",
-                            latex_to_typst(scanner.next_param().unwrap()),
-                            latex_to_typst(scanner.next_param().unwrap())
+                            scanner.next_param().unwrap(),
+                            scanner.next_param().unwrap()
                         ),
                         p => format!(
                             "#box(inset: (bottom: {}), box(fill: black, width: {}, height: {}))",
                             p,
-                            latex_to_typst(scanner.next_param().unwrap()),
-                            latex_to_typst(scanner.next_param().unwrap()),
+                            scanner.next_param().unwrap(),
+                            scanner.next_param().unwrap(),
                         ),
                     }
                 }
@@ -870,7 +896,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "surd" => "√".to_owned(),
                 "swarrow" => "arrow.bl".to_owned(),
                 // T
-                "tbinom" => double!(scanner, "inline(binom"),
+                "tbinom" => double!(scanner, "inline", "binom"),
                 "TeX" => "\"TeX\"".to_owned(),
                 "text" | "textmd" | "textnormal" | "textrm" | "textup" => {
                     format!("#[{}]", text_to_typst(scanner.next_param().unwrap()))
@@ -885,7 +911,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "textsf" => format!("sans(#[{}])", text_to_typst(scanner.next_param().unwrap())),
                 "textstyle" => format!("inline({})", latex_to_typst(scanner.next_param().unwrap())),
                 "texttt" => format!("mono(#[{}])", text_to_typst(scanner.next_param().unwrap())),
-                "tfrac" => double!(scanner, "inline(frac"),
+                "tfrac" => double!(scanner, "inline", "frac"),
                 "th" => "#math.op(\"th\")".to_owned(),
                 "thetasym" => "theta.alt".to_owned(),
                 "thickapprox" => "bold(approx)".to_owned(),
@@ -920,8 +946,8 @@ pub fn latex_to_typst(latex: String) -> String {
                         _ => format!("underbrace({})", param1),
                     }
                 }
-                "undergroup" => format!("accent({}, \\u{{032e}})", latex_to_typst(scanner.next_param().unwrap())),
-                "underleftrightarrow" => format!("accent({}, \\u{{034d}})", latex_to_typst(scanner.next_param().unwrap())),
+                "undergroup" => accent!(scanner, "\\u{{032e}}"),
+                "underleftrightarrow" => accent!(scanner, "\\u{{034d}}"),
                 "unlhd" => "lt.tri.eq".to_owned(),
                 "unrhd" => "gt.tri.eq".to_owned(),
                 "Updownarrow" => "arrow.t.b.double".to_owned(),
@@ -958,7 +984,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "vphantom" => format!("#box(width: 0pt, hide[${}$])", latex_to_typst(scanner.next_param().unwrap())),
                 "Vvdash" => "⊪".to_owned(),
                 // W
-                "wedge" => "and".to_owned(),
+                "wedge" | "land" => "and".to_owned(),
                 "weierp" | "wp" => "℘".to_owned(),
                 "wr" => "wreath".to_owned(),
                 // X
@@ -995,10 +1021,11 @@ pub fn latex_to_typst(latex: String) -> String {
             },
         };
         // insert space if current and next character is a alphabetic character
-        let first = push.chars().next().unwrap();
-        if let Some(prev) = text.chars().last() {
-            if prev.is_alphabetic() && (first.is_alphabetic() || first.is_ascii_digit()) {
-                text.push(' ');
+        if let Some(first) = push.chars().next() {
+            if let Some(prev) = text.chars().last() {
+                if prev.is_alphabetic() && (first.is_alphabetic() || first.is_ascii_digit()) {
+                    text.push(' ');
+                }
             }
         }
         text.push_str(&push);
@@ -1182,6 +1209,22 @@ mod tests {
     #[test]
     fn test_parse_typ5() {
         println!("{:?}", latex_to_typst("\\dot\\sum _ 0 ^n".to_string()));
+    }
+
+    #[test]
+    fn test_parse_typ6() {
+        println!(
+            "{:?}",
+            latex_to_typst("\\frac54 = 1\\tfrac   {1}   {4}\\\\".to_string())
+        );
+    }
+
+    #[test]
+    fn test_parse_typ7() {
+        println!(
+            "{:?}",
+            latex_to_typst("h\\raisebox{2pt}{$\\psi ighe$}r".to_string())
+        );
     }
 
     #[test]
