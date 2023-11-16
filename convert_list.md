@@ -26,38 +26,40 @@ something too long to fit in a table
 
 ## Begins
 
-| LaTeX         | Typst |
-| ------------- | ----- |
-| `align`       |       |
-| `align*`      |       |
-| `aligned`     |       |
-| `alignat`     |       |
-| `alignat*`    |       |
-| `alignedat`   |       |
-| `array`       |       |
-| `Bmatrix`     |       |
-| `Bmatrix*`    |       |
-| `bmatrix`     |       |
-| `bmatrix*`    |       |
-| `cases`       |       |
-| `CD`          |       |
-| `darray`      |       |
-| `dcases`      |       |
-| `equation`    |       |
-| `equation*`   |       |
-| `gather`      |       |
-| `gathered`    |       |
-| `matrix`      |       |
-| `matrix*`     |       |
-| `pmatrix`     |       |
-| `pmatrix*`    |       |
-| `rcases`      |       |
-| `smallmatrix` |       |
-| `split`       |       |
-| `Vmatrix`     |       |
-| `Vmatrix*`    |       |
-| `vmatrix`     |       |
-| `vmatrix*`    |       |
+context inside the environment is denoted by `{}`
+
+| LaTeX         | Typst                           |
+| ------------- | ------------------------------- |
+| `align`       | `$${}$$`                        |
+| `align*`      | `$${}$$`                        |
+| `aligned`     | `$${}$$`                        |
+| `alignat`     | `$${}$$`                        |
+| `alignat*`    | `$${}$$`                        |
+| `alignedat`   | `$${}$$`                        |
+| `array`       | `mat(delim: #none, {})`         |
+| `Bmatrix`     | `mat(delim: "{", {})`           |
+| `Bmatrix*`    | `mat(delim: "{", {})`           |
+| `bmatrix`     | `mat(delim: "[", {})`           |
+| `bmatrix*`    | `mat(delim: "[", {})`           |
+| `cases`       | `cases({})`                     |
+| `CD`          | TODO#not sure                   |
+| `darray`      | `mat(delim: #none, {})`         |
+| `dcases`      | `cases({})`                     |
+| `equation`    | `$${}$$`                        |
+| `equation*`   | `$${}$$`                        |
+| `gather`      | `$${}$$`                        |
+| `gathered`    | `$${}$$`                        |
+| `matrix`      | `mat(delim: #none, {})`         |
+| `matrix*`     | `mat(delim: #none, {})`         |
+| `pmatrix`     | `mat(delim: "(", {})`           |
+| `pmatrix*`    | `mat(delim: "(", {})`           |
+| `rcases`      | `cases(reverse: #true, {})`     |
+| `smallmatrix` | `inline(mat(delim: #none, {}))` |
+| `split`       | `$${}$$`                        |
+| `Vmatrix`     | `mat(delim: "\|\|", {})`        |
+| `Vmatrix*`    | `mat(delim: "\|\|", {})`        |
+| `vmatrix`     | `mat(delim: "\|", {})`          |
+| `vmatrix*`    | `mat(delim: "\|", {})`          |
 
 
 ## Symbols
