@@ -1,5 +1,5 @@
-use regex::Regex;
 use crate::typ;
+use regex::Regex;
 
 #[derive(Debug, Clone)]
 struct Scanner {
