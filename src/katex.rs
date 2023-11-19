@@ -1,6 +1,5 @@
 use regex::Regex;
-#[path = "typ.rs"]
-mod typ;
+use crate::typ;
 
 #[derive(Debug, Clone)]
 struct Scanner {

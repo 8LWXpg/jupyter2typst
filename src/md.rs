@@ -7,8 +7,7 @@ use std::{collections::HashMap, fs::File, io::Write};
 use url::Url;
 
 use crate::IMG_PATH;
-mod katex;
-mod typ;
+use crate::{katex, typ};
 
 use once_cell::sync::Lazy;
 

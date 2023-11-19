@@ -8,12 +8,7 @@ use std::{
     io::Write,
 };
 
-#[path = "katex.rs"]
-mod katex;
-#[path = "md.rs"]
-mod md;
-#[path = "typ.rs"]
-mod typ;
+use crate::{katex, md, typ};
 
 static LANG: OnceCell<String> = OnceCell::new();
 static TEMPLATE: &str = "#import \"template.typ\": *\n#show: template\n\n";

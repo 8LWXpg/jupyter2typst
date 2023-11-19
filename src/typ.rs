@@ -1,5 +1,5 @@
 pub fn escape_string(s: String) -> String {
-    const  ESCAPE: &[char] =&['\\', '"'];
+    const ESCAPE: &[char] = &['\\', '"'];
 
     let mut result = String::new();
     for c in s.chars() {
