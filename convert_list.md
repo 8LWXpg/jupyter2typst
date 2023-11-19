@@ -9,7 +9,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 - binary - 6
 - lr - 5
 - no alternative - 12
-- not sure - 11
+- not sure - 9
 - spacing - 7
 - scripting - 14
 - overlap - 8
@@ -428,7 +428,7 @@ context inside the environment is denoted by `{}`
 | `\harr`                       | `<->`                           |
 | `\hat`                        | `hat($1)`                       |
 | `\hbar`                       | `planck.reduce`                 |
-| `\hbox`                       | TODO#not sure                   |
+| `\hbox`                       | `$1`                            |
 | `\hdashline`                  | TODO#begin                      |
 | `\hearts`                     | `♡`                             |
 | `\heartsuit`                  | `♡`                             |
@@ -598,8 +598,8 @@ context inside the environment is denoted by `{}`
 | `\mathinner`       | TODO#spacing                  |
 | `\mathit`          | `italic($1)`                  |
 | `\mathllap`        | TODO#overlap                  |
-| `\mathnormal`      | ignored                       |
-| `\mathop`          | ignored                       |
+| `\mathnormal`      | `$1`                          |
+| `\mathop`          | `$1`                          |
 | `\mathopen`        | `$1 #h(0pt)`                  |
 | `\mathord`         | TODO#spacing                  |
 | `\mathpunct`       | TODO#spacing                  |
@@ -832,80 +832,80 @@ context inside the environment is denoted by `{}`
 
 ## S
 
-| LaTeX                | Typst                     |
-| -------------------- | ------------------------- |
-| `\S`                 | `section`                 |
-| `\scriptscriptstyle` | TODO#affect all           |
-| `\scriptsize`        | TODO#affect all           |
-| `\scriptstyle`       | TODO#affect all           |
-| `\sdot`              | `dot.op`                  |
-| `\searrow`           | `arrow.br`                |
-| `\sec`               | `sec`                     |
-| `\sect`              | `section`                 |
-| `\Set`               | `{$1}`                    |
-| `\set`               | `{$1}`                    |
-| `\setminus`          | `without`                 |
-| `\sf`                | TODO#affect all           |
-| `sharp`              | `♯`                       |
-| `\shortmid`          | TODO#no alternative       |
-| `\shortparallel`     | TODO#no alternative       |
-| `\Sigma`             | `Sigma`                   |
-| `\sigma`             | `sigma`                   |
-| `\sim`               | `tilde.op`                |
-| `\simcolon`          | `tilde.op:`               |
-| `\simcoloncolon`     | `tilde.op::`              |
-| `\simeq`             | `tilde.eq`                |
-| `\sin`               | `sin`                     |
-| `\sinh`              | `sinh`                    |
-| `\sixptsize`         | TODO#affect all           |
-| `\sh`                | `#math.op("sh")`          |
-| `\small`             | TODO#affect all           |
-| `\smallint`          | `inline(integral)`        |
-| `\smallsetminus`     | `without`                 |
-| `\smallsmile`        | `⌣`                       |
-| `\sout`              | TODO#not sure             |
-| `\space`             | `space`                   |
-| `\spades`            | `suit.spade`              |
-| `\spadesuit`         | `suit.spade`              |
-| `\sphericalangle`    | `angle.spheric`           |
-| `\sqcap`             | `sect.sq`                 |
-| `\sqcup`             | `union.sq`                |
-| `\square`            | `square.stroked`          |
-| `\sqrt`              | `sqrt($1)` `root($1, $2)` |
-| `\sqsubset`          | `subset.sq`               |
-| `\sqsubseteq`        | `subset.eq.sq`            |
-| `\sqsupset`          | `supset.sq`               |
-| `\sqsupseteq`        | `supset.eq.sq`            |
-| `\ss`                | `ß`                       |
-| `\stackrel`          | TODO#overlap              |
-| `\star`              | `star.op`                 |
-| `\sub`               | `subset`                  |
-| `\sube`              | `subset.eq`               |
-| `\Subset`            | `subset.double`           |
-| `\subset`            | `subset`                  |
-| `\subseteq`          | `subset.eq`               |
-| `\subseteqq`         | `⫅`                       |
-| `\subsetneq`         | `subset.neq`              |
-| `\subsetneqq`        | `⫋`                       |
-| `\substack`          | TODO#overlap              |
-| `\succ`              | `succ`                    |
-| `\succapprox`        | `succ.approx`             |
-| `\succcurlyeq`       | `succ.eq`                 |
-| `\succeq`            | `⪰`                       |
-| `\succnapprox`       | `succ.napprox`            |
-| `\succneqq`          | `succ.nequiv`             |
-| `\succnsim`          | `succ.ntilde`             |
-| `\sum`               | `sum`                     |
-| `\sup`               | `sup`                     |
-| `\supe`              | `supset.eq`               |
-| `\Supset`            | `supset.double`           |
-| `\supset`            | `supset`                  |
-| `\supseteq`          | `supset.eq`               |
-| `\supseteqq`         | `⫆`                       |
-| `\supsetneq`         | `supset.neq`              |
-| `\supsetneqq`        | `⫌`                       |
-| `\surd`              | `√`                       |
-| `\swarrow`           | `arrow.bl`                |
+| LaTeX                | Typst                       |
+| -------------------- | --------------------------- |
+| `\S`                 | `section`                   |
+| `\scriptscriptstyle` | TODO#affect all             |
+| `\scriptsize`        | TODO#affect all             |
+| `\scriptstyle`       | TODO#affect all             |
+| `\sdot`              | `dot.op`                    |
+| `\searrow`           | `arrow.br`                  |
+| `\sec`               | `sec`                       |
+| `\sect`              | `section`                   |
+| `\Set`               | `{$1}`                      |
+| `\set`               | `{$1}`                      |
+| `\setminus`          | `without`                   |
+| `\sf`                | TODO#affect all             |
+| `sharp`              | `♯`                         |
+| `\shortmid`          | TODO#no alternative         |
+| `\shortparallel`     | TODO#no alternative         |
+| `\Sigma`             | `Sigma`                     |
+| `\sigma`             | `sigma`                     |
+| `\sim`               | `tilde.op`                  |
+| `\simcolon`          | `tilde.op:`                 |
+| `\simcoloncolon`     | `tilde.op::`                |
+| `\simeq`             | `tilde.eq`                  |
+| `\sin`               | `sin`                       |
+| `\sinh`              | `sinh`                      |
+| `\sixptsize`         | TODO#affect all             |
+| `\sh`                | `#math.op("sh")`            |
+| `\small`             | TODO#affect all             |
+| `\smallint`          | `inline(integral)`          |
+| `\smallsetminus`     | `without`                   |
+| `\smallsmile`        | `⌣`                         |
+| `\sout`              | `cancel(angle: #90deg, $1)` |
+| `\space`             | `space`                     |
+| `\spades`            | `suit.spade`                |
+| `\spadesuit`         | `suit.spade`                |
+| `\sphericalangle`    | `angle.spheric`             |
+| `\sqcap`             | `sect.sq`                   |
+| `\sqcup`             | `union.sq`                  |
+| `\square`            | `square.stroked`            |
+| `\sqrt`              | `sqrt($1)` `root($1, $2)`   |
+| `\sqsubset`          | `subset.sq`                 |
+| `\sqsubseteq`        | `subset.eq.sq`              |
+| `\sqsupset`          | `supset.sq`                 |
+| `\sqsupseteq`        | `supset.eq.sq`              |
+| `\ss`                | `ß`                         |
+| `\stackrel`          | TODO#overlap                |
+| `\star`              | `star.op`                   |
+| `\sub`               | `subset`                    |
+| `\sube`              | `subset.eq`                 |
+| `\Subset`            | `subset.double`             |
+| `\subset`            | `subset`                    |
+| `\subseteq`          | `subset.eq`                 |
+| `\subseteqq`         | `⫅`                         |
+| `\subsetneq`         | `subset.neq`                |
+| `\subsetneqq`        | `⫋`                         |
+| `\substack`          | TODO#overlap                |
+| `\succ`              | `succ`                      |
+| `\succapprox`        | `succ.approx`               |
+| `\succcurlyeq`       | `succ.eq`                   |
+| `\succeq`            | `⪰`                         |
+| `\succnapprox`       | `succ.napprox`              |
+| `\succneqq`          | `succ.nequiv`               |
+| `\succnsim`          | `succ.ntilde`               |
+| `\sum`               | `sum`                       |
+| `\sup`               | `sup`                       |
+| `\supe`              | `supset.eq`                 |
+| `\Supset`            | `supset.double`             |
+| `\supset`            | `supset`                    |
+| `\supseteq`          | `supset.eq`                 |
+| `\supseteqq`         | `⫆`                         |
+| `\supsetneq`         | `supset.neq`                |
+| `\supsetneqq`        | `⫌`                         |
+| `\surd`              | `√`                         |
+| `\swarrow`           | `arrow.bl`                  |
 
 ## T
 

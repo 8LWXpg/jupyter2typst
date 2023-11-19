@@ -238,11 +238,11 @@ macro_rules! single {
             latex_to_typst($scanner.next_param().unwrap())
         )
     }};
-    ($scanner:expr, $fn:expr, $param:expr) => {{
+    ($scanner:expr, $fn:expr, $params:expr) => {{
         format!(
             "{}({}{})",
             $fn,
-            $param,
+            $params,
             latex_to_typst($scanner.next_param().unwrap())
         )
     }};
@@ -603,6 +603,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "harr" | "leftrightarrow" | "lrarr" => "<->".to_owned(),
                 "hat" | "widehat" => single!(scanner, "hat"),
                 "hbar" | "hslash" => "planck.reduce".to_owned(),
+                "hbox" | "mathnormal" | "mathop" => latex_to_typst(scanner.next_param().unwrap()),
                 "hearts" | "heartsuit" => "♡".to_owned(),
                 "hookleftarrow" => "arrow.l.hook".to_owned(),
                 "hookrightarrow" => "arrow.r.hook".to_owned(),
@@ -676,7 +677,6 @@ pub fn latex_to_typst(latex: String) -> String {
                 "mathclap" => single!(scanner, "#box", "width: 0pt, "),
                 "mathclose" => format!("#h(0pt) {}", latex_to_typst(scanner.next_param().unwrap())),
                 "mathit" => single!(scanner, "italic"),
-                "mathnormal" | "mathop" => latex_to_typst(scanner.next_param().unwrap()),
                 "mathopen" => format!("{} #h(0pt)", latex_to_typst(scanner.next_param().unwrap())),
                 "mathring" | "r" => single!(scanner, "circle"),
                 "mathrm" => single!(scanner, "upright"),
@@ -859,6 +859,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "sh" => "#math.op(\"sh\")".to_owned(),
                 "smallint" => "inline(integral)".to_owned(),
                 "smallsmile" => "⌣".to_owned(),
+                "sout" => single!(scanner, "cancel", "angle: #90deg, "),
                 "spades" | "spadesuit" => "suit.spade".to_owned(),
                 "sphericalangle" => "angle.spheric".to_owned(),
                 "sqcap" => "sect.sq".to_owned(),
