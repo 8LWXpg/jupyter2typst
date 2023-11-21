@@ -24,7 +24,9 @@ something too long to fit in a table
 - `rule`: `$1` is optional
   `#box(inset: (bottom: $1), box(fill: black, width: $2, height: $3))`
 
-## Begins
+## Environments
+
+details at [KaTeX](https://katex.org/docs/supported.html#environments)
 
 context inside the environment is denoted by `{}`
 
@@ -154,7 +156,7 @@ context inside the environment is denoted by `{}`
 | `\barwedge`             | `⊼`                         |
 | `\Bbb`                  | `bb($1)`                    |
 | `\bcancel`              | `cancel(inverted: #true)`   |
-| `\begin`                | see [begins](#Begins)       |
+| `\begin`                | see [begins](#Environments) |
 | `\begingroup`           | ignored                     |
 | `Beta`                  | `Beta`                      |
 | `\beta`                 | `beta`                      |
@@ -340,35 +342,35 @@ context inside the environment is denoted by `{}`
 
 ## E
 
-| LaTeX               | Typst                 |
-| ------------------- | --------------------- |
-| `\edef`             | TODO#scripting        |
-| `\ell`              | `ell`                 |
-| `\empty`            | `emptyset`            |
-| `\emptyset`         | `emptyset`            |
-| `\end`              | see [begins](#Begins) |
-| `\endgroup`         | TODO#scripting        |
-| `\enspace`          | `space.en`            |
-| `\Epsilon`          | `Epsilon`             |
-| `\epsilon`          | `epsilon.alt`         |
-| `\eqcirc`           | `≖`                   |
-| `\Eqcolon`          | `"−::"`               |
-| `\eqcolon`          | `dash.colon`          |
-| `\Eqqcolon`         | `"=::"`               |
-| `\eqqcolon`         | `=:`                  |
-| `\eqsim`            | `minus.tilde`         |
-| `\eqslantgtr`       | `⪖`                   |
-| `\eqslantless`      | `⪕`                   |
-| `\equalscolon`      | `=:`                  |
-| `\equalscoloncolon` | `"=::"`               |
-| `\equiv`            | `equiv`               |
-| `\Eta`              | `Eta`                 |
-| `\eta`              | `eta`                 |
-| `\eth`              | `ð`                   |
-| `\exist`            | `exists`              |
-| `\exists`           | `exists`              |
-| `\exp`              | `exp`                 |
-| `\expandafter`      | TODO#scripting        |
+| LaTeX               | Typst                       |
+| ------------------- | --------------------------- |
+| `\edef`             | TODO#scripting              |
+| `\ell`              | `ell`                       |
+| `\empty`            | `emptyset`                  |
+| `\emptyset`         | `emptyset`                  |
+| `\end`              | see [begins](#Environments) |
+| `\endgroup`         | TODO#scripting              |
+| `\enspace`          | `space.en`                  |
+| `\Epsilon`          | `Epsilon`                   |
+| `\epsilon`          | `epsilon.alt`               |
+| `\eqcirc`           | `≖`                         |
+| `\Eqcolon`          | `"−::"`                     |
+| `\eqcolon`          | `dash.colon`                |
+| `\Eqqcolon`         | `"=::"`                     |
+| `\eqqcolon`         | `=:`                        |
+| `\eqsim`            | `minus.tilde`               |
+| `\eqslantgtr`       | `⪖`                         |
+| `\eqslantless`      | `⪕`                         |
+| `\equalscolon`      | `=:`                        |
+| `\equalscoloncolon` | `"=::"`                     |
+| `\equiv`            | `equiv`                     |
+| `\Eta`              | `Eta`                       |
+| `\eta`              | `eta`                       |
+| `\eth`              | `ð`                         |
+| `\exist`            | `exists`                    |
+| `\exists`           | `exists`                    |
+| `\exp`              | `exp`                       |
+| `\expandafter`      | TODO#scripting              |
 
 ## F
 
