@@ -65,7 +65,7 @@ pub fn ipynb_parse(json: Value) -> String {
                         .iter()
                         .map(|v| v.as_str().unwrap())
                         .collect::<Vec<&str>>(),
-                    cell["execution_count"].as_i64().unwrap(),
+                    cell["execution_count"].as_i64().unwrap_or_default(),
                 ));
                 output.push_str("\n]\n#block[\n");
                 output.push_str(&code_output_parse(
