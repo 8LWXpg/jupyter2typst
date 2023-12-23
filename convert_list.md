@@ -7,7 +7,6 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 - affect all - 18
 - begin - 4
 - binary - 6
-- lr - 5
 - no alternative - 12
 - not sure - 9
 - spacing - 7
@@ -198,8 +197,8 @@ context inside the environment is denoted by `{}`
 | `\boxtimes`             | `times.square`              |
 | `\Bra`                  | `lr(angle.l $1 \|)`         |
 | `\bra`                  | `lr(angle.l $1 \|)`         |
-| `\Braket`               | TODO#lr                     |
-| `\braket`               | TODO#lr                     |
+| `\Braket`               | `lr(angle.l $1 angle.r)`    |
+| `\braket`               | `lr(angle.l $1 angle.r)`    |
 | `\brace`                | TODO#binary                 |
 | `\brack`                | TODO#binary                 |
 | `\breve`                | `breve($1)`                 |
@@ -512,7 +511,7 @@ context inside the environment is denoted by `{}`
 | `\ldots`                  | `...`                |
 | `\le`                     | `<=`                 |
 | `\leadsto`                | `arrow.r.squiggly`   |
-| `\left`                   | TODO#lr              |
+| `\left`                   | `lr($1 ...)`         |
 | `\leftarrow`              | `<-`                 |
 | `\Leftarrow`              | `arrow.l.double`     |
 | `\leftarrowtail`          | `<-<`                |
@@ -619,7 +618,7 @@ context inside the environment is denoted by `{}`
 | `\medspace`        | `#h(2em/9)`                   |
 | `\mho`             | `ohm.inv`                     |
 | `\mid`             | `\|`                          |
-| `\middle`          | TODO#lr                       |
+| `\middle`          | `mid($1)`                     |
 | `\minuscolon`      | `dash.colon`                  |
 | `\minuscoloncolon` | `"−::"`                       |
 | `\minuso`          | `⦵`                           |
@@ -807,7 +806,7 @@ context inside the environment is denoted by `{}`
 | `\rhd`               | `gt.tri`                   |
 | `\Rho`               | `Rho`                      |
 | `\rho`               | `rho`                      |
-| `\right`             | TODO#lr                    |
+| `\right`             | `lr(... $1)`               |
 | `\Rightarrow`        | `=>`                       |
 | `\rightarrow`        | `->`                       |
 | `\rightarrowtail`    | `>->`                      |

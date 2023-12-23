@@ -15,3 +15,9 @@
 ### Fixed
 
 - Fixed for no execution_count #2
+
+## [0.1.3]
+
+### Added
+
+- Complete TODOs for `lr`

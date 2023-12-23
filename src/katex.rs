@@ -464,6 +464,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "boxplus" => "plus.square".to_owned(),
                 "boxtimes" => "times.square".to_owned(),
                 "Bra" | "bra" => format!("lr(angle.l {} |)", latex_to_typst(scanner.next_param().unwrap())),
+                "Braket" | "braket" => format!("lr(angle.l {} angle.r)", latex_to_typst(scanner.next_param().unwrap()).replace("|", "mid(|)")),
                 "breve" | "u" => single!(scanner, "breve"),
                 "bull" | "bullet" => "circle.filled.small".to_owned(),
                 "Bumpeq" => "≎".to_owned(),
@@ -659,6 +660,12 @@ pub fn latex_to_typst(latex: String) -> String {
                 "ldotp" => ".".to_owned(),
                 "le" | "leq" => "<=".to_owned(),
                 "leadsto" => "arrow.r.squiggly".to_owned(),
+                "left" => format!(
+                    "lr({}{}{})",
+                    scanner.next_param().unwrap(),
+                    latex_to_typst(scanner.until_string("\\right".to_string())),
+                    scanner.next_param().unwrap(),
+                ),
                 "lfloor" => "⌊".to_owned(),
                 "lgroup" => "turtle.l".to_owned(),
                 "lhd" | "vartriangleleft" => "lt.tri".to_owned(),
@@ -709,6 +716,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "medspace" => "space.med".to_owned(),
                 "mho" => "ohm.inv".to_owned(),
                 "mid" => "|".to_owned(),
+                "middle" => single!(scanner, "mid"),
                 "minuso" => "⊖".to_owned(),
                 "models" | "vDash" => "tack.r.double".to_owned(),
                 "mp" => "minus.plus".to_owned(),
@@ -1204,80 +1212,48 @@ mod function_tests {
 mod tests {
     use super::*;
 
-    // #[test]
-    // fn test_scanner_error() {
-    //     let scanner = Scanner::new("Hello, World!".to_string());
-    //     let error = ScannerError::new("test".to_string(), scanner);
-    //     let result: Result<String, ScannerError> = Err(error);
-    //     result.unwrap();
-    // }
-
     #[test]
     fn test_parse_typ() {
         assert_eq!(
             latex_to_typst("\\bcancel{N = N_oe^{ln2(t/t_2)}}".to_string()),
             "cancel(inverted: #true, N = N_o e^l n 2(t\\/t_2))"
-        )
-    }
-
-    #[test]
-    fn test_parse_typ2() {
-        assert_eq!(latex_to_typst("hello".to_string()), "h e l l o")
-    }
-
-    #[test]
-    fn test_parse_typ3() {
+        );
+        assert_eq!(latex_to_typst("hello".to_string()), "h e l l o");
         assert_eq!(
             latex_to_typst("\\binom {asdf}  {aas}".to_string()),
             "binom(a s d f, a a s)"
-        )
-    }
-
-    #[test]
-    fn test_parse_typ4() {
+        );
         assert_eq!(
             latex_to_typst("\\overbrace{x+⋯+x}^{n\\text{ times$\\int$}}".to_string()),
             "overbrace(x+⋯+x, n#[ times$integral$])"
-        )
-    }
-
-    #[test]
-    fn test_parse_typ5() {
+        );
         assert_eq!(
             latex_to_typst("\\dot\\sum _ 0 ^n".to_string()),
             "dot(sum_0^n)"
-        )
-    }
-
-    #[test]
-    fn test_parse_typ6() {
+        );
         assert_eq!(
             latex_to_typst("\\frac54 = 1\\tfrac   {1}   {4}\\\\".to_string()),
             "frac(5, 4) = 1inline(frac(1, 4))\\"
-        )
-    }
-
-    #[test]
-    fn test_parse_typ7() {
+        );
         assert_eq!(
             latex_to_typst("h\\raisebox{2pt}{$\\psi ighe$}r".to_string()),
             "h#text(baseline: -2pt)[$psi i g h e$]r"
+        );
+        assert_eq!(
+            latex_to_typst("\\left(\\frac{3}{2}\\middle| B\\right)".to_string()),
+            "lr((frac(3, 2)mid(|) B))"
         )
     }
 
     #[test]
-    fn matrix1() {
+    fn matrix() {
         assert_eq!(
             latex_to_typst("\\begin{array}{cc}\na& b\\\\\nc& d\n\\end{array}".to_string()),
             "mat(delim: #none, \na, b;\nc, d\n)"
-        )
-    }
-
-    #[test]
-    fn matrix2() {
+        );
         assert_eq!(
             latex_to_typst("\\begin{matrix}\na& b\\\\\nc& d\n\\end{matrix}".to_string()),
             "mat(delim: #none, \na, b;\nc, d\n)"
-        )
+        );
     }
 }
