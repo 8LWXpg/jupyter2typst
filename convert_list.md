@@ -4,7 +4,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 
 ## TODOs
 
-- affect all - 18
+- affect following - 18
 - begin - 4
 - binary - 6
 - no alternative - 12
@@ -161,7 +161,7 @@ context inside the environment is denoted by `{}`
 | `\beta`                 | `beta`                      |
 | `\beth`                 | `beth`                      |
 | `\between`              | `≬`                         |
-| `\bf`                   | TODO#affect all             |
+| `\bf`                   | TODO#affect following       |
 | `\big` and its variants | TODO#font                   |
 | `\bigcap`               | `sect.big`                  |
 | `\bigcirc`              | `circle.stroked.big`        |
@@ -211,7 +211,7 @@ context inside the environment is denoted by `{}`
 
 | LaTeX               | Typst                   |
 | ------------------- | ----------------------- |
-| `\cal`              | TODO#affect all         |
+| `\cal`              | TODO#affect following   |
 | `\cancel`           | `cancel($1)`            |
 | `\Cap`              | `sect.double`           |
 | `\cap`              | `sect`                  |
@@ -255,7 +255,7 @@ context inside the environment is denoted by `{}`
 | `\colonminus`       | `":−"`                  |
 | `\Colonsim`         | `::tilde.op`            |
 | `\colonsim`         | `:tilde.op`             |
-| `\color`            | TODO#affect all         |
+| `\color`            | TODO#affect following   |
 | `\colorbox`         | `#box(fill: $1)[$2]`    |
 | `\complement`       | `complement`            |
 | `\Complex`          | `CC`                    |
@@ -380,7 +380,7 @@ context inside the environment is denoted by `{}`
 | `\fcolorbox`     | `#box(stroke: $1, fill: $2)[$3]` |
 | `\Finv`          | `Ⅎ`                              |
 | `\flat`          | `♭`                              |
-| `\footnotesize`  | TODO#affect all                  |
+| `\footnotesize`  | TODO#affect following            |
 | `\forall`        | `forall`                         |
 | `\frac`          | `frac($1, $2)`                   |
 | `\frak`          | `frak($1)`                       |
@@ -443,8 +443,8 @@ context inside the environment is denoted by `{}`
 | `\hslash`                     | `planck.reduce`                 |
 | `\hspace`                     | `#h($1)`                        |
 | `\htmlClass` and its variants | not supported in ipynb          |
-| `\huge`                       | TODO#affect all                 |
-| `\Huge`                       | TODO#affect all                 |
+| `\huge`                       | TODO#affect following           |
+| `\Huge`                       | TODO#affect following           |
 
 ## I
 
@@ -472,7 +472,7 @@ context inside the environment is denoted by `{}`
 | `\Iota`            | `Iota`                                     |
 | `\iota`            | `iota`                                     |
 | `\isin`            | `in`                                       |
-| `\it`              | TODO#affect all                            |
+| `\it`              | TODO#affect following                      |
 
 ## JK
 
@@ -491,95 +491,95 @@ context inside the environment is denoted by `{}`
 
 ## L
 
-| LaTeX                     | Typst                |
-| ------------------------- | -------------------- |
-| `\Lambda`                 | `Lambda`             |
-| `\lambda`                 | `lambda`             |
-| `\land`                   | `and`                |
-| `\lang`                   | `angle.l`            |
-| `\langle`                 | `angle.l`            |
-| `\Larr`                   | `arrow.l.double`     |
-| `\lArr`                   | `arrow.l.double`     |
-| `\larr`                   | `<-`                 |
-| `\large` and its variants | TODO#affect all      |
-| `\LaTeX`                  | `"LaTeX"`            |
-| `\lBrace`                 | `⦃`                  |
-| `\lbrace`                 | `{`                  |
-| `\lbrack`                 | `[`                  |
-| `\lceil`                  | `⌈`                  |
-| `\ldotp`                  | `.`                  |
-| `\ldots`                  | `...`                |
-| `\le`                     | `<=`                 |
-| `\leadsto`                | `arrow.r.squiggly`   |
-| `\left`                   | `lr($1 ...)`         |
-| `\leftarrow`              | `<-`                 |
-| `\Leftarrow`              | `arrow.l.double`     |
-| `\leftarrowtail`          | `<-<`                |
-| `\leftharpoondown`        | `harpoon.lb`         |
-| `\leftharpoonup`          | `harpoon.lt`         |
-| `\leftleftarrows`         | `arrows.ll`          |
-| `\Leftrightarrow`         | `<=>`                |
-| `\leftrightarrow`         | `<->`                |
-| `\leftrightarrows`        | `arrows.lr`          |
-| `\leftrightharpoons`      | `harpoons.ltrb`      |
-| `\leftrightsquigarrow`    | `arrow.l.r.wave`     |
-| `\leftthreetimes`         | `times.three.l`      |
-| `\leq`                    | `<=`                 |
-| `\leqq`                   | `lt.equiv`           |
-| `\leqslant`               | `lt.eq.slant`        |
-| `\lessapprox`             | `⪅`                  |
-| `\lessdot`                | `lt.dot`             |
-| `\lesseqgtr`              | `lt.eq.gt`           |
-| `\lesseqqgtr`             | `⪋`                  |
-| `\lessgtr`                | `lt.gt`              |
-| `\lesssim`                | `lt.tilde`           |
-| `\let`                    | TODO#scripting       |
-| `\lfloor`                 | `⌊`                  |
-| `\lg`                     | `lg`                 |
-| `\lgroup`                 | `⟮`                  |
-| `\lhd`                    | `lt.tri`             |
-| `\lim`                    | `lim`                |
-| `\liminf`                 | `liminf`             |
-| `\limits`                 | ignored              |
-| `\limsup`                 | `limsup`             |
-| `\ll`                     | `<<`                 |
-| `\llap`                   | TODO#overlap         |
-| `\llbracket`              | `bracket.l.double`   |
-| `\llcorner`               | `⌞`                  |
-| `\Lleftarrow`             | `arrow.l.triple`     |
-| `\lll`                    | `<<<`                |
-| `\llless`                 | `<<<`                |
-| `\ln`                     | `ln`                 |
-| `\lnapprox`               | `⪉`                  |
-| `\lneq`                   | `⪇`                  |
-| `\lneqq`                  | `lt.nequiv`          |
-| `\lnot`                   | `not`                |
-| `\lnsim`                  | `lt.ntilde`          |
-| `\log`                    | `log`                |
-| `\long`                   | TODO#scripting       |
-| `\Longleftarrow`          | `<==`                |
-| `\longleftarrow`          | `<--`                |
-| `\Longleftrightarrow`     | `<==>`               |
-| `\longleftrightarrow`     | `<-->`               |
-| `\longmapsto`             | `arrow.r.long.bar`   |
-| `\Longrightarrow`         | `==>`                |
-| `\longrightarrow`         | `-->`                |
-| `\looparrowleft`          | `arrow.l.loop`       |
-| `\looparrowright`         | `arrow.r.loop`       |
-| `\lor`                    | `or`                 |
-| `\lozenge`                | `lozenge.stroked`    |
-| `\lparen`                 | `(`                  |
-| `\Lrarr`                  | `<=>`                |
-| `\lrArr`                  | `<=>`                |
-| `\lrarr`                  | `<->`                |
-| `\lrcorner`               | `⌟`                  |
-| `\lq`                     | `quote.l.single`     |
-| `\Lsh`                    | `↰`                  |
-| `\lt`                     | `<`                  |
-| `\ltimes`                 | `times.l`            |
-| `\lVert`                  | `parallel`           |
-| `\lvert`                  | `divides`            |
-| `\lvertneqq`              | not found in unicode |
+| LaTeX                     | Typst                 |
+| ------------------------- | --------------------- |
+| `\Lambda`                 | `Lambda`              |
+| `\lambda`                 | `lambda`              |
+| `\land`                   | `and`                 |
+| `\lang`                   | `angle.l`             |
+| `\langle`                 | `angle.l`             |
+| `\Larr`                   | `arrow.l.double`      |
+| `\lArr`                   | `arrow.l.double`      |
+| `\larr`                   | `<-`                  |
+| `\large` and its variants | TODO#affect following |
+| `\LaTeX`                  | `"LaTeX"`             |
+| `\lBrace`                 | `⦃`                   |
+| `\lbrace`                 | `{`                   |
+| `\lbrack`                 | `[`                   |
+| `\lceil`                  | `⌈`                   |
+| `\ldotp`                  | `.`                   |
+| `\ldots`                  | `...`                 |
+| `\le`                     | `<=`                  |
+| `\leadsto`                | `arrow.r.squiggly`    |
+| `\left`                   | `lr($1 ...)`          |
+| `\leftarrow`              | `<-`                  |
+| `\Leftarrow`              | `arrow.l.double`      |
+| `\leftarrowtail`          | `<-<`                 |
+| `\leftharpoondown`        | `harpoon.lb`          |
+| `\leftharpoonup`          | `harpoon.lt`          |
+| `\leftleftarrows`         | `arrows.ll`           |
+| `\Leftrightarrow`         | `<=>`                 |
+| `\leftrightarrow`         | `<->`                 |
+| `\leftrightarrows`        | `arrows.lr`           |
+| `\leftrightharpoons`      | `harpoons.ltrb`       |
+| `\leftrightsquigarrow`    | `arrow.l.r.wave`      |
+| `\leftthreetimes`         | `times.three.l`       |
+| `\leq`                    | `<=`                  |
+| `\leqq`                   | `lt.equiv`            |
+| `\leqslant`               | `lt.eq.slant`         |
+| `\lessapprox`             | `⪅`                   |
+| `\lessdot`                | `lt.dot`              |
+| `\lesseqgtr`              | `lt.eq.gt`            |
+| `\lesseqqgtr`             | `⪋`                   |
+| `\lessgtr`                | `lt.gt`               |
+| `\lesssim`                | `lt.tilde`            |
+| `\let`                    | TODO#scripting        |
+| `\lfloor`                 | `⌊`                   |
+| `\lg`                     | `lg`                  |
+| `\lgroup`                 | `⟮`                   |
+| `\lhd`                    | `lt.tri`              |
+| `\lim`                    | `lim`                 |
+| `\liminf`                 | `liminf`              |
+| `\limits`                 | ignored               |
+| `\limsup`                 | `limsup`              |
+| `\ll`                     | `<<`                  |
+| `\llap`                   | TODO#overlap          |
+| `\llbracket`              | `bracket.l.double`    |
+| `\llcorner`               | `⌞`                   |
+| `\Lleftarrow`             | `arrow.l.triple`      |
+| `\lll`                    | `<<<`                 |
+| `\llless`                 | `<<<`                 |
+| `\ln`                     | `ln`                  |
+| `\lnapprox`               | `⪉`                   |
+| `\lneq`                   | `⪇`                   |
+| `\lneqq`                  | `lt.nequiv`           |
+| `\lnot`                   | `not`                 |
+| `\lnsim`                  | `lt.ntilde`           |
+| `\log`                    | `log`                 |
+| `\long`                   | TODO#scripting        |
+| `\Longleftarrow`          | `<==`                 |
+| `\longleftarrow`          | `<--`                 |
+| `\Longleftrightarrow`     | `<==>`                |
+| `\longleftrightarrow`     | `<-->`                |
+| `\longmapsto`             | `arrow.r.long.bar`    |
+| `\Longrightarrow`         | `==>`                 |
+| `\longrightarrow`         | `-->`                 |
+| `\looparrowleft`          | `arrow.l.loop`        |
+| `\looparrowright`         | `arrow.r.loop`        |
+| `\lor`                    | `or`                  |
+| `\lozenge`                | `lozenge.stroked`     |
+| `\lparen`                 | `(`                   |
+| `\Lrarr`                  | `<=>`                 |
+| `\lrArr`                  | `<=>`                 |
+| `\lrarr`                  | `<->`                 |
+| `\lrcorner`               | `⌟`                   |
+| `\lq`                     | `quote.l.single`      |
+| `\Lsh`                    | `↰`                   |
+| `\lt`                     | `<`                   |
+| `\ltimes`                 | `times.l`             |
+| `\lVert`                  | `parallel`            |
+| `\lvert`                  | `divides`             |
+| `\lvertneqq`              | not found in unicode  |
 
 ## M
 
@@ -669,7 +669,7 @@ context inside the environment is denoted by `{}`
 | `\noexpand`         | TODO#scripting         |
 | `\nolimits`         | ignored                |
 | `\nonumber`         | TODO#begin             |
-| `\normalsize`       | TODO#affect all        |
+| `\normalsize`       | TODO#affect following  |
 | `\notin`            | `in.not`               |
 | `\notni`            | `in.rev.not`           |
 | `\nparallel`        | `parallel.not`         |
@@ -819,7 +819,7 @@ context inside the environment is denoted by `{}`
 | `\rightthreetimes`   | `times.three.r`            |
 | `\risingdotseq`      | `≓`                        |
 | `\rlap`              | TODO#overlap               |
-| `\rm`                | TODO#affect all            |
+| `\rm`                | TODO#affect following      |
 | `\rmoustache`        | `⎱`                        |
 | `\rparen`            | `)`                        |
 | `\rq`                | `'`                        |
@@ -836,9 +836,9 @@ context inside the environment is denoted by `{}`
 | LaTeX                | Typst                       |
 | -------------------- | --------------------------- |
 | `\S`                 | `section`                   |
-| `\scriptscriptstyle` | TODO#affect all             |
-| `\scriptsize`        | TODO#affect all             |
-| `\scriptstyle`       | TODO#affect all             |
+| `\scriptscriptstyle` | TODO#affect following       |
+| `\scriptsize`        | TODO#affect following       |
+| `\scriptstyle`       | TODO#affect following       |
 | `\sdot`              | `dot.op`                    |
 | `\searrow`           | `arrow.br`                  |
 | `\sec`               | `sec`                       |
@@ -846,7 +846,7 @@ context inside the environment is denoted by `{}`
 | `\Set`               | `{$1}`                      |
 | `\set`               | `{$1}`                      |
 | `\setminus`          | `without`                   |
-| `\sf`                | TODO#affect all             |
+| `\sf`                | TODO#affect following       |
 | `sharp`              | `♯`                         |
 | `\shortmid`          | TODO#no alternative         |
 | `\shortparallel`     | TODO#no alternative         |
@@ -858,9 +858,9 @@ context inside the environment is denoted by `{}`
 | `\simeq`             | `tilde.eq`                  |
 | `\sin`               | `sin`                       |
 | `\sinh`              | `sinh`                      |
-| `\sixptsize`         | TODO#affect all             |
+| `\sixptsize`         | TODO#affect following       |
 | `\sh`                | `#math.op("sh")`            |
-| `\small`             | TODO#affect all             |
+| `\small`             | TODO#affect following       |
 | `\smallint`          | `inline(integral)`          |
 | `\smallsetminus`     | `without`                   |
 | `\smallsmile`        | `⌣`                         |
@@ -970,7 +970,7 @@ some command here is text mode only
 | `\thinspace`         | `space.sixth`           |
 | `\tilde`             | `tilde($1)`             |
 | `\times`             | `times`                 |
-| `\tiny`              | TODO#affect all         |
+| `\tiny`              | TODO#affect following   |
 | `\to`                | `->`                    |
 | `\top`               | `top`                   |
 | `\triangle`          | `triangle.stroked.t`    |
@@ -980,7 +980,7 @@ some command here is text mode only
 | `\triangleq`         | `eq.delta`              |
 | `\triangleright`     | `triangle.stroked.r`    |
 | `\trianglerighteq`   | `gt.tri.eq`             |
-| `\tt`                | TODO#affect all         |
+| `\tt`                | TODO#affect following   |
 | `\twoheadleftarrow`  | `<<-`                   |
 | `\twoheadrightarrow` | `->>`                   |
 
