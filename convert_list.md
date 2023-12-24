@@ -1,4 +1,4 @@
-# Convert List
+# KaTeX Convert List
 
 full list in [KaTeX](https://katex.org/docs/support_table)
 
