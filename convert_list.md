@@ -16,7 +16,7 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 
 ## References
 
-something too long to fit in a table
+something too long to fit in the table
 
 - `boxed`, `colorbox`, `fbox`, `fcolorbox`: 
   `#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))`
