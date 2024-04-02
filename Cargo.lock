@@ -605,7 +605,7 @@ dependencies = [
 
 [[package]]
 name = "jupyter2typst"
-version = "0.1.5"
+version = "0.1.6"
 dependencies = [
  "argh",
  "base64",

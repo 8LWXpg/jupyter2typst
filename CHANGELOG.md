@@ -21,3 +21,22 @@
 ### Added
 
 - Complete TODOs for `lr`
+
+## [0.1.4]
+
+### Changed
+
+- Bump dependencies
+
+## [0.1.5]
+
+### Changed
+
+- Bump dependencies
+
+## [0.1.6]
+
+### Changed
+
+- Code cleanup
+- Fix cat image url in test4.ipynb
