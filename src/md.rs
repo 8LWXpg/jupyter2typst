@@ -1,7 +1,7 @@
-use image;
 use markdown::{mdast::Node, to_mdast, Constructs, ParseOptions};
 use reqwest::blocking;
 use sha1::{Digest, Sha1};
+use std::fmt::Write as _;
 use std::sync::RwLock;
 use std::{collections::HashMap, fs::File, io::Write};
 use url::Url;
@@ -52,7 +52,7 @@ fn ast_parse(node: Node) -> String {
             context.push_str("#block-quote[\n");
             for child in node.children {
                 let mut item = ast_parse(child);
-                item = format!("  {}\n", item.trim_end_matches("\n").replace("\n", "\n  "));
+                item = format!("  {}\n", item.trim_end_matches('\n').replace('\n', "\n  "));
                 context.push_str(&item);
             }
             context.push_str("]\n\n");
@@ -143,7 +143,7 @@ fn ast_parse(node: Node) -> String {
             for child in node.children {
                 context.push_str(if node.ordered { "+ " } else { "- " });
                 let mut item = ast_parse(child);
-                item = item.trim_end_matches("\n").replace("\n", "\n  ") + "\n";
+                item = item.trim_end_matches('\n').replace('\n', "\n  ") + "\n";
                 context.push_str(&item);
                 if node.spread {
                     context.push('\n');
@@ -270,10 +270,12 @@ fn footnote_def_parse(node: Node) -> String {
 pub fn sha1(s: &str) -> String {
     let mut sha1 = Sha1::new();
     sha1.update(s);
-    sha1.finalize()
-        .iter()
-        .map(|b| format!("{:02x}", b))
-        .collect()
+    sha1.finalize().iter().fold(String::new(), |mut output, p| {
+        write!(output, "{:02x}", p).unwrap();
+        output
+    })
+    // .map(|b| format!("{:02x}", b))
+    // .collect()
 }
 
 fn download_image(url: Url) -> String {

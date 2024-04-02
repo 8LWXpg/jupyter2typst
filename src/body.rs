@@ -29,7 +29,7 @@ pub fn ipynb_parse(json: Value) -> String {
         let mut attachments: HashMap<String, String> = HashMap::new();
         if let Some(item) = cell["attachments"].as_object() {
             for (name, value) in item {
-                let extension = name.split(".").last().unwrap();
+                let extension = name.split('.').last().unwrap();
                 let content = value[format!("image/{}", extension)].as_str().unwrap();
                 let file_path = format!(
                     "{}/{}.{}",

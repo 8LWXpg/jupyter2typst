@@ -87,7 +87,7 @@ block
   columns: 2,
   align: (auto, auto),
   [Header 1], [Header 2],
-  [#image("img/ded905929f9f27d5e6f084b799f4c8f1d145ec72.jpg")], [#image("img/6e58c2da06fe64145ccd937de4236df64ecb506f.jpg")],
+  [#image("img/ab2e0fb48e36657b7719077fe47911c7b5f84884.jpg")], [#image("img/4f3c219d9527429061b3bb90d9f8cb6c53f36556.jpg")],
 )
 
 === Lists

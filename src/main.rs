@@ -52,8 +52,10 @@ fn main() {
         _ => panic!("Invalid file extension"),
     };
 
-    env::set_current_dir(Path::new(&format!("./{}", &args.input)).parent().unwrap())
-        .expect("Failed to set current directory");
+    let abs_path = env::current_dir()
+        .expect("Failed to get current directory")
+        .join(&args.input);
+    env::set_current_dir(abs_path.parent().unwrap()).expect("Failed to set current directory");
     fs::create_dir_all(IMG_PATH.get().unwrap()).expect("Failed to create image directory");
     let output = body::ipynb_parse(json);
 

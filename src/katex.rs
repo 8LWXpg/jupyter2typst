@@ -87,7 +87,7 @@ impl Scanner {
                         "Expected a character after '\\'".to_string(),
                         self.clone(),
                     ))?),
-                    word => ret.push_str(&word),
+                    word => ret.push_str(word),
                 }
                 loop {
                     match self.next() {
@@ -105,7 +105,7 @@ impl Scanner {
             }
             Some('{') => {
                 let mut depth = 0;
-                while let Some(c) = self.next() {
+                for c in self.by_ref() {
                     match c {
                         '{' => depth += 1,
                         '}' => {
@@ -147,7 +147,7 @@ impl Scanner {
         match self.peek() {
             Some('[') => {
                 self.cursor += 1;
-                while let Some(c) = self.next() {
+                for c in self.by_ref() {
                     match c {
                         ']' => break,
                         _ => ret.push(c),
@@ -163,7 +163,7 @@ impl Scanner {
     /// The ending character is consumed
     pub fn until_chars(&mut self, chars: &str) -> String {
         let mut ret = String::new();
-        while let Some(c) = self.next() {
+        for c in self.by_ref() {
             if chars.contains(c) {
                 break;
             }
@@ -176,7 +176,7 @@ impl Scanner {
     /// The ending character is consumed
     pub fn until_chars_not(&mut self, chars: &str) -> String {
         let mut ret = String::new();
-        while let Some(c) = self.next() {
+        for c in self.by_ref() {
             if !chars.contains(c) {
                 break;
             }
@@ -189,7 +189,7 @@ impl Scanner {
     /// The ending string is consumed
     pub fn until_string(&mut self, string: String) -> String {
         let mut ret = String::new();
-        while let Some(c) = self.next() {
+        for c in self.by_ref() {
             ret.push(c);
             if ret.ends_with(&string) {
                 ret.truncate(ret.len() - string.len());
@@ -464,7 +464,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 "boxplus" => "plus.square".to_owned(),
                 "boxtimes" => "times.square".to_owned(),
                 "Bra" | "bra" => format!("lr(angle.l {} |)", latex_to_typst(scanner.next_param().unwrap())),
-                "Braket" | "braket" => format!("lr(angle.l {} angle.r)", latex_to_typst(scanner.next_param().unwrap()).replace("|", "mid(|)")),
+                "Braket" | "braket" => format!("lr(angle.l {} angle.r)", latex_to_typst(scanner.next_param().unwrap()).replace('|', "mid(|)")),
                 "breve" | "u" => single!(scanner, "breve"),
                 "bull" | "bullet" => "circle.filled.small".to_owned(),
                 "Bumpeq" => "≎".to_owned(),
@@ -490,7 +490,7 @@ pub fn latex_to_typst(latex: String) -> String {
                         }
                         _ => format!(
                             "{:x}",
-                            u32::from_str_radix(&scanner.until_chars_not("0123456789"), 10).unwrap()
+                            scanner.until_chars_not("0123456789").parse::<u32>().unwrap()
                         )
                     };
                     scanner.cursor -= 1;
@@ -1070,7 +1070,7 @@ pub fn latex_to_typst(latex: String) -> String {
 }
 
 fn color_to_typst(color: String) -> String {
-    if color.chars().next().unwrap() == '#' {
+    if color.starts_with('#') {
         format!("rgb(\"{}\")", color)
     } else {
         color
@@ -1110,7 +1110,7 @@ pub fn text_to_typst(text: String) -> String {
             },
             '$' => {
                 let mut math = String::new();
-                while let Some(c) = scanner.next() {
+                for c in scanner.by_ref() {
                     if c == '$' {
                         break;
                     }
@@ -1174,12 +1174,9 @@ mod function_tests {
     fn next_word_test() {
         let mut scanner = Scanner::new("\n\\frac\t\\land=3aa".to_string());
         while let Some(c) = scanner.next() {
-            match c {
-                '\\' => {
-                    let word = scanner.next_word();
-                    println!("{}", word);
-                }
-                _ => {}
+            if c == '\\' {
+                let word = scanner.next_word();
+                println!("{}", word);
             }
         }
     }
