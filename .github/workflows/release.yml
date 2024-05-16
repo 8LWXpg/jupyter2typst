@@ -48,7 +48,7 @@ jobs:
       run: |
         sudo apt update && sudo apt install -y libssl-dev pkg-config
         cargo install cross --git https://github.com/cross-rs/cross.git
-        cross build --release --target ${{ matrix.target }} --features vendor-openssl
+        cross build --release --target ${{ matrix.target }} --features rustls
 
     - name: Run Cargo
       if: ${{ !matrix.cross }}
