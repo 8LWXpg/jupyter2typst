@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-rustls = ["reqwest/rustls-tls"]
+vendored = ["reqwest/native-tls-vendored"]
 
 [dependencies]
 argh = "0.1.12"
