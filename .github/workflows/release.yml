@@ -50,19 +50,19 @@ jobs:
     - name: create artifact directory
       shell: bash
       run: |
-        directory=gpm-${{ matrix.target }}
+        directory=jupyter2typst-${{ matrix.target }}
         mkdir $directory
         cp README.md LICENSE $directory
-        if [ -f target/${{ matrix.target }}/release/gpm.exe ]; then
-          cp target/${{ matrix.target }}/release/gpm.exe $directory
+        if [ -f target/${{ matrix.target }}/release/jupyter2typst.exe ]; then
+          cp target/${{ matrix.target }}/release/jupyter2typst.exe $directory
         else
-          cp target/${{ matrix.target }}/release/gpm $directory
+          cp target/${{ matrix.target }}/release/jupyter2typst $directory
         fi
         7z a -r $directory.zip $directory
 
     - uses: ncipollo/release-action@v1.14.0
       with:
-        artifacts: "gpm-${{ matrix.target }}.zip"
+        artifacts: "jupyter2typst-${{ matrix.target }}.zip"
         allowUpdates: true
         omitNameDuringUpdate: true
         omitBodyDuringUpdate: true
