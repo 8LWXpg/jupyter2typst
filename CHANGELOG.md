@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.1]
+
+### Fixed
+
+- Fixed release action for linux
+
+## [1.0.0]
+
+### Added
+
+- Release prebuild binary
+
 ## [0.1.6]
 
 ### Changed
