@@ -49,36 +49,34 @@ fn ast_parse(node: Node) -> String {
 
     match node {
         Node::BlockQuote(node) => {
-            context.push_str("#block-quote[\n");
+            context += "#block-quote[\n";
             for child in node.children {
-                let mut item = ast_parse(child);
-                item = format!("  {}\n", item.trim_end_matches('\n').replace('\n', "\n  "));
-                context.push_str(&item);
+                context += &format!(
+                    "  {}\n",
+                    ast_parse(child)
+                        .trim_end_matches('\n')
+                        .replace('\n', "\n  ")
+                );
             }
-            context.push_str("]\n\n");
+            context += "]\n\n";
         }
-        Node::Break(_) => {
-            context.push('\n');
-        }
+        Node::Break(_) => context.push('\n'),
         Node::Code(node) => {
-            context.push_str(&format!(
-                "```{}\n",
-                node.lang.unwrap_or_else(|| "".to_string())
-            ));
-            context.push_str(&node.value);
-            context.push_str("\n```\n");
+            context += &format!("```{}\n", node.lang.unwrap_or_else(|| "".to_string()));
+            context += &node.value;
+            context += "\n```\n";
         }
         Node::Delete(node) => {
-            context.push_str("#strike[");
+            context += "#strike[";
             for child in node.children {
-                context.push_str(&ast_parse(child));
+                context += &ast_parse(child);
             }
             context.push(']');
         }
         Node::Emphasis(node) => {
-            context.push_str("#emph[");
+            context += "#emph[";
             for child in node.children {
-                context.push_str(&ast_parse(child));
+                context += &ast_parse(child);
             }
             context.push(']');
         }
@@ -88,63 +86,56 @@ fn ast_parse(node: Node) -> String {
         Node::FootnoteReference(node) => {
             let id = node.identifier.as_str();
             if let Some(link) = FOOTNOTE_DEFINITIONS.read().unwrap().to_owned().get(id) {
-                context.push_str(&format!("#link(\"{}\")[^{}]", link, id))
+                context += &format!("#link(\"{}\")[^{}]", link, id)
             } else {
-                context.push_str(&format!("[^{}]", id))
+                context += &format!("[^{}]", id)
             }
         }
         Node::Heading(node) => {
             let mut item = String::new();
-            context.push_str(&format!("{} ", "=".repeat(node.depth as usize)));
+            context += &format!("{} ", "=".repeat(node.depth as usize));
             for child in node.children {
                 item = ast_parse(child);
             }
-            context.push_str(&item);
-            context.push_str("\n\n");
+            context += &item;
+            context += "\n\n";
         }
-        Node::Html(node) => {
-            context.push_str(&typ::escape_content(html_to_typst(&node.value)));
-        }
+        Node::Html(node) => context += &typ::escape_content(html_to_typst(&node.value)),
         Node::Image(node) => match Url::parse(&node.url) {
             Ok(url) => match url.scheme() {
-                "http" | "https" => {
-                    context.push_str(&format!("#image(\"{}\")", download_image(url)))
-                }
+                "http" | "https" => context += &format!("#image(\"{}\")", download_image(url)),
                 _ => {
                     let name = node.url.strip_prefix("attachment:").unwrap();
                     let a = ATTACHMENTS.read().unwrap();
                     if let Some(file_path) = a.to_owned().get(name) {
-                        context.push_str(&format!("#image(\"{}\")", file_path))
+                        context += &format!("#image(\"{}\")", file_path)
                     };
                 }
             },
             Err(_) => {
                 let name = node.url.strip_prefix("attachment:").unwrap();
                 if let Some(file_path) = ATTACHMENTS.read().unwrap().to_owned().get(name) {
-                    context.push_str(&format!("#image(\"{}\")", file_path))
+                    context += &format!("#image(\"{}\")", file_path)
                 };
             }
         },
-        Node::InlineCode(node) => {
-            context.push_str(&format!("`{}`", node.value));
-        }
-        Node::InlineMath(node) => {
-            // println!("{}\n", node.value);
-            context.push_str(&format!("${}$", katex::latex_to_typst(node.value)));
-        }
+        Node::InlineCode(node) => context += &format!("`{}`", node.value),
+        Node::InlineMath(node) => context += &format!("${}$", katex::latex_to_typst(node.value)),
         Node::Link(node) => {
-            context.push_str(&format!("#link(\"{}\")[", node.url));
+            context += &format!("#link(\"{}\")[", node.url);
             for child in node.children {
-                context.push_str(&ast_parse(child));
+                context += &ast_parse(child);
             }
             context.push(']');
         }
         Node::List(node) => {
             for child in node.children {
-                context.push_str(if node.ordered { "+ " } else { "- " });
-                let mut item = ast_parse(child);
-                item = item.trim_end_matches('\n').replace('\n', "\n  ") + "\n";
-                context.push_str(&item);
+                context += if node.ordered { "+ " } else { "- " };
+                let mut item = ast_parse(child)
+                    .trim_end_matches('\n')
+                    .replace('\n', "\n  ");
+                item.push('\n');
+                context += &item;
                 if node.spread {
                     context.push('\n');
                 }
@@ -153,34 +144,34 @@ fn ast_parse(node: Node) -> String {
         }
         Node::ListItem(node) => {
             for child in node.children {
-                context.push_str(&ast_parse(child));
+                context += &ast_parse(child);
             }
         }
         Node::Math(node) => {
             // println!("{}\n", node.value);
-            context.push_str(&format!("$ {} $", katex::latex_to_typst(node.value)))
+            context += &format!("$ {} $", katex::latex_to_typst(node.value))
         }
         Node::Paragraph(node) => {
             for child in node.children {
-                context.push_str(&ast_parse(child));
+                context += &ast_parse(child);
             }
             context.push('\n');
         }
         Node::Root(node) => {
             for child in node.children {
-                context.push_str(&ast_parse(child));
+                context += &ast_parse(child);
             }
         }
         Node::Strong(node) => {
             context.push('*');
             for child in node.children {
-                context.push_str(&ast_parse(child));
+                context += &ast_parse(child);
             }
             context.push('*');
         }
         Node::Table(node) => {
-            context.push_str("#table(\n");
-            context.push_str(&format!("  columns: {},\n", node.align.len()));
+            context += "#table(\n";
+            context += &format!("  columns: {},\n", node.align.len());
             context.push_str(&format!(
                 "  align: ({}),\n",
                 node.align
@@ -197,34 +188,32 @@ fn ast_parse(node: Node) -> String {
                     .join(", ")
             ));
             for child in node.children {
-                context.push_str(&ast_parse(child));
+                context += &ast_parse(child);
             }
-            context.push_str(")\n\n");
+            context += ")\n\n";
         }
         Node::TableCell(node) => {
             context.push('[');
             for child in node.children {
-                context.push_str(&ast_parse(child));
+                context += &ast_parse(child);
             }
-            context.push_str("], ");
+            context += "], ";
         }
         Node::TableRow(node) => {
-            context.push_str("  ");
+            context += "  ";
             for child in node.children {
-                context.push_str(&ast_parse(child));
+                context += &ast_parse(child);
             }
             context.pop();
             context.push('\n');
         }
         Node::Text(node) => {
-            context.push_str(&typ::escape_content(node.value));
+            context += &typ::escape_content(node.value);
         }
         Node::ThematicBreak(_) => {
-            context.push_str("#line(length: 100%)\n");
+            context += "#line(length: 100%)\n";
         }
-        _ => {
-            println!("unhandled node: {:?}", node);
-        }
+        _ => unreachable!(),
     }
 
     context
@@ -257,11 +246,11 @@ fn footnote_def_parse(node: Node) -> String {
     match node {
         Node::Paragraph(node) => {
             for child in node.children {
-                context.push_str(&footnote_def_parse(child));
+                context += &footnote_def_parse(child);
             }
         }
-        Node::Text(node) => context.push_str(&node.value),
-        Node::Link(node) => context.push_str(&node.url),
+        Node::Text(node) => context += &node.value,
+        Node::Link(node) => context += &node.url,
         _ => println!("footnote_def_parse unhandled node: {:?}\n", node),
     }
     context
@@ -274,16 +263,14 @@ pub fn sha1(s: &str) -> String {
         write!(output, "{:02x}", p).unwrap();
         output
     })
-    // .map(|b| format!("{:02x}", b))
-    // .collect()
 }
 
 fn download_image(url: Url) -> String {
     println!("Downloading image from {}", url);
     let response = match blocking::get(url.as_str()) {
         Ok(r) => r,
-        Err(_) => {
-            println!("download image failed: {}", url);
+        Err(e) => {
+            println!("Download image at {} failed: {}", url, e);
             return url.as_str().to_string();
         }
     };
@@ -297,7 +284,7 @@ fn download_image(url: Url) -> String {
             "image/gif" => "gif",
             "image/svg+xml" => "svg",
             c => {
-                println!("not supported image format: {}", c);
+                println!("Unsupported image format: {}", c);
                 return url.as_str().to_string();
             }
         },
@@ -309,7 +296,7 @@ fn download_image(url: Url) -> String {
                     image::ImageFormat::Jpeg => "jpg",
                     image::ImageFormat::Gif => "gif",
                     _ => {
-                        println!("not supported image format: {:?}", format);
+                        println!("Unsupported image format: {:?}", format);
                         return url.as_str().to_string();
                     }
                 },
