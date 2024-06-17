@@ -6,7 +6,7 @@ Feel free to open a issue or PR!
 
 - automatic image download/extract
 - nice template
-- support for KaTeX in markdown convert (mostly complete)
+- support for KaTeX in markdown math (mostly complete)
 
 Look for demos in [test](test) folder.
 
