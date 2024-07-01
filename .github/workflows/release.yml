@@ -46,12 +46,15 @@ jobs:
       with:
         target: ${{ matrix.target }}
 
-    - name: Run Cross
+    - name: Install Cross
       if: ${{ matrix.cross }}
-      run: |
-        sudo apt update && sudo apt install -y libssl-dev pkg-config
-        cargo install cross --git https://github.com/cross-rs/cross.git
-        cross build --release --target ${{ matrix.target }} --features vendored
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cross
+
+    - name: Run Cross
+      run: cross build --release --target ${{ matrix.target }}
+      if: ${{ matrix.cross }}
 
     - name: Run Cargo
       if: ${{ !matrix.cross }}
