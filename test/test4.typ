@@ -22,7 +22,6 @@
 #block-quote[
   quote
 ]
-
 - l
 - l
 - l
@@ -137,9 +136,7 @@ int method() {
     ]
   ]
 ]
-
 #block-quote[
   single line
 ]
-
 ]

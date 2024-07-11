@@ -58,7 +58,7 @@ fn ast_parse(node: Node) -> String {
                         .replace('\n', "\n  ")
                 );
             }
-            context += "]\n\n";
+            context += "]\n";
         }
         Node::Break(_) => context.push('\n'),
         Node::Code(node) => {
@@ -149,7 +149,7 @@ fn ast_parse(node: Node) -> String {
         }
         Node::Math(node) => {
             // println!("{}\n", node.value);
-            context += &format!("$ {} $", katex::latex_to_typst(node.value))
+            context += &format!("$ {} $\n", katex::latex_to_typst(node.value))
         }
         Node::Paragraph(node) => {
             for child in node.children {
@@ -172,7 +172,7 @@ fn ast_parse(node: Node) -> String {
         Node::Table(node) => {
             context += "#table(\n";
             context += &format!("  columns: {},\n", node.align.len());
-            context.push_str(&format!(
+            context += &format!(
                 "  align: ({}),\n",
                 node.align
                     .iter()
@@ -186,7 +186,7 @@ fn ast_parse(node: Node) -> String {
                     })
                     .collect::<Vec<String>>()
                     .join(", ")
-            ));
+            );
             for child in node.children {
                 context += &ast_parse(child);
             }

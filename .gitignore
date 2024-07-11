@@ -2,3 +2,5 @@
 *.txt
 /test/img
 /test/template.pdf
+/template/img
+/template/template.pdf

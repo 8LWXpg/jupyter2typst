@@ -8,7 +8,6 @@ default(fmt = :png)
 
 using DataFrames"
 , lang: "julia", count: 2)
-
 ]
 #block[
 ]
@@ -24,7 +23,6 @@ Plots.jl outputs plots in different formats. It is written in #link("https://jul
 g(x) = cos(x)
 h(x) = tan(x)"
 , lang: "julia", count: 21)
-
 ]
 #block[
 #result-block("h (generic function with 1 method)")
@@ -32,7 +30,6 @@ h(x) = tan(x)"
 #block[
 #code-block("xs = LinRange(0, 2pi, 100)"
 , lang: "julia", count: 22)
-
 ]
 #block[
 #result-block("100-element LinRange{Float64, Int64}:
@@ -49,17 +46,16 @@ According to Wikipedia, their graphs look like this:
 #block[
 #code-block("plot(xs, [f, g, h]; ylim = (-2, 2), framestyle = :box, grid = false, palette = :tab10)"
 , lang: "julia", count: 23)
-
 ]
 #block[
-#image("./img/ea844af1262c9c7267aaed6e3f6bb2a54b115ac9.png")]
+#image("./img/ea844af1262c9c7267aaed6e3f6bb2a54b115ac9.png")
+]
 #block[
 Let\'s produce an error:
 ]
 #block[
 #code-block("i(x)"
 , lang: "julia", count: 24)
-
 ]
 #block[
 #result-block("UndefVarError: `i` not defined
@@ -76,7 +72,6 @@ We can try some table outputs, for example:
 #block[
 #code-block("df = DataFrame((col1 = [\"First\", \"Second\", \"Third\"], col2 = [1, 2, 3]))"
 , lang: "julia", count: 3)
-
 ]
 #block[
 #result-block("[1m3×2 DataFrame[0m

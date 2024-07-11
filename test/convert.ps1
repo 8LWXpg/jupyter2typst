@@ -1,9 +1,9 @@
 pushd
 cd $PSScriptRoot
 
-foreach($e in (ls *.ipynb)){
-	../target/debug/jupyter2typst $e.FullName
-	typst c "$($e.DirectoryName)/$($e.BaseName).typ"
+ls *.ipynb | % {
+	cargo run -- $_.FullName
+	typst c "$($_.DirectoryName)/$($_.BaseName).typ"
 }
 
 popd

@@ -18,10 +18,10 @@ H(p) = I(p) + I(1 - p)
 
 plot(p, [I.(p), I.(1 .- p), H.(p)], label=[\"I(p)\" \"I(1-p)\" \"H(p)\"])"
 , lang: "julia", count: 1)
-
 ]
 #block[
-#image("./img/985daaaacb50fe430f2a5eae9d74119bb590aea2.svg")]
+#image("./img/985daaaacb50fe430f2a5eae9d74119bb590aea2.svg")
+]
 #block[
 == (b)
 
@@ -33,10 +33,10 @@ H(p1, p2) = I(p1) + I(p2) + I(1 - p1 - p2)
 
 surface(p, p, H)"
 , lang: "julia", count: 2)
-
 ]
 #block[
-#image("./img/e7da6cb820adc923140956e22a8c0d372f812a89.svg")]
+#image("./img/e7da6cb820adc923140956e22a8c0d372f812a89.svg")
+]
 #block[
 = 2.
 
@@ -65,10 +65,10 @@ f(x) = x
 p1 = plot(f, -1, 1, label=\"f(x)\")
 plot!(quantize(f, bit, -1, 1), -1, 1, label=[\"quantize(f, $bit)\" \"error\"], legend=:topleft)"
 , lang: "julia", count: 3)
-
 ]
 #block[
-#image("./img/c99fc14339dd048ab2beb09d5d14b5bc121b9d0d.svg")]
+#image("./img/c99fc14339dd048ab2beb09d5d14b5bc121b9d0d.svg")
+]
 #block[
 == (b)
 
@@ -78,7 +78,7 @@ plot!(quantize(f, bit, -1, 1), -1, 1, label=[\"quantize(f, $bit)\" \"error\"], l
 p2 = plot(f, 0, 2π, label=\"f(x)\")
 plot!(quantize(f, 3, 0, 2π), 0, 2π, label=[\"quantize(f, $bit)\" \"error\"])"
 , lang: "julia", count: 4)
-
 ]
 #block[
-#image("./img/5b73b52a47ccaa96e7996b317c04e1a15ef968d6.svg")]
+#image("./img/5b73b52a47ccaa96e7996b317c04e1a15ef968d6.svg")
+]

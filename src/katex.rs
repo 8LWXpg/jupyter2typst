@@ -87,14 +87,14 @@ impl Scanner {
                         "Expected a character after '\\'".to_string(),
                         self.clone(),
                     ))?),
-                    word => ret.push_str(word),
+                    word => ret += word,
                 }
                 loop {
                     match self.next() {
                         Some(c) if c.is_whitespace() => {}
                         Some(c) if BINARY_OPERATORS.contains(&c) => {
                             ret.push(c);
-                            ret.push_str(&self.next_param()?);
+                            ret += &self.next_param()?;
                         }
                         _ => {
                             self.cursor -= 1;
@@ -1063,7 +1063,7 @@ pub fn latex_to_typst(latex: String) -> String {
                 }
             }
         }
-        text.push_str(&push);
+        text += &push;
     }
 
     text
@@ -1120,7 +1120,7 @@ pub fn text_to_typst(text: String) -> String {
             }
             _ => c.to_string(),
         };
-        ret.push_str(&push);
+        ret += &push;
     }
     ret
 }
@@ -1152,7 +1152,7 @@ fn matrix_to_typst(content: String) -> String {
                 if s[i].ends_with('\\') {
                     let temp = s[i + 1].clone();
                     s[i].push('&');
-                    s[i].push_str(&temp);
+                    s[i] += &temp;
                     s.remove(i + 1);
                 }
                 i += 1;

@@ -50,7 +50,6 @@ In natural units ($c$ = 1), the formula expresses the identity
 E=m
 \\\\end{equation}''')"
 , lang: "python", count: 15)
-
 ]
 #block[
 #result-block("<IPython.core.display.Latex object>")
@@ -64,7 +63,6 @@ E=m
 \\nabla \\cdot \\vec{\\mathbf{B}} & = 0
 \\end{aligned}"
 , lang: "python", count: 3)
-
 ]
 #block[
 #result-block("<IPython.core.display.Latex object>")
@@ -102,7 +100,6 @@ $$ Ai(-z) =
 $$
 "
 , lang: "python", count: 11)
-
 ]
 #block[
 #result-block("<IPython.core.display.Latex object>")

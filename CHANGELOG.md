@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.0]
+
+### Changed
+
+- Bump template dependencies
+
+### Fixed
+
+- Fixed output newline of `code-block`, `image` and `block-quote`
+- Fixed output newline of markdown math block
+
 ## [1.0.1]
 
 ### Fixed
@@ -10,7 +21,7 @@
 
 ### Added
 
-- Release prebuild binary
+- Release prebuilt binary
 
 ## [0.1.6]
 

@@ -58,4 +58,5 @@ frac(c, d)\
 #box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt), fill: blue)[h]e l l o\
 a b\
 a#h(-1em/6)b\
-space a $]
+space a $
+]
