@@ -53,7 +53,7 @@ jobs:
         tool: cross
 
     - name: Run Cross
-      run: cross build --release --target ${{ matrix.target }}
+      run: cross build --release --target ${{ matrix.target }} --features vendored
       if: ${{ matrix.cross }}
 
     - name: Run Cargo
