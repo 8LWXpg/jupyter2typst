@@ -5,6 +5,7 @@
 ### Changed
 
 - Bump template dependencies
+- Update deprecated code in template
 
 ### Fixed
 
