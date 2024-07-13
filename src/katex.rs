@@ -1173,10 +1173,14 @@ mod function_tests {
     #[test]
     fn next_word_test() {
         let mut scanner = Scanner::new("\n\\frac\t\\land=3aa".to_string());
+        let mut count = 0;
+        let assert = ["frac", "land"];
         while let Some(c) = scanner.next() {
             if c == '\\' {
                 let word = scanner.next_word();
-                println!("{}", word);
+                // println!("{}", word);
+                assert_eq!(word, assert[count]);
+                count += 1;
             }
         }
     }
@@ -1184,15 +1188,21 @@ mod function_tests {
     #[test]
     fn next_param_test() {
         let mut scanner = Scanner::new("\n\t\\land\\%=3aa\\\\".to_string());
+        let mut count = 0;
+        let assert = ["\\land", "\\%", "=", "3", "a", "a", "\\\\"];
         while let Ok(c) = scanner.next_param() {
-            println!("{}", c);
+            // println!("{}", c);
+            assert_eq!(c, assert[count]);
+            count += 1;
         }
     }
 
     #[test]
     fn color_test() {
-        println!("{}", color_to_typst("#00ff00".to_string()));
-        println!("{}", color_to_typst("red".to_string()));
+        assert_eq!(color_to_typst("#00ff00".to_string()), "rgb(\"#00ff00\")");
+        // println!("{}", color_to_typst("#00ff00".to_string()));
+        assert_eq!(color_to_typst("red".to_string()), "red");
+        // println!("{}", color_to_typst("red".to_string()));
     }
 
     #[test]

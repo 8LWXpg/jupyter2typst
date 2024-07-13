@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.2]
+
+### Changed
+
+- Preserve `table.header` in `table` block
+
+## [1.1.1]
+
+### Fixed
+
+- Fixed release action for linux
+
 ## [1.1.0]
 
 ### Changed

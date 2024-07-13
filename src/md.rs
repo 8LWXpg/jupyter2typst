@@ -187,7 +187,12 @@ fn ast_parse(node: Node) -> String {
                     .collect::<Vec<String>>()
                     .join(", ")
             );
-            for child in node.children {
+            let mut children = node.children;
+            context += "  table.header(\n";
+            context += "    ";
+            context += &ast_parse(children.remove(0));
+            context += "  ),\n";
+            for child in children {
                 context += &ast_parse(child);
             }
             context += ")\n\n";
@@ -347,5 +352,31 @@ mod tests {
             )
             .unwrap()
         );
+    }
+
+    #[test]
+    fn test_table() {
+        let table = "| Syntax test | Description | Test | XXX | XXX |
+| ----------- | ----------- | ---- | --- | --- |
+| Header      | Title       | AAAA | XXX | XXX |
+| Header      | Title       | AAAA | XXX | XXX |
+| Paragraph   | Text        | BBBB | XXX | XXX |";
+        // println!("{}", md_to_typst(vec![table], HashMap::new()));
+        assert_eq!(
+            md_to_typst(vec![table], HashMap::new()),
+            "#table(
+  columns: 5,
+  align: (auto, auto, auto, auto, auto),
+  table.header(
+      [Syntax test], [Description], [Test], [XXX], [XXX],
+  ),
+  [Header], [Title], [AAAA], [XXX], [XXX],
+  [Header], [Title], [AAAA], [XXX], [XXX],
+  [Paragraph], [Text], [BBBB], [XXX], [XXX],
+)
+
+"
+            .to_string(),
+        )
     }
 }
