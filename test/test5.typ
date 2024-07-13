@@ -18,7 +18,8 @@ nabla times arrow(bold(B)) -space.sixth frac(1, c)space.sixth frac(diff arrow(bo
 nabla dot.op arrow(bold(E)) & = 4 pi rho \
 nabla times arrow(bold(E))space.sixth +space.sixth frac(1, c)space.sixth frac(diff arrow(bold(B)), diff t) & = arrow(bold(0)) \
 nabla dot.op arrow(bold(B)) & = 0
-$$ $]
+$$ $
+]
 #block[
 *Easy Equation writing examples*
 $c = sqrt(a^2 + b^2)$
