@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Fixed binary operator in math
+
 ## [1.1.2]
 
 ### Changed
