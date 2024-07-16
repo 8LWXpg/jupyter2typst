@@ -1048,9 +1048,13 @@ pub fn latex_to_typst(latex: String) -> String {
                 "Z" => "ZZ".to_owned(),
                 word => word.to_owned(),
             }
-            c if BINARY_OPERATORS.contains(&c) => match scanner.peek() {
-                Some('{') => format!("^({})", latex_to_typst(scanner.next_param().unwrap())),
-                _ => format!("{}{}", c, latex_to_typst(scanner.next_param().unwrap())),
+            _ if BINARY_OPERATORS.contains(&c) => match scanner.peek() {
+                Some('{') => format!("{}({})", c, latex_to_typst(scanner.next_param().unwrap())),
+                Some(next) => {
+                    scanner.cursor += 1;
+                    format!("{}{}", c, next)
+                }
+                _ => unreachable!(),
             },
             '%' => format!("//{}\n", scanner.until_chars("\n")),
             '~' => "space.nobreak".to_owned(),
