@@ -63,7 +63,9 @@ block
 #table(
   columns: 3,
   align: (auto, auto, auto),
-  [table], [table], [table],
+  table.header(
+      [table], [table], [table],
+  ),
   [table], [table], [table],
   [table], [table], [table],
   [table], [table], [table],
@@ -74,7 +76,9 @@ block
 #table(
   columns: 5,
   align: (auto, auto, auto, auto, auto),
-  [Syntax test], [Description], [Test], [XXX], [XXX],
+  table.header(
+      [Syntax test], [Description], [Test], [XXX], [XXX],
+  ),
   [Header], [Title], [AAAA], [XXX], [XXX],
   [Header], [Title], [AAAA], [XXX], [XXX],
   [Paragraph], [Text], [BBBB], [XXX], [XXX],
@@ -85,8 +89,10 @@ block
 #table(
   columns: 2,
   align: (auto, auto),
-  [Header 1], [Header 2],
-  [#image("img/ab2e0fb48e36657b7719077fe47911c7b5f84884.jpg")], [#image("img/4f3c219d9527429061b3bb90d9f8cb6c53f36556.jpg")],
+  table.header(
+      [Header 1], [Header 2],
+  ),
+  [#image("img/ab2e0fb48e36657b7719077fe47911c7b5f84884.png")], [#image("img/4f3c219d9527429061b3bb90d9f8cb6c53f36556.jpg")],
 )
 
 === Lists

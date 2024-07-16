@@ -24,7 +24,7 @@ $$ $
 *Easy Equation writing examples*
 $c = sqrt(a^2 + b^2)$
 Logarithmic growth of a population of cells can be described mathematically as
-$N = N_o e^l n 2(t\/t_2)$
+$N = N_o e^(l n 2(t\/t_2))$
 (from page 177 of Methods in Yeast Genetics, 205 Edition)
 *See #link("http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference")[here] for an awesome reference for MathJax*
 ]

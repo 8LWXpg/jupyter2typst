@@ -5,6 +5,7 @@
 		"ipynb",
 		"katex",
 		"mdast",
+		"mitex",
 		"reqwest",
 		"traceback",
 		"Typst"

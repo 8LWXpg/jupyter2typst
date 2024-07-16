@@ -1,6 +1,8 @@
 use crate::typ;
 use regex::Regex;
 
+const BINARY_OPERATORS: &[char] = &['_', '^'];
+
 #[derive(Debug, Clone)]
 struct Scanner {
     cursor: usize,
@@ -68,7 +70,6 @@ impl Scanner {
     /// Returns the next LaTeX parameter in the scanner.
     pub fn next_param(&mut self) -> Result<String, ScannerError> {
         let mut ret = String::new();
-        const BINARY_OPERATORS: &[char] = &['_', '^'];
 
         // trim whitespace
         while let Some(c) = self.peek() {
@@ -1047,13 +1048,15 @@ pub fn latex_to_typst(latex: String) -> String {
                 "Z" => "ZZ".to_owned(),
                 word => word.to_owned(),
             }
+            c if BINARY_OPERATORS.contains(&c) => match scanner.peek() {
+                Some('{') => format!("^({})", latex_to_typst(scanner.next_param().unwrap())),
+                _ => format!("{}{}", c, latex_to_typst(scanner.next_param().unwrap())),
+            },
             '%' => format!("//{}\n", scanner.until_chars("\n")),
             '~' => "space.nobreak".to_owned(),
             '/' | '"' => format!("\\{}", c),
-            _ => match c {
-                '{' | '}' => "".to_string(),
-                _ => c.to_string(),
-            },
+            '{' | '}' => "".to_string(),
+            _ => c.to_string(),
         };
         // insert space if current and next character is a alphabetic character
         if let Some(first) = push.chars().next() {
@@ -1223,7 +1226,7 @@ mod tests {
     fn test_parse_typ() {
         assert_eq!(
             latex_to_typst("\\bcancel{N = N_oe^{ln2(t/t_2)}}".to_string()),
-            "cancel(inverted: #true, N = N_o e^l n 2(t\\/t_2))"
+            "cancel(inverted: #true, N = N_o e^(l n 2(t\\/t_2)))"
         );
         assert_eq!(latex_to_typst("hello".to_string()), "h e l l o");
         assert_eq!(
