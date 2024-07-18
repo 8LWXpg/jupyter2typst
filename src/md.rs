@@ -120,7 +120,9 @@ fn ast_parse(node: Node) -> String {
             }
         },
         Node::InlineCode(node) => context += &format!("`{}`", node.value),
-        Node::InlineMath(node) => context += &format!("${}$", katex::latex_to_typst(node.value)),
+        Node::InlineMath(node) => {
+            context += &format!("${}$", katex::latex_to_typst(node.value).unwrap())
+        }
         Node::Link(node) => {
             context += &format!("#link(\"{}\")[", node.url);
             for child in node.children {
@@ -149,7 +151,7 @@ fn ast_parse(node: Node) -> String {
         }
         Node::Math(node) => {
             // println!("{}\n", node.value);
-            context += &format!("$ {} $\n", katex::latex_to_typst(node.value))
+            context += &format!("$ {} $\n", katex::latex_to_typst(node.value).unwrap())
         }
         Node::Paragraph(node) => {
             for child in node.children {

@@ -147,7 +147,8 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
                             .collect::<Vec<&str>>()
                             .join("")
                             .replace("$$", "$"),
-                    );
+                    )
+                    .unwrap();
                 } else if let Some(text) = data["text/html"].as_array() {
                     context += &md::html_to_typst(
                         text.iter()
