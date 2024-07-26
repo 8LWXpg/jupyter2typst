@@ -2,20 +2,18 @@ use markdown::{mdast::Node, to_mdast, Constructs, ParseOptions};
 use reqwest::blocking;
 use sha1::{Digest, Sha1};
 use std::fmt::Write as _;
-use std::sync::RwLock;
+use std::sync::{LazyLock, RwLock};
 use std::{collections::HashMap, fs::File, io::Write};
 use url::Url;
 
 use crate::IMG_PATH;
 use crate::{katex, typ};
 
-use once_cell::sync::Lazy;
-
-static FOOTNOTE_DEFINITIONS: Lazy<RwLock<HashMap<String, String>>> =
-    Lazy::new(|| RwLock::new(HashMap::new()));
+static FOOTNOTE_DEFINITIONS: LazyLock<RwLock<HashMap<String, String>>> =
+    LazyLock::new(|| RwLock::new(HashMap::new()));
 /// <name in attachments, file path>
-static ATTACHMENTS: Lazy<RwLock<HashMap<String, String>>> =
-    Lazy::new(|| RwLock::new(HashMap::new()));
+static ATTACHMENTS: LazyLock<RwLock<HashMap<String, String>>> =
+    LazyLock::new(|| RwLock::new(HashMap::new()));
 
 pub fn md_to_typst(md: Vec<&str>, attachments: HashMap<String, String>) -> String {
     let tree = to_mdast(

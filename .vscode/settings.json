@@ -8,6 +8,9 @@
 		"mitex",
 		"reqwest",
 		"traceback",
-		"Typst"
-	]
+		"Typst",
+	],
+	"cSpell.ignorePaths": [
+		"src/katex.rs",
+	],
 }

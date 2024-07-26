@@ -1,7 +1,7 @@
 use crate::IMG_PATH;
 use base64::{engine::general_purpose::STANDARD, Engine as _};
-use once_cell::sync::OnceCell;
 use serde_json::Value;
+use std::sync::OnceLock;
 use std::{
     collections::HashMap,
     fs::{self, File},
@@ -10,7 +10,7 @@ use std::{
 
 use crate::{katex, md, typ};
 
-static LANG: OnceCell<String> = OnceCell::new();
+static LANG: OnceLock<String> = OnceLock::new();
 static TEMPLATE: &str = "#import \"template.typ\": *\n#show: template\n\n";
 
 pub fn ipynb_parse(json: Value) -> String {

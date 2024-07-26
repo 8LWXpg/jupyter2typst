@@ -3,13 +3,13 @@ mod katex;
 mod md;
 mod typ;
 
-use once_cell::sync::OnceCell;
 use serde_json::Value;
 use std::{
     env,
     fs::{self, File},
     io::{Read, Write},
     path::Path,
+    sync::OnceLock,
 };
 
 use argh::FromArgs;
@@ -30,7 +30,7 @@ struct Args {
     img_path: String,
 }
 
-static IMG_PATH: OnceCell<String> = OnceCell::new();
+static IMG_PATH: OnceLock<String> = OnceLock::new();
 
 fn main() {
     let args: Args = argh::from_env();
