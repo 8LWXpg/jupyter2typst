@@ -5,297 +5,297 @@ const BINARY_OPERATORS: &[char] = &['_', '^'];
 
 #[derive(Debug, Clone)]
 struct Scanner {
-    cursor: usize,
-    characters: Vec<char>,
+	cursor: usize,
+	characters: Vec<char>,
 }
 
 #[derive(Debug)]
 pub struct ScannerError {
-    message: String,
-    cursor: usize,
-    characters: String,
+	message: String,
+	cursor: usize,
+	characters: String,
 }
 
 impl ScannerError {
-    fn new(message: String, scanner: Scanner) -> Self {
-        Self {
-            message,
-            cursor: scanner.cursor,
-            characters: scanner.characters.iter().collect(),
-        }
-    }
+	fn new(message: String, scanner: Scanner) -> Self {
+		Self {
+			message,
+			cursor: scanner.cursor,
+			characters: scanner.characters.iter().collect(),
+		}
+	}
 }
 
 impl std::fmt::Display for ScannerError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(
-            f,
-            "{} at position {} in {}",
-            self.message, self.cursor, self.characters
-        )
-    }
+	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+		write!(
+			f,
+			"{} at position {} in {}",
+			self.message, self.cursor, self.characters
+		)
+	}
 }
 
 impl Scanner {
-    pub fn new(text: String) -> Self {
-        Self {
-            cursor: 0,
-            characters: text.chars().collect(),
-        }
-    }
+	pub fn new(text: String) -> Self {
+		Self {
+			cursor: 0,
+			characters: text.chars().collect(),
+		}
+	}
 
-    /// Returns character at the cursor without advancing the cursor.
-    pub fn peek(&self) -> Option<char> {
-        self.characters.get(self.cursor).copied()
-    }
+	/// Returns character at the cursor without advancing the cursor.
+	pub fn peek(&self) -> Option<char> {
+		self.characters.get(self.cursor).copied()
+	}
 
-    /// Returns the next word (ascii alphabet only) in the scanner.
-    pub fn next_word(&mut self) -> String {
-        let mut ret = String::new();
-        while let Some(c) = self.peek() {
-            if !c.is_ascii_alphabetic() {
-                // pick up '\operatorname*' specifically
-                if ret == "operatorname" && c == '*' {
-                    ret.push(c);
-                    self.cursor += 1;
-                }
-                break;
-            }
-            self.cursor += 1;
-            ret.push(c);
-        }
-        ret
-    }
+	/// Returns the next word (ascii alphabet only) in the scanner.
+	pub fn next_word(&mut self) -> String {
+		let mut ret = String::new();
+		while let Some(c) = self.peek() {
+			if !c.is_ascii_alphabetic() {
+				// pick up '\operatorname*' specifically
+				if ret == "operatorname" && c == '*' {
+					ret.push(c);
+					self.cursor += 1;
+				}
+				break;
+			}
+			self.cursor += 1;
+			ret.push(c);
+		}
+		ret
+	}
 
-    /// Returns the next LaTeX parameter in the scanner.
-    pub fn next_param(&mut self) -> Result<String, ScannerError> {
-        let mut ret = String::new();
+	/// Returns the next LaTeX parameter in the scanner.
+	pub fn next_param(&mut self) -> Result<String, ScannerError> {
+		let mut ret = String::new();
 
-        // trim whitespace
-        while let Some(c) = self.peek() {
-            if !c.is_whitespace() {
-                break;
-            }
-            self.cursor += 1;
-        }
+		// trim whitespace
+		while let Some(c) = self.peek() {
+			if !c.is_whitespace() {
+				break;
+			}
+			self.cursor += 1;
+		}
 
-        // check if next character is '\\', '{', or any other character
-        match self.next() {
-            Some('\\') => {
-                ret.push('\\');
-                match self.next_word().as_str() {
-                    "" => ret.push(self.next().ok_or(ScannerError::new(
-                        "Expected a character after '\\'".to_string(),
-                        self.clone(),
-                    ))?),
-                    word => ret += word,
-                }
-                loop {
-                    match self.next() {
-                        Some(c) if c.is_whitespace() => {}
-                        Some(c) if BINARY_OPERATORS.contains(&c) => {
-                            ret.push(c);
-                            ret += &self.next_param()?;
-                        }
-                        _ => {
-                            self.cursor -= 1;
-                            break;
-                        }
-                    }
-                }
-            }
-            Some('{') => {
-                let mut depth = 0;
-                for c in self.by_ref() {
-                    match c {
-                        '{' => depth += 1,
-                        '}' => {
-                            if depth == 0 {
-                                break;
-                            }
-                            depth -= 1;
-                        }
-                        _ => {}
-                    }
-                    ret.push(c);
-                }
-            }
-            Some(c) => ret.push(c),
-            None => {
-                return Err(ScannerError::new(
-                    "Unexpected end of input".to_string(),
-                    self.clone(),
-                ))
-            }
-        }
-        Ok(ret)
-    }
+		// check if next character is '\\', '{', or any other character
+		match self.next() {
+			Some('\\') => {
+				ret.push('\\');
+				match self.next_word().as_str() {
+					"" => ret.push(self.next().ok_or(ScannerError::new(
+						"Expected a character after '\\'".to_string(),
+						self.clone(),
+					))?),
+					word => ret += word,
+				}
+				loop {
+					match self.next() {
+						Some(c) if c.is_whitespace() => {}
+						Some(c) if BINARY_OPERATORS.contains(&c) => {
+							ret.push(c);
+							ret += &self.next_param()?;
+						}
+						_ => {
+							self.cursor -= 1;
+							break;
+						}
+					}
+				}
+			}
+			Some('{') => {
+				let mut depth = 0;
+				for c in self.by_ref() {
+					match c {
+						'{' => depth += 1,
+						'}' => {
+							if depth == 0 {
+								break;
+							}
+							depth -= 1;
+						}
+						_ => {}
+					}
+					ret.push(c);
+				}
+			}
+			Some(c) => ret.push(c),
+			None => {
+				return Err(ScannerError::new(
+					"Unexpected end of input".to_string(),
+					self.clone(),
+				))
+			}
+		}
+		Ok(ret)
+	}
 
-    /// Returns the next LaTeX optional parameter in the scanner
-    /// returns empty string if there's no optional parameter
-    pub fn next_param_optional(&mut self) -> String {
-        let mut ret = String::new();
+	/// Returns the next LaTeX optional parameter in the scanner
+	/// returns empty string if there's no optional parameter
+	pub fn next_param_optional(&mut self) -> String {
+		let mut ret = String::new();
 
-        // trim whitespace
-        while let Some(c) = self.peek() {
-            if !c.is_whitespace() {
-                break;
-            }
-            self.cursor += 1;
-        }
+		// trim whitespace
+		while let Some(c) = self.peek() {
+			if !c.is_whitespace() {
+				break;
+			}
+			self.cursor += 1;
+		}
 
-        // check if next character is '\\', '{', or any other character
-        match self.peek() {
-            Some('[') => {
-                self.cursor += 1;
-                for c in self.by_ref() {
-                    match c {
-                        ']' => break,
-                        _ => ret.push(c),
-                    }
-                }
-            }
-            _ => return "".to_string(),
-        }
-        ret
-    }
+		// check if next character is '\\', '{', or any other character
+		match self.peek() {
+			Some('[') => {
+				self.cursor += 1;
+				for c in self.by_ref() {
+					match c {
+						']' => break,
+						_ => ret.push(c),
+					}
+				}
+			}
+			_ => return "".to_string(),
+		}
+		ret
+	}
 
-    /// Return characters until one of the characters in `chars` is found.
-    /// The ending character is consumed
-    pub fn until_chars(&mut self, chars: &str) -> String {
-        let mut ret = String::new();
-        for c in self.by_ref() {
-            if chars.contains(c) {
-                break;
-            }
-            ret.push(c);
-        }
-        ret
-    }
+	/// Return characters until one of the characters in `chars` is found.
+	/// The ending character is consumed
+	pub fn until_chars(&mut self, chars: &str) -> String {
+		let mut ret = String::new();
+		for c in self.by_ref() {
+			if chars.contains(c) {
+				break;
+			}
+			ret.push(c);
+		}
+		ret
+	}
 
-    /// Return characters until one of the characters **not** in `chars` is found.
-    /// The ending character is consumed
-    pub fn until_chars_not(&mut self, chars: &str) -> String {
-        let mut ret = String::new();
-        for c in self.by_ref() {
-            if !chars.contains(c) {
-                break;
-            }
-            ret.push(c);
-        }
-        ret
-    }
+	/// Return characters until one of the characters **not** in `chars` is found.
+	/// The ending character is consumed
+	pub fn until_chars_not(&mut self, chars: &str) -> String {
+		let mut ret = String::new();
+		for c in self.by_ref() {
+			if !chars.contains(c) {
+				break;
+			}
+			ret.push(c);
+		}
+		ret
+	}
 
-    /// Return characters until match the input string.
-    /// The ending string is consumed
-    pub fn until_string(&mut self, string: String) -> String {
-        let mut ret = String::new();
-        for c in self.by_ref() {
-            ret.push(c);
-            if ret.ends_with(&string) {
-                ret.truncate(ret.len() - string.len());
-                break;
-            }
-        }
-        ret
-    }
+	/// Return characters until match the input string.
+	/// The ending string is consumed
+	pub fn until_string(&mut self, string: String) -> String {
+		let mut ret = String::new();
+		for c in self.by_ref() {
+			ret.push(c);
+			if ret.ends_with(&string) {
+				ret.truncate(ret.len() - string.len());
+				break;
+			}
+		}
+		ret
+	}
 }
 
 impl Iterator for Scanner {
-    type Item = char;
+	type Item = char;
 
-    fn next(&mut self) -> Option<Self::Item> {
-        let item = self.characters.get(self.cursor).copied();
-        self.cursor += 1;
-        item
-    }
+	fn next(&mut self) -> Option<Self::Item> {
+		let item = self.characters.get(self.cursor).copied();
+		self.cursor += 1;
+		item
+	}
 }
 
 macro_rules! matrix {
-    // no alignment in matrix currently
-    ($scanner:expr, $param:expr, $delim:expr) => {{
-        format!(
-            "mat(delim: {}, {})",
-            $delim,
-            matrix_to_typst($scanner.until_string(format!("\\end{{{}}}", $param)))?
-        )
-    }};
-    ($scanner:expr, $param:expr) => {{
-        format!(
-            "mat({})",
-            matrix_to_typst($scanner.until_string(format!("\\end{{{}}}", $param)))?
-        )
-    }};
+	// no alignment in matrix currently
+	($scanner:expr, $param:expr, $delim:expr) => {{
+		format!(
+			"mat(delim: {}, {})",
+			$delim,
+			matrix_to_typst($scanner.until_string(format!("\\end{{{}}}", $param)))?
+		)
+	}};
+	($scanner:expr, $param:expr) => {{
+		format!(
+			"mat({})",
+			matrix_to_typst($scanner.until_string(format!("\\end{{{}}}", $param)))?
+		)
+	}};
 }
 
 macro_rules! matrix_opt {
-    // no alignment in matrix currently
-    ($scanner:expr, $param:expr, $delim:expr) => {{
-        $scanner.next_param_optional();
-        format!(
-            "mat(delim: {}, {})",
-            $delim,
-            matrix_to_typst($scanner.until_string(format!("\\end{{{}}}", $param)))?
-        )
-    }};
-    ($scanner:expr, $param:expr) => {{
-        $scanner.next_param_optional();
-        format!(
-            "mat({})",
-            matrix_to_typst($scanner.until_string(format!("\\end{{{}}}", $param)))?
-        )
-    }};
+	// no alignment in matrix currently
+	($scanner:expr, $param:expr, $delim:expr) => {{
+		$scanner.next_param_optional();
+		format!(
+			"mat(delim: {}, {})",
+			$delim,
+			matrix_to_typst($scanner.until_string(format!("\\end{{{}}}", $param)))?
+		)
+	}};
+	($scanner:expr, $param:expr) => {{
+		$scanner.next_param_optional();
+		format!(
+			"mat({})",
+			matrix_to_typst($scanner.until_string(format!("\\end{{{}}}", $param)))?
+		)
+	}};
 }
 
 macro_rules! single {
-    ($scanner:expr, $fn:expr) => {{
-        format!("{}({})", $fn, latex_to_typst($scanner.next_param()?)?)
-    }};
-    ($scanner:expr, $fn:expr, $params:expr) => {{
-        format!(
-            "{}({}, {})",
-            $fn,
-            $params,
-            latex_to_typst($scanner.next_param()?)?
-        )
-    }};
+	($scanner:expr, $fn:expr) => {{
+		format!("{}({})", $fn, latex_to_typst($scanner.next_param()?)?)
+	}};
+	($scanner:expr, $fn:expr, $params:expr) => {{
+		format!(
+			"{}({}, {})",
+			$fn,
+			$params,
+			latex_to_typst($scanner.next_param()?)?
+		)
+	}};
 }
 
 macro_rules! double {
-    ($scanner:expr, $fn:expr) => {{
-        format!(
-            "{}({}, {})",
-            $fn,
-            latex_to_typst($scanner.next_param()?)?,
-            latex_to_typst($scanner.next_param()?)?
-        )
-    }};
-    ($scanner:expr, $fn1:expr, $fn2:expr) => {{
-        format!(
-            "{}({}({}, {}))",
-            $fn1,
-            $fn2,
-            latex_to_typst($scanner.next_param()?)?,
-            latex_to_typst($scanner.next_param()?)?
-        )
-    }};
+	($scanner:expr, $fn:expr) => {{
+		format!(
+			"{}({}, {})",
+			$fn,
+			latex_to_typst($scanner.next_param()?)?,
+			latex_to_typst($scanner.next_param()?)?
+		)
+	}};
+	($scanner:expr, $fn1:expr, $fn2:expr) => {{
+		format!(
+			"{}({}({}, {}))",
+			$fn1,
+			$fn2,
+			latex_to_typst($scanner.next_param()?)?,
+			latex_to_typst($scanner.next_param()?)?
+		)
+	}};
 }
 
 macro_rules! accent {
-    ($scanner:expr, $accent:expr) => {{
-        format!(
-            "accent({}, {})",
-            latex_to_typst($scanner.next_param()?)?,
-            $accent
-        )
-    }};
+	($scanner:expr, $accent:expr) => {{
+		format!(
+			"accent({}, {})",
+			latex_to_typst($scanner.next_param()?)?,
+			$accent
+		)
+	}};
 }
 
 pub fn latex_to_typst(latex: String) -> Result<String, ScannerError> {
-    let mut scanner = Scanner::new(latex);
-    let mut text = String::new();
-    while let Some(c) = scanner.next() {
-        let push = match c {
+	let mut scanner = Scanner::new(latex);
+	let mut text = String::new();
+	while let Some(c) = scanner.next() {
+		let push = match c {
             '\\' => match scanner.next_word().as_str() {
                 // same one goes to default
                 "" => {
@@ -1052,74 +1052,74 @@ pub fn latex_to_typst(latex: String) -> Result<String, ScannerError> {
             '{' | '}' => "".to_string(),
             _ => c.to_string(),
         };
-        // insert space if current and next character is a alphabetic character
-        if let Some(first) = push.chars().next() {
-            if let Some(prev) = text.chars().last() {
-                if prev.is_alphabetic() && (first.is_alphabetic() || first.is_ascii_digit()) {
-                    text.push(' ');
-                }
-            }
-        }
-        text += &push;
-    }
+		// insert space if current and next character is a alphabetic character
+		if let Some(first) = push.chars().next() {
+			if let Some(prev) = text.chars().last() {
+				if prev.is_alphabetic() && (first.is_alphabetic() || first.is_ascii_digit()) {
+					text.push(' ');
+				}
+			}
+		}
+		text += &push;
+	}
 
-    Ok(text)
+	Ok(text)
 }
 
 fn color_to_typst(color: String) -> String {
-    if color.starts_with('#') {
-        format!("rgb(\"{}\")", color)
-    } else {
-        color
-    }
+	if color.starts_with('#') {
+		format!("rgb(\"{}\")", color)
+	} else {
+		color
+	}
 }
 
 pub fn text_to_typst(text: String) -> Result<String, ScannerError> {
-    let mut scanner = Scanner::new(text);
-    let mut ret = String::new();
-    while let Some(c) = scanner.next() {
-        let push = match c {
-            '\\' => match scanner.next_word().as_str() {
-                "textasciitilde" => "~".to_owned(),
-                "textasciicircum" => "\\^".to_owned(),
-                "textbackslash" => "\\\\".to_owned(),
-                "textbar" => "|".to_owned(),
-                "textbardbl" => "‖".to_owned(),
-                "textbraceleft" => "{".to_owned(),
-                "textbraceright" => "}".to_owned(),
-                "textdagger" => "#sym.dagger".to_owned(),
-                "textdaggerdbl" => "#sym.dagger.double".to_owned(),
-                "textdegree" => "#sym.degree".to_owned(),
-                "textdollar" => "\\$".to_owned(),
-                "textellipsis" => "...".to_owned(),
-                "textemdash" => "---".to_owned(),
-                "textendash" => "--".to_owned(),
-                "textgreater" => "#sym.gt".to_owned(),
-                "textless" => "#sym.lt".to_owned(),
-                "textquotedblleft" => "#sym.quote.l.double".to_owned(),
-                "textquotedblright" => "#sym.quote.r.double".to_owned(),
-                "textquoteleft" => "#sym.quote.l.single".to_owned(),
-                "textquoteright" => "#sym.quote.r.single".to_owned(),
-                "textregistered" => "®".to_owned(),
-                "textsterling" => "#sym.pound".to_owned(),
-                "textunderscore" => "\\_".to_owned(),
-                word => word.to_owned(),
-            },
-            '$' => {
-                let mut math = String::new();
-                for c in scanner.by_ref() {
-                    if c == '$' {
-                        break;
-                    }
-                    math.push(c);
-                }
-                format!("${}$", latex_to_typst(math)?)
-            }
-            _ => c.to_string(),
-        };
-        ret += &push;
-    }
-    Ok(ret)
+	let mut scanner = Scanner::new(text);
+	let mut ret = String::new();
+	while let Some(c) = scanner.next() {
+		let push = match c {
+			'\\' => match scanner.next_word().as_str() {
+				"textasciitilde" => "~".to_owned(),
+				"textasciicircum" => "\\^".to_owned(),
+				"textbackslash" => "\\\\".to_owned(),
+				"textbar" => "|".to_owned(),
+				"textbardbl" => "‖".to_owned(),
+				"textbraceleft" => "{".to_owned(),
+				"textbraceright" => "}".to_owned(),
+				"textdagger" => "#sym.dagger".to_owned(),
+				"textdaggerdbl" => "#sym.dagger.double".to_owned(),
+				"textdegree" => "#sym.degree".to_owned(),
+				"textdollar" => "\\$".to_owned(),
+				"textellipsis" => "...".to_owned(),
+				"textemdash" => "---".to_owned(),
+				"textendash" => "--".to_owned(),
+				"textgreater" => "#sym.gt".to_owned(),
+				"textless" => "#sym.lt".to_owned(),
+				"textquotedblleft" => "#sym.quote.l.double".to_owned(),
+				"textquotedblright" => "#sym.quote.r.double".to_owned(),
+				"textquoteleft" => "#sym.quote.l.single".to_owned(),
+				"textquoteright" => "#sym.quote.r.single".to_owned(),
+				"textregistered" => "®".to_owned(),
+				"textsterling" => "#sym.pound".to_owned(),
+				"textunderscore" => "\\_".to_owned(),
+				word => word.to_owned(),
+			},
+			'$' => {
+				let mut math = String::new();
+				for c in scanner.by_ref() {
+					if c == '$' {
+						break;
+					}
+					math.push(c);
+				}
+				format!("${}$", latex_to_typst(math)?)
+			}
+			_ => c.to_string(),
+		};
+		ret += &push;
+	}
+	Ok(ret)
 }
 
 /// split with '\\', then split with '&' (not '\&'), finally process element by element
@@ -1136,134 +1136,134 @@ pub fn text_to_typst(text: String) -> Result<String, ScannerError> {
 /// c, d
 /// ```
 fn matrix_to_typst(content: String) -> Result<String, ScannerError> {
-    Ok(Regex::new(r"\\\\|\\cr")
-        .unwrap()
-        .split(&content)
-        .map(|row| {
-            let mut s = row
-                .split('&')
-                .map(|s| s.to_string())
-                .collect::<Vec<String>>();
-            let mut i = 0;
-            while i < s.len() {
-                if s[i].ends_with('\\') {
-                    let temp = s[i + 1].clone();
-                    s[i].push('&');
-                    s[i] += &temp;
-                    s.remove(i + 1);
-                }
-                i += 1;
-            }
-            Ok(s.iter()
-                .map(|col| latex_to_typst(col.to_string()))
-                .collect::<Result<Vec<_>, _>>()?
-                .join(","))
-        })
-        .collect::<Result<Vec<String>, _>>()?
-        .join(";"))
+	Ok(Regex::new(r"\\\\|\\cr")
+		.unwrap()
+		.split(&content)
+		.map(|row| {
+			let mut s = row
+				.split('&')
+				.map(|s| s.to_string())
+				.collect::<Vec<String>>();
+			let mut i = 0;
+			while i < s.len() {
+				if s[i].ends_with('\\') {
+					let temp = s[i + 1].clone();
+					s[i].push('&');
+					s[i] += &temp;
+					s.remove(i + 1);
+				}
+				i += 1;
+			}
+			Ok(s.iter()
+				.map(|col| latex_to_typst(col.to_string()))
+				.collect::<Result<Vec<_>, _>>()?
+				.join(","))
+		})
+		.collect::<Result<Vec<String>, _>>()?
+		.join(";"))
 }
 
 #[cfg(test)]
 mod function_tests {
-    use super::*;
+	use super::*;
 
-    #[test]
-    fn next_word_test() {
-        let mut scanner = Scanner::new("\n\\frac\t\\land=3aa".to_string());
-        let mut count = 0;
-        let assert = ["frac", "land"];
-        while let Some(c) = scanner.next() {
-            if c == '\\' {
-                let word = scanner.next_word();
-                // println!("{}", word);
-                assert_eq!(word, assert[count]);
-                count += 1;
-            }
-        }
-    }
+	#[test]
+	fn next_word_test() {
+		let mut scanner = Scanner::new("\n\\frac\t\\land=3aa".to_string());
+		let mut count = 0;
+		let assert = ["frac", "land"];
+		while let Some(c) = scanner.next() {
+			if c == '\\' {
+				let word = scanner.next_word();
+				// println!("{}", word);
+				assert_eq!(word, assert[count]);
+				count += 1;
+			}
+		}
+	}
 
-    #[test]
-    fn next_param_test() {
-        let mut scanner = Scanner::new("\n\t\\land\\%=3aa\\\\".to_string());
-        let mut count = 0;
-        let assert = ["\\land", "\\%", "=", "3", "a", "a", "\\\\"];
-        while let Ok(c) = scanner.next_param() {
-            // println!("{}", c);
-            assert_eq!(c, assert[count]);
-            count += 1;
-        }
-    }
+	#[test]
+	fn next_param_test() {
+		let mut scanner = Scanner::new("\n\t\\land\\%=3aa\\\\".to_string());
+		let mut count = 0;
+		let assert = ["\\land", "\\%", "=", "3", "a", "a", "\\\\"];
+		while let Ok(c) = scanner.next_param() {
+			// println!("{}", c);
+			assert_eq!(c, assert[count]);
+			count += 1;
+		}
+	}
 
-    #[test]
-    fn color_test() {
-        assert_eq!(color_to_typst("#00ff00".to_string()), "rgb(\"#00ff00\")");
-        // println!("{}", color_to_typst("#00ff00".to_string()));
-        assert_eq!(color_to_typst("red".to_string()), "red");
-        // println!("{}", color_to_typst("red".to_string()));
-    }
+	#[test]
+	fn color_test() {
+		assert_eq!(color_to_typst("#00ff00".to_string()), "rgb(\"#00ff00\")");
+		// println!("{}", color_to_typst("#00ff00".to_string()));
+		assert_eq!(color_to_typst("red".to_string()), "red");
+		// println!("{}", color_to_typst("red".to_string()));
+	}
 
-    #[test]
-    fn matrix_test1() {
-        assert_eq!(
-            matrix_to_typst("a& b\\\\\nc& d".to_string()).unwrap(),
-            "a, b;\nc, d"
-        )
-    }
+	#[test]
+	fn matrix_test1() {
+		assert_eq!(
+			matrix_to_typst("a& b\\\\\nc& d".to_string()).unwrap(),
+			"a, b;\nc, d"
+		)
+	}
 
-    #[test]
-    fn matrix_test2() {
-        assert_eq!(
-            matrix_to_typst("a& b\\cr\nc& d".to_string()).unwrap(),
-            "a, b;\nc, d"
-        )
-    }
+	#[test]
+	fn matrix_test2() {
+		assert_eq!(
+			matrix_to_typst("a& b\\cr\nc& d".to_string()).unwrap(),
+			"a, b;\nc, d"
+		)
+	}
 }
 #[cfg(test)]
 mod tests {
-    use super::*;
+	use super::*;
 
-    #[test]
-    fn test_parse_typ() {
-        assert_eq!(
-            latex_to_typst("\\bcancel{N = N_oe^{ln2(t/t_2)}}".to_string()).unwrap(),
-            "cancel(inverted: #true, N = N_o e^(l n 2(t\\/t_2)))"
-        );
-        assert_eq!(latex_to_typst("hello".to_string()).unwrap(), "h e l l o");
-        assert_eq!(
-            latex_to_typst("\\binom {asdf}  {aas}".to_string()).unwrap(),
-            "binom(a s d f, a a s)"
-        );
-        assert_eq!(
-            latex_to_typst("\\overbrace{x+⋯+x}^{n\\text{ times$\\int$}}".to_string()).unwrap(),
-            "overbrace(x+⋯+x, n#[ times$integral$])"
-        );
-        assert_eq!(
-            latex_to_typst("\\dot\\sum _ 0 ^n".to_string()).unwrap(),
-            "dot(sum_0^n)"
-        );
-        assert_eq!(
-            latex_to_typst("\\frac54 = 1\\tfrac   {1}   {4}\\\\".to_string()).unwrap(),
-            "frac(5, 4) = 1inline(frac(1, 4))\\"
-        );
-        assert_eq!(
-            latex_to_typst("h\\raisebox{2pt}{$\\psi ighe$}r".to_string()).unwrap(),
-            "h#text(baseline: -2pt)[$psi i g h e$]r"
-        );
-        assert_eq!(
-            latex_to_typst("\\left(\\frac{3}{2}\\middle| B\\right)".to_string()).unwrap(),
-            "lr((frac(3, 2)mid(|) B))"
-        )
-    }
+	#[test]
+	fn test_parse_typ() {
+		assert_eq!(
+			latex_to_typst("\\bcancel{N = N_oe^{ln2(t/t_2)}}".to_string()).unwrap(),
+			"cancel(inverted: #true, N = N_o e^(l n 2(t\\/t_2)))"
+		);
+		assert_eq!(latex_to_typst("hello".to_string()).unwrap(), "h e l l o");
+		assert_eq!(
+			latex_to_typst("\\binom {asdf}  {aas}".to_string()).unwrap(),
+			"binom(a s d f, a a s)"
+		);
+		assert_eq!(
+			latex_to_typst("\\overbrace{x+⋯+x}^{n\\text{ times$\\int$}}".to_string()).unwrap(),
+			"overbrace(x+⋯+x, n#[ times$integral$])"
+		);
+		assert_eq!(
+			latex_to_typst("\\dot\\sum _ 0 ^n".to_string()).unwrap(),
+			"dot(sum_0^n)"
+		);
+		assert_eq!(
+			latex_to_typst("\\frac54 = 1\\tfrac   {1}   {4}\\\\".to_string()).unwrap(),
+			"frac(5, 4) = 1inline(frac(1, 4))\\"
+		);
+		assert_eq!(
+			latex_to_typst("h\\raisebox{2pt}{$\\psi ighe$}r".to_string()).unwrap(),
+			"h#text(baseline: -2pt)[$psi i g h e$]r"
+		);
+		assert_eq!(
+			latex_to_typst("\\left(\\frac{3}{2}\\middle| B\\right)".to_string()).unwrap(),
+			"lr((frac(3, 2)mid(|) B))"
+		)
+	}
 
-    #[test]
-    fn matrix() {
-        assert_eq!(
-            latex_to_typst("\\begin{array}{cc}\na& b\\\\\nc& d\n\\end{array}".to_string()).unwrap(),
-            "mat(delim: #none, \na, b;\nc, d\n)"
-        );
-        assert_eq!(
-            latex_to_typst("\\begin{matrix}\na& b\\\\\nc& d\n\\end{matrix}".to_string()).unwrap(),
-            "mat(delim: #none, \na, b;\nc, d\n)"
-        );
-    }
+	#[test]
+	fn matrix() {
+		assert_eq!(
+			latex_to_typst("\\begin{array}{cc}\na& b\\\\\nc& d\n\\end{array}".to_string()).unwrap(),
+			"mat(delim: #none, \na, b;\nc, d\n)"
+		);
+		assert_eq!(
+			latex_to_typst("\\begin{matrix}\na& b\\\\\nc& d\n\\end{matrix}".to_string()).unwrap(),
+			"mat(delim: #none, \na, b;\nc, d\n)"
+		);
+	}
 }
