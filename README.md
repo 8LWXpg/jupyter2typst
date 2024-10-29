@@ -1,6 +1,6 @@
 # Jupyter to Typst converter
 
-Feel free to open a issue or PR!
+Jupyter to Typst converter with template support.
 
 ## Features
 
