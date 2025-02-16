@@ -46,7 +46,7 @@ fn ast_parse(node: Node) -> String {
 	let mut context = String::new();
 
 	match node {
-		Node::BlockQuote(node) => {
+		Node::Blockquote(node) => {
 			context += "#block-quote[\n";
 			for child in node.children {
 				context += &format!(
@@ -119,7 +119,7 @@ fn ast_parse(node: Node) -> String {
 		},
 		Node::InlineCode(node) => context += &format!("`{}`", node.value),
 		Node::InlineMath(node) => {
-			context += &format!("${}$", katex::latex_to_typst(node.value).unwrap())
+			context += &format!("${}$", katex::latex_to_typst(node.value.into()).unwrap())
 		}
 		Node::Link(node) => {
 			context += &format!("#link(\"{}\")[", node.url);
@@ -149,7 +149,10 @@ fn ast_parse(node: Node) -> String {
 		}
 		Node::Math(node) => {
 			// println!("{}\n", node.value);
-			context += &format!("$ {} $\n", katex::latex_to_typst(node.value).unwrap())
+			context += &format!(
+				"$ {} $\n",
+				katex::latex_to_typst(node.value.into()).unwrap()
+			)
 		}
 		Node::Paragraph(node) => {
 			for child in node.children {

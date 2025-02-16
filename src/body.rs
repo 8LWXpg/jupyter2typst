@@ -142,7 +142,8 @@ fn code_output_parse(outputs: Value, img_path: &str) -> String {
 					);
 				} else if let Some(text) = data["text/latex"].as_array() {
 					context += &katex::text_to_typst(
-						text.iter()
+						&text
+							.iter()
 							.map(|v| v.as_str().unwrap())
 							.collect::<Vec<&str>>()
 							.join("")
