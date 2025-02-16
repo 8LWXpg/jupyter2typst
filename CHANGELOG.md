@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.0]
+
+### Changed
+
+- Reworked LaTeX converter.
+
 ## [1.1.3]
 
 ### Fixed
