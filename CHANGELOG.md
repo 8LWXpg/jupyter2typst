@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.1]
+
+### Changed
+
+- Bumped dependencies.
+
 ## [1.2.0]
 
 ### Changed
