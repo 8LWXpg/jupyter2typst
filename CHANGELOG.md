@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.0]
+
+### Changed
+
+- Changed to `rustls` on Linux.
+
 ## [1.2.1]
 
 ### Changed
