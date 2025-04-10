@@ -53,12 +53,12 @@ jobs:
         tool: cross
 
     - name: Run Cross
-      run: cross build --release --target ${{ matrix.target }} --features vendored
+      run: cross build --release --target ${{ matrix.target }} --features rustls
       if: ${{ matrix.cross }}
 
     - name: Run Cargo
       if: ${{ !matrix.cross }}
-      run: cargo build --release --target ${{ matrix.target }}
+      run: cargo build --release --target ${{ matrix.target }} --features native-tls
 
     - name: create artifact directory
       shell: bash

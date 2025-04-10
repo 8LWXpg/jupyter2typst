@@ -19,7 +19,7 @@ Or
 Install with cargo:
 
 ```bash
-cargo install --git 'https://github.com/8LWXpg/jupyter2typst.git'
+cargo install --git 'https://github.com/8LWXpg/jupyter2typst.git' --features native-tls
 ```
 
 After that, you can use `jupyter2typst` in your terminal.
