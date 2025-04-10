@@ -5,6 +5,7 @@
 ### Changed
 
 - Changed to `rustls` on Linux.
+- Bumped dependencies.
 
 ## [1.2.1]
 
