@@ -1,9 +1,18 @@
 [package]
 name = "jupyter2typst"
 version = "1.3.0"
+authors = ["8LWXpg"]
+description = "Jupyter to Typst converter with template support"
+license = "MIT"
+repository = "https://github.com/8LWXpg/jupyter2typst"
+readme = "README.md"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/v{ version }/{ name }-{ target }{ archive-suffix }"
+bin-dir = "{ name }-{ target }/{ bin }{ binary-ext }"
+pkg-fmt = "zip"
+disabled-strategies = ["quick-install", "compile"]
 
 [features]
 rustls = ["reqwest/rustls-tls"]
