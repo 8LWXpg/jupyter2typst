@@ -14,9 +14,13 @@ Look for demos in [test](test) folder.
 
 Download binary from [release](https://github.com/8LWXpg/jupyter2typst/releases/latest) page
 
-Or
+Install with `cargo-binstall`:
 
-Install with cargo:
+```bash
+cargo binstall --git https://github.com/8LWXpg/jupyter2typst jupyter2typst
+```
+
+Install with `cargo`:
 
 ```bash
 cargo install --git 'https://github.com/8LWXpg/jupyter2typst.git' --features native-tls
