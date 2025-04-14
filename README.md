@@ -37,7 +37,7 @@ Check the [template list](./template/template.md) for templates others have made
 Download the [template](./template/template.typ) file:
 
 ```bash
-curl 'https://raw.githubusercontent.com/8LWXpg/jupyter2typst/master/template/template.typ' > template.typ
+wget https://raw.githubusercontent.com/8LWXpg/jupyter2typst/master/template/template.typ
 ```
 
 modify the `template.typ` to fit your needs.
