@@ -29,7 +29,7 @@ pub fn md_to_typst(md: Vec<&str>, attachments: HashMap<String, String>) -> Strin
 	)
 	.unwrap();
 
-	// write tree to debug file
+	// Write tree to debug file
 	// let mut file = File::create("debug.txt").unwrap();
 	// file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
 	{

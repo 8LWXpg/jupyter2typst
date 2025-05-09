@@ -77,7 +77,7 @@ impl<'a> Scanner<'a> {
 					})?),
 					word => ret += word,
 				}
-				// process training binary opreators
+				// process training binary operators
 				while let Some(&c) = self.peek() {
 					if c.is_whitespace() {
 						self.next();
@@ -317,7 +317,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 				"Bbbk" => "bb(k)".into(),
 				"bcancel" => single!(scanner, "cancel", "inverted: #true").into(),
 				"begin" => {
-					// skip numbering because there's a issue for numbering equation separately in Typst
+					// Skip numbering because there's an issue for numbering equation separately in Typst
 					let param = scanner.next_param()?;
 					match param.as_str() {
 						"align" | "align*" | "aligned" | "equation" | "equation*" | "gather" | "gather*" | "gathered" | "split" => {
@@ -1013,7 +1013,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 			'{' | '}' => "".into(),
 			_ => c.to_string().into(),
 		};
-		// insert space if current and next character is a alphabetic character
+		// Insert space if current and next character is an alphabetic character
 		if let Some(first) = push.chars().next() {
 			if let Some(prev) = text.chars().last() {
 				if prev.is_alphabetic() && (first.is_alphabetic() || first.is_ascii_digit()) {

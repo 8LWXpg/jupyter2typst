@@ -4,9 +4,9 @@ Jupyter to Typst converter with template support.
 
 ## Features
 
-- automatic image download/extract
-- nice template
-- support for KaTeX in markdown math (mostly complete)
+- Automatic image download/extract
+- Nice template
+- Support for KaTeX in markdown math (mostly complete)
 
 Look for demos in [test](test) folder.
 
@@ -42,7 +42,7 @@ Download the [template](./template/template.typ) file:
 wget https://raw.githubusercontent.com/8LWXpg/jupyter2typst/master/template/template.typ
 ```
 
-modify the `template.typ` to fit your needs.
+Modify the `template.typ` to fit your needs.
 
 ## Usage
 
@@ -60,7 +60,7 @@ jupyter2typst <input> [-o <output>] [-i <img-path>]
 
 1. Create a new template file `<template-name>.typ` in the `template` folder
 2. Add simple description in `template/template.md`
-3. submit a PR with a preview image of `template/base.typ` compiled with the new template
+3. Submit a PR with a preview image of `template/base.typ` compiled with the new template
 
 ## KaTeX support list
 

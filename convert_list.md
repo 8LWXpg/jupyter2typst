@@ -1,6 +1,6 @@
 # KaTeX Convert List
 
-full list in [KaTeX](https://katex.org/docs/support_table)
+Full list in [KaTeX](https://katex.org/docs/support_table)
 
 ## TODOs
 
@@ -16,18 +16,18 @@ full list in [KaTeX](https://katex.org/docs/support_table)
 
 ## References
 
-something too long to fit in the table
+Something too long to fit in the table
 
-- `boxed`, `colorbox`, `fbox`, `fcolorbox`: 
+- `boxed`, `colorbox`, `fbox`, `fcolorbox`:
   `#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))`
 - `rule`: `$1` is optional
   `#box(inset: (bottom: $1), box(fill: black, width: $2, height: $3))`
 
 ## Environments
 
-details at [KaTeX](https://katex.org/docs/supported.html#environments)
+Details at [KaTeX](https://katex.org/docs/supported.html#environments)
 
-context inside the environment is denoted by `{}`
+Context inside the environment is denoted by `{}`
 
 | LaTeX         | Typst                           |
 | ------------- | ------------------------------- |
@@ -61,7 +61,6 @@ context inside the environment is denoted by `{}`
 | `Vmatrix*`    | `mat(delim: "\|\|", {})`        |
 | `vmatrix`     | `mat(delim: "\|", {})`          |
 | `vmatrix*`    | `mat(delim: "\|", {})`          |
-
 
 ## Symbols
 
@@ -155,7 +154,7 @@ context inside the environment is denoted by `{}`
 | `\barwedge`             | `⊼`                         |
 | `\Bbb`                  | `bb($1)`                    |
 | `\bcancel`              | `cancel(inverted: #true)`   |
-| `\begin`                | see [begins](#Environments) |
+| `\begin`                | see [begins](#environments) |
 | `\begingroup`           | ignored                     |
 | `Beta`                  | `Beta`                      |
 | `\beta`                 | `beta`                      |
@@ -347,7 +346,7 @@ context inside the environment is denoted by `{}`
 | `\ell`              | `ell`                       |
 | `\empty`            | `emptyset`                  |
 | `\emptyset`         | `emptyset`                  |
-| `\end`              | see [begins](#Environments) |
+| `\end`              | see [begins](#environments) |
 | `\endgroup`         | TODO#scripting              |
 | `\enspace`          | `space.en`                  |
 | `\Epsilon`          | `Epsilon`                   |
@@ -651,8 +650,8 @@ context inside the environment is denoted by `{}`
 | `\newline`          | `\`                    |
 | `nexist`            | `exists.not`           |
 | `\ngeq`             | `gt.eq.not`            |
-| `\ngeqq`            | not found in unicode   |
-| `\ngeqslant`        | not found in unicode   |
+| `\ngeqq`            | not found in Unicode   |
+| `\ngeqslant`        | not found in Unicode   |
 | `\ngtr`             | `gt.not`               |
 | `\ni`               | `in.rev`               |
 | `\nLeftarrow`       | `arrow.l.double.not`   |
@@ -660,7 +659,7 @@ context inside the environment is denoted by `{}`
 | `\nLeftrightarrow`  | `arrow.l.r.double.not` |
 | `\nleftrightarrow`  | `arrow.l.r.not`        |
 | `\nleq`             | `lt.eq.not`            |
-| `\nleqq`            | not found in unicode   |
+| `\nleqq`            | not found in Unicode   |
 | `\nleqslant`        | not found in unicode   |
 | `\nless`            | `lt.not`               |
 | `\nmid`             | `divides.not`          |
@@ -677,15 +676,15 @@ context inside the environment is denoted by `{}`
 | `\npreceq`          | `prec.eq.not`          |
 | `\nRightarrow`      | `arrow.r.double.not`   |
 | `\nrightarrow`      | `arrow.r.not`          |
-| `\nshortmid`        | not found in unicode   |
-| `\nshortparallel`   | not found in unicode   |
+| `\nshortmid`        | not found in Unicode   |
+| `\nshortparallel`   | not found in Unicode   |
 | `\nsim`             | `tilde.not`            |
 | `\nsubseteq`        | `subset.eq.not`        |
-| `\nsubseteqq`       | not found in unicode   |
+| `\nsubseteqq`       | not found in Unicode   |
 | `\nsucc`            | `succ.not`             |
 | `\nsucceq`          | `succ.eq.not`          |
 | `\nsupseteq`        | `supset.eq.not`        |
-| `\nsupseteqq`       | not found in unicode   |
+| `\nsupseteqq`       | not found in Unicode   |
 | `\ntriangleleft`    | `lt.tri.not`           |
 | `\ntrianglelefteq`  | `lt.tri.eq.not`        |
 | `\ntriangleright`   | `gt.tri.not`           |
@@ -910,7 +909,7 @@ context inside the environment is denoted by `{}`
 
 ## T
 
-some command here is text mode only
+Some command here is text mode only
 
 | LaTeX                | Typst                   |
 | -------------------- | ----------------------- |

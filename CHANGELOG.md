@@ -35,7 +35,7 @@
 
 ### Fixed
 
-- Fixed release action for linux
+- Fixed release action for Linux
 
 ## [1.1.0]
 
@@ -53,13 +53,13 @@
 
 ### Fixed
 
-- Fixed release action for linux
+- Fixed release action for Linux
 
 ## [1.0.0]
 
 ### Added
 
-- Release prebuilt binary
+- Release prebuild binary
 
 ## [0.1.6]
 
