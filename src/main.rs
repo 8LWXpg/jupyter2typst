@@ -21,7 +21,7 @@ struct Args {
 	#[argh(positional)]
 	input: String,
 
-	/// The output file path (without extension)
+	/// the output file path (without extension)
 	#[argh(option, short = 'o')]
 	output: Option<String>,
 
