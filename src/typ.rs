@@ -1,4 +1,4 @@
-pub fn escape_string(s: String) -> String {
+pub fn escape_string(s: &str) -> String {
 	const ESCAPE: &[char] = &['\\', '"'];
 
 	let mut result = String::new();
@@ -11,7 +11,7 @@ pub fn escape_string(s: String) -> String {
 	result
 }
 
-pub fn escape_content(s: String) -> String {
+pub fn escape_content(s: &str) -> String {
 	// https://typst.app/docs/reference/syntax/#markup
 	const ESCAPE: &[char] = &[
 		'*', '_', '`', '<', '>', '@', '=', '-', '+', '/', '$', '\\', '\'', '"', '~', '#',

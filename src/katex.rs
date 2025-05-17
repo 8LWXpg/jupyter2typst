@@ -42,10 +42,7 @@ impl<'a> Scanner<'a> {
 
 	/// Returns the next word (ascii alphabet only) in the scanner.
 	pub fn next_word(&mut self) -> String {
-		let mut ret: String = self
-			.0
-			.peeking_take_while(|&c| c.is_ascii_alphabetic())
-			.collect();
+		let mut ret: String = self.0.peeking_take_while(|&c| c.is_ascii_alphabetic()).collect();
 		// pick up '\operatorname*' specifically
 		if ret == "operatorname" {
 			if let Some('*') = self.peek() {
@@ -70,10 +67,7 @@ impl<'a> Scanner<'a> {
 				ret.push('\\');
 				match self.next_word().as_str() {
 					"" => ret.push(self.next().ok_or_else(|| {
-						ScannerError::new(
-							"Expected a character after '\\'".to_string(),
-							self.clone(),
-						)
+						ScannerError::new("Expected a character after '\\'".to_string(), self.clone())
 					})?),
 					word => ret += word,
 				}
@@ -106,12 +100,7 @@ impl<'a> Scanner<'a> {
 				}));
 			}
 			Some(c) => ret.push(c),
-			None => {
-				return Err(ScannerError::new(
-					"Unexpected end of input".to_string(),
-					self.clone(),
-				))
-			}
+			None => return Err(ScannerError::new("Unexpected end of input".to_string(), self.clone())),
 		}
 		Ok(ret)
 	}
@@ -205,11 +194,7 @@ macro_rules! matrix_opt {
 
 macro_rules! single {
 	($scanner:expr, $fn:expr) => {{
-		format!(
-			"{}({})",
-			$fn,
-			latex_to_typst($scanner.next_param()?.into())?
-		)
+		format!("{}({})", $fn, latex_to_typst($scanner.next_param()?.into())?)
 	}};
 	($scanner:expr, $fn:expr, $params:expr) => {{
 		format!(
@@ -320,66 +305,70 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 					// Skip numbering because there's an issue for numbering equation separately in Typst
 					let param = scanner.next_param()?;
 					match param.as_str() {
-						"align" | "align*" | "aligned" | "equation" | "equation*" | "gather" | "gather*" | "gathered" | "split" => {
-							format!(
-								"$${}$$",
-								latex_to_typst(scanner.until_string(&format!("\\end{{{}}}", param)).into())?
-							).into()
-						},
+						"align" | "align*" | "aligned" | "equation" | "equation*" | "gather" | "gather*"
+						| "gathered" | "split" => format!(
+							"$${}$$",
+							latex_to_typst(scanner.until_string(&format!("\\end{{{}}}", param)).into())?
+						)
+						.into(),
 						"alignat" | "alignat*" | "alignedat" => {
 							scanner.next_param()?;
 							format!(
 								"$${}$$",
 								latex_to_typst(scanner.until_string(&format!("\\end{{{}}}", param)).into())?
-							).into()
+							)
+							.into()
 						}
 						"array" | "darray" => {
 							let _ = scanner.next_param();
 							format!(
 								"mat(delim: #none, {})",
 								matrix_to_typst(scanner.until_string(&format!("\\end{{{}}}", param)))?
-							).into()
+							)
+							.into()
 						}
 						"Bmatrix" => matrix!(scanner, param, "\"{\"").into(),
 						"Bmatrix*" => matrix_opt!(scanner, param, "\"{\"").into(),
 						"bmatrix" => matrix!(scanner, param, "\"[\"").into(),
 						"bmatrix*" => matrix_opt!(scanner, param, "\"[\"").into(),
 						"cases" | "dcases" => format!(
-							"cases({})",	
-							scanner.until_string(&format!("\\end{{{}}}", param))
+							"cases({})",
+							scanner
+								.until_string(&format!("\\end{{{}}}", param))
 								.split("\\\\")
 								.map(|s| latex_to_typst(s.into()))
 								.collect::<Result<Vec<_>, _>>()?
 								.join(",")
-						).into(),
+						)
+						.into(),
 						"CD" => {
 							// TODO: begin{CD}
-							format!(
-								"CD({})",
-								scanner.until_string(&format!("\\end{{{}}}", param))
-							).into()
+							format!("CD({})", scanner.until_string(&format!("\\end{{{}}}", param))).into()
 						}
 						"matrix" => matrix!(scanner, param, "#none").into(),
 						"matrix*" => matrix_opt!(scanner, param, "#none").into(),
 						"pmatrix" => matrix!(scanner, param, "\"(\"").into(),
 						"pmatrix*" => matrix_opt!(scanner, param, "\"(\"").into(),
 						"rcases" => format!(
-							"cases(reverse: #true, {})",	
-							scanner.until_string(&format!("\\end{{{}}}", param))
+							"cases(reverse: #true, {})",
+							scanner
+								.until_string(&format!("\\end{{{}}}", param))
 								.split("\\\\")
 								.map(|s| latex_to_typst(s.into()))
 								.collect::<Result<Vec<_>, _>>()?
 								.join(",")
-						).into(),
+						)
+						.into(),
 						"smallmatrix" => format!(
 							"inline(mat(delim: #none, {}))",
 							matrix_to_typst(scanner.until_string(&format!("\\end{{{}}}", param)))?
-						).into(),
+						)
+						.into(),
 						"Vmatrix" => matrix!(scanner, param, "\"||\"").into(),
 						"Vmatrix*" => matrix_opt!(scanner, param, "\"||\"").into(),
 						"vmatrix" => matrix!(scanner, param, "\"|\"").into(),
 						"vmatrix*" => matrix_opt!(scanner, param, "\"|\"").into(),
-						_ => unreachable!()
+						_ => unreachable!(),
 					}
 				}
 				"between" => "≬".into(),
@@ -411,12 +400,17 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 				"boxed" => format!(
 					"#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt), stroke: 0.5pt)[${}$]",
 					latex_to_typst(scanner.next_param()?.into())?
-				).into(),
+				)
+				.into(),
 				"boxminus" => "minus.square".into(),
 				"boxplus" => "plus.square".into(),
 				"boxtimes" => "times.square".into(),
 				"Bra" | "bra" => format!("lr(angle.l {} |)", latex_to_typst(scanner.next_param()?.into())?).into(),
-				"Braket" | "braket" => format!("lr(angle.l {} angle.r)", latex_to_typst(scanner.next_param()?.into())?.replace('|', "mid(|)")).into(),
+				"Braket" | "braket" => format!(
+					"lr(angle.l {} angle.r)",
+					latex_to_typst(scanner.next_param()?.into())?.replace('|', "mid(|)")
+				)
+				.into(),
 				"breve" | "u" => single!(scanner, "breve").into(),
 				"bull" | "bullet" => "circle.filled.small".into(),
 				"Bumpeq" => "≎".into(),
@@ -433,22 +427,18 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 							scanner.next();
 							scanner.until_chars_not("0123456789abcdefABCDEF")
 						}
-						'\''=>{
+						'\'' => {
 							scanner.next();
 							format!(
 								"{:x}",
 								u32::from_str_radix(&scanner.until_chars_not("01234567"), 8).unwrap()
 							)
 						}
-						_ => format!(
-							"{:x}",
-							scanner.until_chars_not("0123456789").parse::<u32>().unwrap()
-						)
+						_ => format!("{:x}", scanner.until_chars_not("0123456789").parse::<u32>().unwrap()),
 					};
 					// scanner.cursor -= 1;
 					format!("\\u{{{}}}", code).into()
 				}
-				,
 				"cdots" | "dots" | "dotsb" | "dotsc" | "dotsi" | "dotsm" => "dots.h.c".into(),
 				"check" | "V" | "widecheck" => single!(scanner, "caron").into(),
 				"circ" => "compose".into(),
@@ -476,7 +466,8 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 					"#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt), fill: {})[{}]",
 					color_to_typst(&scanner.next_param()?),
 					text_to_typst(&scanner.next_param()?)?
-				).into(),
+				)
+				.into(),
 				"complexes" => "CC".into(),
 				"cong" => "tilde.equiv".into(),
 				"cosec" => "#math.op(\"cosec\")".into(),
@@ -541,13 +532,15 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 				"fbox" => format!(
 					"#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))[$upright({})$]",
 					text_to_typst(&scanner.next_param()?)?
-				).into(),
+				)
+				.into(),
 				"fcolorbox" => format!(
 					"#box(inset: (left: 3pt, right: 3pt), outset: (top: 3pt, bottom: 3pt))(stroke: {}, fill: {})[$upright({})$]",
 					color_to_typst(&scanner.next_param()?),
 					color_to_typst(&scanner.next_param()?),
 					text_to_typst(&scanner.next_param()?)?
-				).into(),
+				)
+				.into(),
 				"Finv" => "Ⅎ".into(),
 				"flat" => "♭".into(),
 				"frac" => double!(scanner, "frac").into(),
@@ -582,7 +575,11 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 				"hearts" | "heartsuit" => "♡".into(),
 				"hookleftarrow" => "arrow.l.hook".into(),
 				"hookrightarrow" => "arrow.r.hook".into(),
-				"hphantom" => format!("#box(height: 0pt, hide[${}$])", latex_to_typst(scanner.next_param()?.into())?).into(),
+				"hphantom" => format!(
+					"#box(height: 0pt, hide[${}$])",
+					latex_to_typst(scanner.next_param()?.into())?
+				)
+				.into(),
 				"hspace" | "mskip" => single!(scanner, "#h").into(),
 				// I
 				"i" | "imath" => "dotless.i".into(),
@@ -617,7 +614,8 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 					scanner.next_param()?,
 					latex_to_typst(scanner.until_string("\\right").into())?,
 					scanner.next_param()?,
-				).into(),
+				)
+				.into(),
 				"lfloor" => "⌊".into(),
 				"lgroup" => "turtle.l".into(),
 				"lhd" | "vartriangleleft" => "lt.tri".into(),
@@ -653,7 +651,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 				"mapsto" => "arrow.r.bar".into(),
 				"mathbb" => single!(scanner, "bb").into(),
 				"mathbf" => single!(scanner, "bold").into(),
-				"mathbin" => format!("#math.op(\"{}\")", typ::escape_string(scanner.next_param()?)).into(),
+				"mathbin" => format!("#math.op(\"{}\")", typ::escape_string(&scanner.next_param()?)).into(),
 				"mathcal" => single!(scanner, "cal").into(),
 				"mathclap" => single!(scanner, "#box", "width: 0pt").into(),
 				"mathclose" => format!("#h(0pt) {}", latex_to_typst(scanner.next_param()?.into())?).into(),
@@ -724,11 +722,12 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 				"oiint" => "integral.surf".into(),
 				"oint" => "integral.cont".into(),
 				"ominus" => "minus.circle".into(),
-				"operatorname" => format!("#math.op(\"{}\")", typ::escape_string(scanner.next_param()?)).into(),
+				"operatorname" => format!("#math.op(\"{}\")", typ::escape_string(&scanner.next_param()?)).into(),
 				"operatorname*" | "operatornamewithlimits" => format!(
 					"#math.op(\"{}\", limits: true)",
-					typ::escape_string(scanner.next_param()?)
-				).into(),
+					typ::escape_string(&scanner.next_param()?)
+				)
+				.into(),
 				"oplus" => "plus.circle".into(),
 				"origof" => "⊶".into(),
 				"oslash" => "⊘".into(),
@@ -742,7 +741,8 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 								"overbrace({}, {})",
 								param1,
 								latex_to_typst(scanner.next_param()?.into())?
-							).into()
+							)
+							.into()
 						}
 						_ => format!("overbrace({})", param1).into(),
 					}
@@ -784,7 +784,8 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 					"#text(baseline: -{})[{}]",
 					scanner.next_param()?,
 					latex_to_typst(scanner.next_param()?.into())?
-				).into(),
+				)
+				.into(),
 				"rang" | "rangle" => "angle.r".into(),
 				"Rarr" | "rArr" | "Rightarrow" => "=>".into(),
 				"rarr" | "rightarrow" | "to" => "->".into(),
@@ -813,21 +814,21 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 				"Rrightarrow" => "arrow.r.triple".into(),
 				"Rsh" => "↱".into(),
 				"rtimes" => "times.r".into(),
-				"rule" => {
-					match scanner.next_param_optional().as_str() {
-						"" => format!(
-							"#box(fill: black, width: {}, height: {})",
-							scanner.next_param()?,
-							scanner.next_param()?
-						).into(),
-						p => format!(
-							"#box(inset: (bottom: {}), box(fill: black, width: {}, height: {}))",
-							p,
-							scanner.next_param()?,
-							scanner.next_param()?,
-						).into(),
-					}
-				}
+				"rule" => match scanner.next_param_optional().as_str() {
+					"" => format!(
+						"#box(fill: black, width: {}, height: {})",
+						scanner.next_param()?,
+						scanner.next_param()?
+					)
+					.into(),
+					p => format!(
+						"#box(inset: (bottom: {}), box(fill: black, width: {}, height: {}))",
+						p,
+						scanner.next_param()?,
+						scanner.next_param()?,
+					)
+					.into(),
+				},
 				// S
 				"S" | "sect" => "section".into(),
 				"searrow" => "arrow.br".into(),
@@ -855,7 +856,8 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 							"root({}, {})",
 							latex_to_typst(p.into())?,
 							latex_to_typst(scanner.next_param()?.into())?
-						).into()
+						)
+						.into(),
 					}
 				}
 				"sqsubset" => "subset.sq".into(),
@@ -886,13 +888,16 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 				// T
 				"tbinom" => double!(scanner, "inline", "binom").into(),
 				"TeX" => "\"TeX\"".into(),
-				"text" | "textmd" | "textnormal" | "textrm" | "textup" => format!("#[{}]", text_to_typst(&scanner.next_param()?)?).into(),
+				"text" | "textmd" | "textnormal" | "textrm" | "textup" => {
+					format!("#[{}]", text_to_typst(&scanner.next_param()?)?).into()
+				}
 				"textbf" => format!("bold(#[{}])", text_to_typst(&scanner.next_param()?)?).into(),
 				"textcolor" => format!(
 					"#text(fill: {})[{}]",
 					color_to_typst(&scanner.next_param()?),
 					text_to_typst(&scanner.next_param()?)?
-				).into(),
+				)
+				.into(),
 				"textit" => format!("italic(#[{}])", text_to_typst(&scanner.next_param()?)?).into(),
 				"textsf" => format!("sans(#[{}])", text_to_typst(&scanner.next_param()?)?).into(),
 				"textstyle" => format!("inline({})", latex_to_typst(scanner.next_param()?.into())?).into(),
@@ -927,7 +932,8 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 								"underbrace({}, {})",
 								param1,
 								latex_to_typst(scanner.next_param()?.into())?
-							).into()
+							)
+							.into()
 						}
 						_ => format!("underbrace({})", param1).into(),
 					}
@@ -967,7 +973,11 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 				"vdash" => "tack.r".into(),
 				"vdots" => "dots.v".into(),
 				"veebar" => "⊻".into(),
-				"vphantom" => format!("#box(width: 0pt, hide[${}$])", latex_to_typst(scanner.next_param()?.into())?).into(),
+				"vphantom" => format!(
+					"#box(width: 0pt, hide[${}$])",
+					latex_to_typst(scanner.next_param()?.into())?
+				)
+				.into(),
 				"Vvdash" => "⊪".into(),
 				// W
 				"wedge" | "land" => "and".into(),
@@ -998,9 +1008,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 				word => Cow::Owned(word.to_string()),
 			},
 			_ if BINARY_OPERATORS.contains(&c) => match scanner.peek() {
-				Some('{') => {
-					format!("{}({})", c, latex_to_typst(scanner.next_param()?.into())?).into()
-				}
+				Some('{') => format!("{}({})", c, latex_to_typst(scanner.next_param()?.into())?).into(),
 				Some(&next) => {
 					scanner.next();
 					format!("{}{}", c, next).into()
@@ -1101,10 +1109,7 @@ fn matrix_to_typst(content: String) -> Result<String, ScannerError> {
 		.unwrap()
 		.split(&content)
 		.map(|row| {
-			let mut s = row
-				.split('&')
-				.map(|s| s.to_string())
-				.collect::<Vec<String>>();
+			let mut s = row.split('&').map(|s| s.into()).collect::<Vec<String>>();
 			let mut i = 0;
 			while i < s.len() {
 				if s[i].ends_with('\\') {
@@ -1165,18 +1170,12 @@ mod function_tests {
 
 	#[test]
 	fn matrix_test1() {
-		assert_eq!(
-			matrix_to_typst("a& b\\\\\nc& d".to_string()).unwrap(),
-			"a, b;\nc, d"
-		)
+		assert_eq!(matrix_to_typst("a& b\\\\\nc& d".to_string()).unwrap(), "a, b;\nc, d")
 	}
 
 	#[test]
 	fn matrix_test2() {
-		assert_eq!(
-			matrix_to_typst("a& b\\cr\nc& d".to_string()).unwrap(),
-			"a, b;\nc, d"
-		)
+		assert_eq!(matrix_to_typst("a& b\\cr\nc& d".to_string()).unwrap(), "a, b;\nc, d")
 	}
 }
 #[cfg(test)]
@@ -1198,10 +1197,7 @@ mod tests {
 			latex_to_typst("\\overbrace{x+⋯+x}^{n\\text{ times$\\int$}}".into()).unwrap(),
 			"overbrace(x+⋯+x, n#[ times$integral$])"
 		);
-		assert_eq!(
-			latex_to_typst("\\dot\\sum _ 0 ^n".into()).unwrap(),
-			"dot(sum_0^n)"
-		);
+		assert_eq!(latex_to_typst("\\dot\\sum _ 0 ^n".into()).unwrap(), "dot(sum_0^n)");
 		assert_eq!(
 			latex_to_typst("\\frac54 = 1\\tfrac   {1}   {4}\\\\".into()).unwrap(),
 			"frac(5, 4) = 1inline(frac(1, 4))\\"

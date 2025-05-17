@@ -9,11 +9,9 @@ use url::Url;
 use crate::IMG_PATH;
 use crate::{katex, typ};
 
-static FOOTNOTE_DEFINITIONS: LazyLock<RwLock<HashMap<String, String>>> =
-	LazyLock::new(|| RwLock::new(HashMap::new()));
+static FOOTNOTE_DEFINITIONS: LazyLock<RwLock<HashMap<String, String>>> = LazyLock::new(|| RwLock::new(HashMap::new()));
 /// <name in attachments, file path>
-static ATTACHMENTS: LazyLock<RwLock<HashMap<String, String>>> =
-	LazyLock::new(|| RwLock::new(HashMap::new()));
+static ATTACHMENTS: LazyLock<RwLock<HashMap<String, String>>> = LazyLock::new(|| RwLock::new(HashMap::new()));
 
 pub fn md_to_typst(md: Vec<&str>, attachments: HashMap<String, String>) -> String {
 	let tree = to_mdast(
@@ -34,7 +32,7 @@ pub fn md_to_typst(md: Vec<&str>, attachments: HashMap<String, String>) -> Strin
 	// file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
 	{
 		let mut w_fd = FOOTNOTE_DEFINITIONS.write().unwrap();
-		*w_fd = footnote_grep(tree.clone());
+		*w_fd = footnote_grep(&tree);
 
 		let mut w_a = ATTACHMENTS.write().unwrap();
 		*w_a = attachments;
@@ -49,12 +47,7 @@ fn ast_parse(node: Node) -> String {
 		Node::Blockquote(node) => {
 			context += "#block-quote[\n";
 			for child in node.children {
-				context += &format!(
-					"  {}\n",
-					ast_parse(child)
-						.trim_end_matches('\n')
-						.replace('\n', "\n  ")
-				);
+				context += &format!("  {}\n", ast_parse(child).trim_end_matches('\n').replace('\n', "\n  "));
 			}
 			context += "]\n";
 		}
@@ -98,7 +91,7 @@ fn ast_parse(node: Node) -> String {
 			context += &item;
 			context += "\n\n";
 		}
-		Node::Html(node) => context += &typ::escape_content(html_to_typst(&node.value)),
+		Node::Html(node) => context += &typ::escape_content(&html_to_typst(&node.value)),
 		Node::Image(node) => match Url::parse(&node.url) {
 			Ok(url) => match url.scheme() {
 				"http" | "https" => context += &format!("#image(\"{}\")", download_image(url)),
@@ -118,9 +111,7 @@ fn ast_parse(node: Node) -> String {
 			}
 		},
 		Node::InlineCode(node) => context += &format!("`{}`", node.value),
-		Node::InlineMath(node) => {
-			context += &format!("${}$", katex::latex_to_typst(node.value.into()).unwrap())
-		}
+		Node::InlineMath(node) => context += &format!("${}$", katex::latex_to_typst(node.value.into()).unwrap()),
 		Node::Link(node) => {
 			context += &format!("#link(\"{}\")[", node.url);
 			for child in node.children {
@@ -131,9 +122,7 @@ fn ast_parse(node: Node) -> String {
 		Node::List(node) => {
 			for child in node.children {
 				context += if node.ordered { "+ " } else { "- " };
-				let mut item = ast_parse(child)
-					.trim_end_matches('\n')
-					.replace('\n', "\n  ");
+				let mut item = ast_parse(child).trim_end_matches('\n').replace('\n', "\n  ");
 				item.push('\n');
 				context += &item;
 				if node.spread {
@@ -149,10 +138,7 @@ fn ast_parse(node: Node) -> String {
 		}
 		Node::Math(node) => {
 			// println!("{}\n", node.value);
-			context += &format!(
-				"$ {} $\n",
-				katex::latex_to_typst(node.value.into()).unwrap()
-			)
+			context += &format!("$ {} $\n", katex::latex_to_typst(node.value.into()).unwrap())
 		}
 		Node::Paragraph(node) => {
 			for child in node.children {
@@ -181,13 +167,13 @@ fn ast_parse(node: Node) -> String {
 					.iter()
 					.map(|a| {
 						match a {
-							markdown::mdast::AlignKind::Left => "left".to_string(),
-							markdown::mdast::AlignKind::Center => "center".to_string(),
-							markdown::mdast::AlignKind::Right => "right".to_string(),
-							markdown::mdast::AlignKind::None => "auto".to_string(),
+							markdown::mdast::AlignKind::Left => "left",
+							markdown::mdast::AlignKind::Center => "center",
+							markdown::mdast::AlignKind::Right => "right",
+							markdown::mdast::AlignKind::None => "auto",
 						}
 					})
-					.collect::<Vec<String>>()
+					.collect::<Vec<_>>()
 					.join(", ")
 			);
 			let mut children = node.children;
@@ -216,7 +202,7 @@ fn ast_parse(node: Node) -> String {
 			context.push('\n');
 		}
 		Node::Text(node) => {
-			context += &typ::escape_content(node.value);
+			context += &typ::escape_content(&node.value);
 		}
 		Node::ThematicBreak(_) => {
 			context += "#line(length: 100%)\n";
@@ -227,12 +213,12 @@ fn ast_parse(node: Node) -> String {
 	context
 }
 
-fn footnote_grep(node: Node) -> HashMap<String, String> {
+fn footnote_grep(node: &Node) -> HashMap<String, String> {
 	let mut definitions: HashMap<String, String> = HashMap::new();
 	match node {
 		Node::FootnoteDefinition(node) => {
 			let mut item = String::new();
-			for child in node.children {
+			for child in &node.children {
 				item = footnote_def_parse(child);
 			}
 			definitions.insert(node.identifier.clone(), item);
@@ -240,7 +226,7 @@ fn footnote_grep(node: Node) -> HashMap<String, String> {
 		_ => {
 			if let Some(children) = node.children() {
 				for child in children {
-					let mut d = footnote_grep(child.clone());
+					let mut d = footnote_grep(child);
 					definitions.extend(d.drain());
 				}
 			}
@@ -249,11 +235,11 @@ fn footnote_grep(node: Node) -> HashMap<String, String> {
 	definitions
 }
 
-fn footnote_def_parse(node: Node) -> String {
+fn footnote_def_parse(node: &Node) -> String {
 	let mut context = String::new();
 	match node {
 		Node::Paragraph(node) => {
-			for child in node.children {
+			for child in &node.children {
 				context += &footnote_def_parse(child);
 			}
 		}
@@ -316,12 +302,7 @@ fn download_image(url: Url) -> String {
 		}
 	};
 
-	let path = format!(
-		"{}/{}.{}",
-		IMG_PATH.get().unwrap(),
-		sha1(url.as_str()),
-		content_type,
-	);
+	let path = format!("{}/{}.{}", IMG_PATH.get().unwrap(), sha1(url.as_str()), content_type,);
 	let mut file = File::create(&path).unwrap();
 	file.write_all(&img_bytes).unwrap();
 	println!("Downloaded image to {}", path);

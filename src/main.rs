@@ -39,7 +39,7 @@ fn main() {
 	let extension = args
 		.input
 		.split('.')
-		.last()
+		.next_back()
 		.expect("Failed to get file extension");
 	let json: Value = match extension {
 		"ipynb" => {
