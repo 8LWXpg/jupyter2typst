@@ -40,7 +40,7 @@ impl<'a> Scanner<'a> {
 		self.0.peek()
 	}
 
-	/// Returns the next word (ascii alphabet only) in the scanner.
+	/// Returns the next word (ASCII alphabet only) in the scanner.
 	pub fn next_word(&mut self) -> String {
 		let mut ret: String = self.0.peeking_take_while(|&c| c.is_ascii_alphabetic()).collect();
 		// pick up '\operatorname*' specifically
