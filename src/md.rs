@@ -83,12 +83,10 @@ fn ast_parse(node: Node) -> String {
 			}
 		}
 		Node::Heading(node) => {
-			let mut item = String::new();
 			context += &format!("{} ", "=".repeat(node.depth as usize));
 			for child in node.children {
-				item = ast_parse(child);
+				context += &ast_parse(child);
 			}
-			context += &item;
 			context += "\n\n";
 		}
 		Node::Html(node) => context += &typ::escape_content(&html_to_typst(&node.value)),
@@ -317,6 +315,12 @@ pub fn html_to_typst(html: &str) -> String {
 #[cfg(test)]
 mod tests {
 	use super::*;
+
+	#[test]
+	fn test_heading_math() {
+		let md = "## heading $math$";
+		assert_eq!(md_to_typst(vec![md], HashMap::new()), "== heading $m a t h$\n\n")
+	}
 
 	#[test]
 	fn test_mdast() {

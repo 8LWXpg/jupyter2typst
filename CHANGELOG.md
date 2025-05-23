@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.1]
+
+### Fixed
+
+- Fixed multiple inline block conversion in heading.
+
 ## [1.3.0]
 
 ### Changed
