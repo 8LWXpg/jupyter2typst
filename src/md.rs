@@ -1,21 +1,23 @@
+use itertools::Itertools;
 use markdown::{mdast::Node, to_mdast, Constructs, ParseOptions};
 use reqwest::blocking;
 use sha1::{Digest, Sha1};
+use std::borrow::Cow;
 use std::fmt::Write as _;
-use std::sync::{LazyLock, RwLock};
+use std::sync::{LazyLock, Mutex};
 use std::{collections::HashMap, fs::File, io::Write};
 use url::Url;
 
 use crate::IMG_PATH;
 use crate::{katex, typ};
 
-static FOOTNOTE_DEFINITIONS: LazyLock<RwLock<HashMap<String, String>>> = LazyLock::new(|| RwLock::new(HashMap::new()));
+static FOOTNOTE_DEFINITIONS: LazyLock<Mutex<HashMap<String, String>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
 /// <name in attachments, file path>
-static ATTACHMENTS: LazyLock<RwLock<HashMap<String, String>>> = LazyLock::new(|| RwLock::new(HashMap::new()));
+static ATTACHMENTS: LazyLock<Mutex<HashMap<String, String>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
 
-pub fn md_to_typst(md: Vec<&str>, attachments: HashMap<String, String>) -> String {
+pub fn md_to_typst(md: &str, attachments: HashMap<String, String>) -> String {
 	let tree = to_mdast(
-		&md.join(""),
+		md,
 		&ParseOptions {
 			constructs: Constructs {
 				math_flow: true,
@@ -31,184 +33,122 @@ pub fn md_to_typst(md: Vec<&str>, attachments: HashMap<String, String>) -> Strin
 	// let mut file = File::create("debug.txt").unwrap();
 	// file.write_all(format!("{:#?}", tree).as_bytes()).unwrap();
 	{
-		let mut w_fd = FOOTNOTE_DEFINITIONS.write().unwrap();
+		let mut w_fd = FOOTNOTE_DEFINITIONS.lock().unwrap();
 		*w_fd = footnote_grep(&tree);
 
-		let mut w_a = ATTACHMENTS.write().unwrap();
+		let mut w_a = ATTACHMENTS.lock().unwrap();
 		*w_a = attachments;
 	}
-	ast_parse(tree)
+	ast_parse(&tree).to_string()
 }
 
-fn ast_parse(node: Node) -> String {
-	let mut context = String::new();
+macro_rules! parse_children {
+	($node:expr) => {
+		$node.children.iter().map(|child| ast_parse(child)).join("")
+	};
+}
 
+fn ast_parse(node: &Node) -> Cow<str> {
 	match node {
-		Node::Blockquote(node) => {
-			context += "#block-quote[\n";
-			for child in node.children {
-				context += &format!("  {}\n", ast_parse(child).trim_end_matches('\n').replace('\n', "\n  "));
-			}
-			context += "]\n";
-		}
-		Node::Break(_) => context.push('\n'),
-		Node::Code(node) => {
-			context += &format!("```{}\n", node.lang.unwrap_or_else(|| "".to_string()));
-			context += &node.value;
-			context += "\n```\n";
-		}
-		Node::Delete(node) => {
-			context += "#strike[";
-			for child in node.children {
-				context += &ast_parse(child);
-			}
-			context.push(']');
-		}
-		Node::Emphasis(node) => {
-			context += "#emph[";
-			for child in node.children {
-				context += &ast_parse(child);
-			}
-			context.push(']');
-		}
-		Node::FootnoteDefinition(_) => {
-			// do nothing
-		}
+		Node::Blockquote(node) => format!(
+			"#block-quote[\n  {}\n]\n",
+			node.children
+				.iter()
+				.map(|child| ast_parse(child).trim_end_matches('\n').replace('\n', "\n  "))
+				.join("\n  ")
+		)
+		.into(),
+		Node::Break(_) => "\n".into(),
+		Node::Code(node) => format!("```{}\n{}\n```\n", node.lang.as_deref().unwrap_or_default(), node.value).into(),
+		Node::Delete(node) => format!("#strike[{}]", parse_children!(node)).into(),
+		Node::Emphasis(node) => format!("#emph[{}]", parse_children!(node)).into(),
+		Node::FootnoteDefinition(_) => "".into(),
 		Node::FootnoteReference(node) => {
-			let id = node.identifier.as_str();
-			if let Some(link) = FOOTNOTE_DEFINITIONS.read().unwrap().to_owned().get(id) {
-				context += &format!("#link(\"{}\")[^{}]", link, id)
+			let id = &node.identifier;
+			if let Some(link) = FOOTNOTE_DEFINITIONS.lock().unwrap().get(id) {
+				format!("#link(\"{}\")[^{}]", link, id)
 			} else {
-				context += &format!("[^{}]", id)
+				format!("[^{}]", id)
 			}
+			.into()
 		}
-		Node::Heading(node) => {
-			context += &format!("{} ", "=".repeat(node.depth as usize));
-			for child in node.children {
-				context += &ast_parse(child);
-			}
-			context += "\n\n";
-		}
-		Node::Html(node) => context += &typ::escape_content(&html_to_typst(&node.value)),
+		Node::Heading(node) => format!("{} {}\n\n", "=".repeat(node.depth as usize), parse_children!(node)).into(),
+		Node::Html(node) => typ::escape_content(&html_to_typst(&node.value)).into(),
 		Node::Image(node) => match Url::parse(&node.url) {
 			Ok(url) => match url.scheme() {
-				"http" | "https" => context += &format!("#image(\"{}\")", download_image(url)),
+				"http" | "https" => format!("#image(\"{}\")", download_image(url)).into(),
 				_ => {
 					let name = node.url.strip_prefix("attachment:").unwrap();
-					let a = ATTACHMENTS.read().unwrap();
-					if let Some(file_path) = a.to_owned().get(name) {
-						context += &format!("#image(\"{}\")", file_path)
-					};
+					let a = ATTACHMENTS.lock().unwrap();
+					if let Some(file_path) = a.get(name) {
+						format!("#image(\"{}\")", file_path).into()
+					} else {
+						"".into()
+					}
 				}
 			},
 			Err(_) => {
 				let name = node.url.strip_prefix("attachment:").unwrap();
-				if let Some(file_path) = ATTACHMENTS.read().unwrap().to_owned().get(name) {
-					context += &format!("#image(\"{}\")", file_path)
-				};
-			}
-		},
-		Node::InlineCode(node) => context += &format!("`{}`", node.value),
-		Node::InlineMath(node) => context += &format!("${}$", katex::latex_to_typst(node.value.into()).unwrap()),
-		Node::Link(node) => {
-			context += &format!("#link(\"{}\")[", node.url);
-			for child in node.children {
-				context += &ast_parse(child);
-			}
-			context.push(']');
-		}
-		Node::List(node) => {
-			for child in node.children {
-				context += if node.ordered { "+ " } else { "- " };
-				let mut item = ast_parse(child).trim_end_matches('\n').replace('\n', "\n  ");
-				item.push('\n');
-				context += &item;
-				if node.spread {
-					context.push('\n');
+				if let Some(file_path) = ATTACHMENTS.lock().unwrap().get(name) {
+					format!("#image(\"{}\")", file_path).into()
+				} else {
+					"".into()
 				}
 			}
-			context.push('\n');
-		}
-		Node::ListItem(node) => {
-			for child in node.children {
-				context += &ast_parse(child);
-			}
-		}
-		Node::Math(node) => {
-			// println!("{}\n", node.value);
-			context += &format!("$ {} $\n", katex::latex_to_typst(node.value.into()).unwrap())
-		}
-		Node::Paragraph(node) => {
-			for child in node.children {
-				context += &ast_parse(child);
-			}
-			context.push('\n');
-		}
-		Node::Root(node) => {
-			for child in node.children {
-				context += &ast_parse(child);
-			}
-		}
-		Node::Strong(node) => {
-			context.push('*');
-			for child in node.children {
-				context += &ast_parse(child);
-			}
-			context.push('*');
-		}
-		Node::Table(node) => {
-			context += "#table(\n";
-			context += &format!("  columns: {},\n", node.align.len());
-			context += &format!(
-				"  align: ({}),\n",
-				node.align
-					.iter()
-					.map(|a| {
-						match a {
-							markdown::mdast::AlignKind::Left => "left",
-							markdown::mdast::AlignKind::Center => "center",
-							markdown::mdast::AlignKind::Right => "right",
-							markdown::mdast::AlignKind::None => "auto",
-						}
-					})
-					.collect::<Vec<_>>()
-					.join(", ")
-			);
-			let mut children = node.children;
-			context += "  table.header(\n";
-			context += "    ";
-			context += &ast_parse(children.remove(0));
-			context += "  ),\n";
-			for child in children {
-				context += &ast_parse(child);
-			}
-			context += ")\n\n";
-		}
-		Node::TableCell(node) => {
-			context.push('[');
-			for child in node.children {
-				context += &ast_parse(child);
-			}
-			context += "], ";
-		}
+		},
+		Node::InlineCode(node) => format!("`{}`", node.value).into(),
+		Node::InlineMath(node) => format!("${}$", katex::latex_to_typst((&node.value).into()).unwrap()).into(),
+		Node::Link(node) => format!("#link(\"{}\")[{}]", node.url, parse_children!(node)).into(),
+		Node::List(node) => format!(
+			"{}\n",
+			node.children
+				.iter()
+				.map(|child| {
+					let mut ret = format!(
+						"{} {}\n",
+						if node.ordered { '+' } else { '-' },
+						ast_parse(child).trim_end_matches('\n').replace('\n', "\n  ")
+					);
+					if node.spread {
+						ret.push('\n');
+					}
+					ret
+				})
+				.join("")
+		)
+		.into(),
+		Node::ListItem(node) => parse_children!(node).into(),
+		Node::Math(node) => format!("$ {} $\n", katex::latex_to_typst((&node.value).into()).unwrap()).into(),
+		Node::Paragraph(node) => format!("{}\n", parse_children!(node)).into(),
+		Node::Root(node) => parse_children!(node).into(),
+		Node::Strong(node) => format!("*{}*", parse_children!(node)).into(),
+		Node::Table(node) => format!(
+			"#table(\n  columns: {},\n  align: ({}),\n  table.header(\n    {}  ),\n{})\n\n",
+			node.align.len(),
+			node.align
+				.iter()
+				.map(|a| {
+					match a {
+						markdown::mdast::AlignKind::Left => "left",
+						markdown::mdast::AlignKind::Center => "center",
+						markdown::mdast::AlignKind::Right => "right",
+						markdown::mdast::AlignKind::None => "auto",
+					}
+				})
+				.collect::<Vec<_>>()
+				.join(", "),
+			ast_parse(&node.children[0]),
+			node.children.iter().skip(1).map(|child| ast_parse(child)).join("")
+		)
+		.into(),
+		Node::TableCell(node) => format!("[{}]", parse_children!(node)).into(),
 		Node::TableRow(node) => {
-			context += "  ";
-			for child in node.children {
-				context += &ast_parse(child);
-			}
-			context.pop();
-			context.push('\n');
+			format!("  {},\n", node.children.iter().map(|child| ast_parse(child)).join(", ")).into()
 		}
-		Node::Text(node) => {
-			context += &typ::escape_content(&node.value);
-		}
-		Node::ThematicBreak(_) => {
-			context += "#line(length: 100%)\n";
-		}
+		Node::Text(node) => typ::escape_content(&node.value).into(),
+		Node::ThematicBreak(_) => "#line(length: 100%)\n".into(),
 		_ => unreachable!(),
 	}
-
-	context
 }
 
 fn footnote_grep(node: &Node) -> HashMap<String, String> {
@@ -319,7 +259,7 @@ mod tests {
 	#[test]
 	fn test_heading_math() {
 		let md = "## heading $math$";
-		assert_eq!(md_to_typst(vec![md], HashMap::new()), "== heading $m a t h$\n\n")
+		assert_eq!(md_to_typst(md, HashMap::new()), "== heading $m a t h$\n\n")
 	}
 
 	#[test]
@@ -351,7 +291,7 @@ mod tests {
 | Paragraph   | Text        | BBBB | XXX | XXX |";
 		// println!("{}", md_to_typst(vec![table], HashMap::new()));
 		assert_eq!(
-			md_to_typst(vec![table], HashMap::new()),
+			md_to_typst(table, HashMap::new()),
 			"#table(
   columns: 5,
   align: (auto, auto, auto, auto, auto),
