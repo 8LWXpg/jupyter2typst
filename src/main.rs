@@ -36,17 +36,12 @@ fn main() {
 	let args: Args = argh::from_env();
 	IMG_PATH.set(args.img_path).unwrap();
 
-	let extension = args
-		.input
-		.split('.')
-		.next_back()
-		.expect("Failed to get file extension");
+	let extension = args.input.split('.').next_back().expect("Failed to get file extension");
 	let json: Value = match extension {
 		"ipynb" => {
 			let mut file = File::open(&args.input).expect("Failed to open file");
 			let mut contents = String::new();
-			file.read_to_string(&mut contents)
-				.expect("Failed to read file");
+			file.read_to_string(&mut contents).expect("Failed to read file");
 			serde_json::from_str(&contents).expect("Failed to parse JSON")
 		}
 		_ => panic!("Invalid file extension"),
@@ -68,6 +63,5 @@ fn main() {
 			.to_string()
 	});
 	let mut file = File::create(format!("{}.typ", out_file)).expect("Failed to create/open file");
-	file.write_all(output.as_bytes())
-		.expect("Failed to write file");
+	file.write_all(output.as_bytes()).expect("Failed to write file");
 }

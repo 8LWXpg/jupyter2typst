@@ -15,6 +15,12 @@ static FOOTNOTE_DEFINITIONS: LazyLock<Mutex<HashMap<String, String>>> = LazyLock
 /// <name in attachments, file path>
 static ATTACHMENTS: LazyLock<Mutex<HashMap<String, String>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
 
+/// Convert Markdown to Typst.
+///
+/// # Arguments
+///
+/// - `md` (`&str`) - Markdown string
+/// - `attachments` (`HashMap<String, String>`) - Peprocessed attachments with <name, file_path>
 pub fn md_to_typst(md: &str, attachments: HashMap<String, String>) -> String {
 	let tree = to_mdast(
 		md,

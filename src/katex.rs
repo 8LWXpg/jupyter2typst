@@ -28,6 +28,7 @@ impl std::fmt::Display for ScannerError {
 }
 
 #[derive(Debug, Clone)]
+/// A simple one way scanner is enough of most KeTeX parsing
 struct Scanner<'a>(Peekable<Chars<'a>>);
 
 impl<'a> Scanner<'a> {
@@ -1047,7 +1048,7 @@ pub fn text_to_typst(text: &str) -> Result<String, ScannerError> {
 	let mut scanner = Scanner::new(text);
 	let mut ret = String::new();
 	while let Some(c) = scanner.next() {
-		let push = match c {
+		let push: Cow<str> = match c {
 			'\\' => match scanner.next_word().as_str() {
 				"textasciitilde" => "~".into(),
 				"textasciicircum" => "\\^".into(),
@@ -1072,7 +1073,7 @@ pub fn text_to_typst(text: &str) -> Result<String, ScannerError> {
 				"textregistered" => "®".into(),
 				"textsterling" => "#sym.pound".into(),
 				"textunderscore" => "\\_".into(),
-				word => word.into(),
+				word => word.to_owned().into(),
 			},
 			'$' => {
 				let mut math = String::new();
@@ -1082,16 +1083,16 @@ pub fn text_to_typst(text: &str) -> Result<String, ScannerError> {
 					}
 					math.push(c);
 				}
-				format!("${}$", latex_to_typst(math.into())?)
+				format!("${}$", latex_to_typst(math.into())?).into()
 			}
-			_ => c.to_string(),
+			_ => c.to_string().into(),
 		};
 		ret += &push;
 	}
 	Ok(ret)
 }
 
-/// split with '\\', then split with '&' (not '\&'), finally process element by element
+/// split with `\\`, then split with `&` (not `\&`), finally process element by element
 ///
 /// for example:
 /// ```
