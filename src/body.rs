@@ -39,23 +39,25 @@ pub fn ipynb_parse(json: Value) -> String {
 			"#block[\n{}]\n",
 			match cell["cell_type"].as_str().unwrap() {
 				"markdown" => md::md_to_typst(
-					cell["source"]
+					&cell["source"]
 						.as_array()
 						.unwrap()
 						.iter()
 						.map(|v| v.as_str().unwrap())
-						.collect::<Vec<&str>>(),
+						.collect::<Vec<_>>()
+						.join(""),
 					attachments,
 				),
 				"code" => format!(
 					"{}]\n#block[\n{}",
 					code_parse(
-						cell["source"]
+						&cell["source"]
 							.as_array()
 							.unwrap()
 							.iter()
 							.map(|v| v.as_str().unwrap())
-							.collect::<Vec<&str>>(),
+							.collect::<Vec<_>>()
+							.join(""),
 						cell["execution_count"].as_i64().unwrap_or_default(),
 					),
 					code_output_parse(&cell["outputs"], IMG_PATH.get().unwrap()),
@@ -68,14 +70,13 @@ pub fn ipynb_parse(json: Value) -> String {
 	output
 }
 
-fn code_parse(code: Vec<&str>, count: i64) -> String {
-	let mut context = String::new();
-
-	context += "#code-block(\"";
-	context += &typ::escape_string(&code.join(""));
-	context += format!("\"\n, lang: \"{}\", count: {})\n", LANG.get().unwrap(), count).as_str();
-
-	context
+fn code_parse(code: &str, count: i64) -> String {
+	format!(
+		"#code-block(\"{}\"\n, lang: \"{}\", count: {})\n",
+		typ::escape_content(code),
+		LANG.get().unwrap(),
+		count
+	)
 }
 
 fn code_output_parse(outputs: &Value, img_path: &str) -> String {
@@ -149,8 +150,7 @@ fn code_output_parse(outputs: &Value, img_path: &str) -> String {
 				);
 			}
 			other => {
-				println!("unhandled output type: {other}\n");
-				unreachable!();
+				unreachable!("unhandled output type: {other}\n");
 			}
 		}
 	}
