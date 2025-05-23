@@ -73,7 +73,7 @@ fn ast_parse(node: &Node) -> Cow<str> {
 			.into()
 		}
 		Node::Heading(node) => format!("{} {}\n\n", "=".repeat(node.depth as usize), parse_children!(node)).into(),
-		Node::Html(node) => typ::escape_content(&html_to_typst(&node.value)).into(),
+		Node::Html(node) => html_to_typst(&node.value).into(),
 		Node::Image(node) => match Url::parse(&node.url) {
 			Ok(url) => match url.scheme() {
 				"http" | "https" => format!("#image(\"{}\")", download_image(url)).into(),
@@ -249,7 +249,7 @@ fn download_image(url: Url) -> String {
 
 pub fn html_to_typst(html: &str) -> String {
 	// TODO html to typst
-	html.to_string()
+	typ::escape_content(html)
 }
 
 #[cfg(test)]

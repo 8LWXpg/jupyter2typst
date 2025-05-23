@@ -44,7 +44,6 @@ pub fn ipynb_parse(json: Value) -> String {
 						.unwrap()
 						.iter()
 						.map(|v| v.as_str().unwrap())
-						.collect::<Vec<_>>()
 						.join(""),
 					attachments,
 				),
@@ -56,11 +55,10 @@ pub fn ipynb_parse(json: Value) -> String {
 							.unwrap()
 							.iter()
 							.map(|v| v.as_str().unwrap())
-							.collect::<Vec<_>>()
 							.join(""),
 						cell["execution_count"].as_i64().unwrap_or_default(),
 					),
-					code_output_parse(&cell["outputs"], IMG_PATH.get().unwrap()),
+					code_output_parse(&cell["outputs"]),
 				),
 				_ => "".into(),
 			},
@@ -73,87 +71,71 @@ pub fn ipynb_parse(json: Value) -> String {
 fn code_parse(code: &str, count: i64) -> String {
 	format!(
 		"#code-block(\"{}\"\n, lang: \"{}\", count: {})\n",
-		typ::escape_content(code),
+		typ::escape_string(code),
 		LANG.get().unwrap(),
 		count
 	)
 }
 
-fn code_output_parse(outputs: &Value, img_path: &str) -> String {
-	let mut context = String::new();
+fn code_output_parse(outputs: &Value) -> String {
+	let img_path = IMG_PATH.get().unwrap();
 
-	for output in outputs.as_array().unwrap() {
-		match output["output_type"].as_str().unwrap() {
-			"stream" => {
-				context += &format!(
+	outputs
+		.as_array()
+		.unwrap()
+		.iter()
+		.map(|output| {
+			match output["output_type"].as_str().unwrap() {
+				"stream" => format!(
 					"#result-block(\"{}\")\n",
 					output["text"]
 						.as_array()
 						.unwrap()
 						.iter()
 						.map(|v| v.as_str().unwrap())
-						.collect::<Vec<&str>>()
 						.join("")
-				);
-			}
-			"display_data" | "execute_result" => {
-				let data = &output["data"];
-				if let Some(img) = data["image/svg+xml"].as_array() {
-					fs::create_dir_all(img_path).unwrap();
-					let content = img.iter().map(|v| v.as_str().unwrap()).collect::<Vec<&str>>().join("");
-					let file_path = format!("{}/{}.svg", img_path, md::sha1(&content));
-					let mut file = File::create(&file_path).unwrap();
-					file.write_all(content.as_bytes()).unwrap();
-					context += format!("#image(\"./{}\")\n", file_path).as_str();
-				} else if let Some(img) = data["image/png"].as_str() {
-					// base 64 image data
-					fs::create_dir_all(img_path).unwrap();
-					let file_path = format!("{}/{}.png", img_path, md::sha1(img));
-					let mut file = File::create(&file_path).unwrap();
-					file.write_all(&STANDARD.decode(img).unwrap()).unwrap();
-					context += format!("#image(\"./{}\")\n", file_path).as_str();
-				} else if let Some(text) = data["text/plain"].as_array() {
-					context += &format!(
-						"#result-block(\"{}\")\n",
-						typ::escape_string(&text.iter().map(|v| v.as_str().unwrap()).join("")),
-					);
-				} else if let Some(text) = data["text/latex"].as_array() {
-					context += &katex::text_to_typst(
-						&text
-							.iter()
-							.map(|v| v.as_str().unwrap())
-							.collect::<Vec<&str>>()
-							.join("")
-							.replace("$$", "$"),
-					)
-					.unwrap();
-				} else if let Some(text) = data["text/html"].as_array() {
-					context += &md::html_to_typst(
-						text.iter()
-							.map(|v| v.as_str().unwrap())
-							.collect::<Vec<&str>>()
-							.join("")
-							.as_str(),
-					);
+				),
+				"display_data" | "execute_result" => {
+					let data = &output["data"];
+					if let Some(img) = data["image/svg+xml"].as_array() {
+						fs::create_dir_all(img_path).unwrap();
+						let content = img.iter().map(|v| v.as_str().unwrap()).join("");
+						let file_path = format!("{}/{}.svg", img_path, md::sha1(&content));
+						let mut file = File::create(&file_path).unwrap();
+						file.write_all(content.as_bytes()).unwrap();
+						format!("#image(\"./{}\")\n", file_path)
+					} else if let Some(img) = data["image/png"].as_str() {
+						// base 64 image data
+						fs::create_dir_all(img_path).unwrap();
+						let file_path = format!("{}/{}.png", img_path, md::sha1(img));
+						let mut file = File::create(&file_path).unwrap();
+						file.write_all(&STANDARD.decode(img).unwrap()).unwrap();
+						format!("#image(\"./{}\")\n", file_path)
+					} else if let Some(text) = data["text/plain"].as_array() {
+						format!(
+							"#result-block(\"{}\")\n",
+							typ::escape_string(&text.iter().map(|v| v.as_str().unwrap()).join("")),
+						)
+					} else if let Some(text) = data["text/latex"].as_array() {
+						katex::text_to_typst(&text.iter().map(|v| v.as_str().unwrap()).join("").replace("$$", "$"))
+							.unwrap()
+					} else if let Some(text) = data["text/html"].as_array() {
+						md::html_to_typst(text.iter().map(|v| v.as_str().unwrap()).join("").as_str())
+					} else {
+						"".into()
+					}
 				}
-			}
-			"error" => {
-				context += &format!(
+				"error" => format!(
 					"#result-block(\"{}\")\n",
 					output["traceback"]
 						.as_array()
 						.unwrap()
 						.iter()
 						.map(|v| v.as_str().unwrap())
-						.collect::<Vec<&str>>()
 						.join("\n"),
-				);
+				),
+				other => unreachable!("unhandled output type: {other}\n"),
 			}
-			other => {
-				unreachable!("unhandled output type: {other}\n");
-			}
-		}
-	}
-
-	context
+		})
+		.join("")
 }
