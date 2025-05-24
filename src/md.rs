@@ -50,7 +50,7 @@ pub fn md_to_typst(md: &str, attachments: HashMap<String, String>) -> String {
 
 macro_rules! parse_children {
 	($node:expr) => {
-		$node.children.iter().map(|child| ast_parse(child)).join("")
+		$node.children.iter().map(ast_parse).join("")
 	};
 }
 
@@ -180,18 +180,12 @@ fn footnote_grep(node: &Node) -> HashMap<String, String> {
 }
 
 fn footnote_def_parse(node: &Node) -> String {
-	let mut context = String::new();
 	match node {
-		Node::Paragraph(node) => {
-			for child in &node.children {
-				context += &footnote_def_parse(child);
-			}
-		}
-		Node::Text(node) => context += &node.value,
-		Node::Link(node) => context += &node.url,
-		_ => println!("footnote_def_parse unhandled node: {:?}\n", node),
+		Node::Paragraph(node) => node.children.iter().map(footnote_def_parse).join(""),
+		Node::Text(node) => node.value.to_owned(),
+		Node::Link(node) => node.url.to_owned(),
+		_ => unreachable!("footnote_def_parse unhandled node: {:?}\n", node),
 	}
-	context
 }
 
 pub fn sha1(s: &str) -> String {

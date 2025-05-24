@@ -1,4 +1,5 @@
 use std::{borrow::Cow, iter::Peekable, str::Chars};
+use thiserror::Error;
 
 use crate::typ;
 use itertools::Itertools;
@@ -6,30 +7,35 @@ use regex::Regex;
 
 const BINARY_OPERATORS: &[char] = &['_', '^'];
 
-#[derive(Debug)]
-pub struct ScannerError {
-	message: String,
-	characters: String,
+#[derive(Debug, Error)]
+pub enum ScannerError {
+	#[error("Unexpected end of input while parsing {context}")]
+	UnexpectedEof { context: String },
 }
 
 impl ScannerError {
-	fn new(message: String, scanner: Scanner) -> Self {
-		Self {
-			message,
-			characters: scanner.collect(),
+	pub fn unexpected_eof(context: impl Into<String>) -> Self {
+		Self::UnexpectedEof {
+			context: context.into(),
 		}
-	}
-}
-
-impl std::fmt::Display for ScannerError {
-	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-		write!(f, "{} in {}", self.message, self.characters)
 	}
 }
 
 #[derive(Debug, Clone)]
 /// A simple one way scanner is enough of most KeTeX parsing
 struct Scanner<'a>(Peekable<Chars<'a>>);
+
+impl From<Scanner<'_>> for String {
+	fn from(value: Scanner) -> Self {
+		value.collect()
+	}
+}
+
+impl From<&mut Scanner<'_>> for String {
+	fn from(value: &mut Scanner) -> Self {
+		value.collect()
+	}
+}
 
 impl<'a> Scanner<'a> {
 	pub fn new(text: &'a str) -> Self {
@@ -44,7 +50,7 @@ impl<'a> Scanner<'a> {
 	/// Returns the next word (ASCII alphabet only) in the scanner.
 	pub fn next_word(&mut self) -> String {
 		let mut ret: String = self.0.peeking_take_while(|&c| c.is_ascii_alphabetic()).collect();
-		// pick up '\operatorname*' specifically
+		// pick up `\operatorname*` specifically
 		if ret == "operatorname" {
 			if let Some('*') = self.peek() {
 				self.next(); // Consume '*'
@@ -62,14 +68,12 @@ impl<'a> Scanner<'a> {
 		// trim whitespace
 		let next = self.by_ref().find(|&c| !c.is_whitespace());
 
-		// check if next character is '\\', '{', or any other character
+		// check if next character is `\`, `{`, or any other character
 		match next {
 			Some('\\') => {
 				ret.push('\\');
 				match self.next_word().as_str() {
-					"" => ret.push(self.next().ok_or_else(|| {
-						ScannerError::new("Expected a character after '\\'".to_string(), self.clone())
-					})?),
+					"" => ret.push(self.next().ok_or_else(|| ScannerError::unexpected_eof(&mut *self))?),
 					word => ret += word,
 				}
 				// process training binary operators
@@ -101,7 +105,7 @@ impl<'a> Scanner<'a> {
 				}));
 			}
 			Some(c) => ret.push(c),
-			None => return Err(ScannerError::new("Unexpected end of input".to_string(), self.clone())),
+			None => return Err(ScannerError::unexpected_eof(self)),
 		}
 		Ok(ret)
 	}
@@ -239,7 +243,7 @@ macro_rules! accent {
 
 pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 	let mut scanner = Scanner::new(&latex);
-	let mut text = String::new();
+	let mut text = String::with_capacity(latex.len());
 	while let Some(c) = scanner.next() {
 		let push: Cow<str> = match c {
 			'\\' => match scanner.next_word().as_str() {
@@ -1046,7 +1050,7 @@ fn color_to_typst(color: &str) -> Cow<str> {
 
 pub fn text_to_typst(text: &str) -> Result<String, ScannerError> {
 	let mut scanner = Scanner::new(text);
-	let mut ret = String::new();
+	let mut ret = String::with_capacity(text.len());
 	while let Some(c) = scanner.next() {
 		let push: Cow<str> = match c {
 			'\\' => match scanner.next_word().as_str() {
@@ -1076,14 +1080,8 @@ pub fn text_to_typst(text: &str) -> Result<String, ScannerError> {
 				word => word.to_owned().into(),
 			},
 			'$' => {
-				let mut math = String::new();
-				for c in scanner.by_ref() {
-					if c == '$' {
-						break;
-					}
-					math.push(c);
-				}
-				format!("${}$", latex_to_typst(math.into())?).into()
+				let math: Cow<str> = scanner.by_ref().take_while(|&c| c != '$').collect();
+				format!("${}$", latex_to_typst(math)?).into()
 			}
 			_ => c.to_string().into(),
 		};
@@ -1110,7 +1108,7 @@ fn matrix_to_typst(content: String) -> Result<String, ScannerError> {
 		.unwrap()
 		.split(&content)
 		.map(|row| {
-			let mut s = row.split('&').map(|s| s.into()).collect::<Vec<String>>();
+			let mut s: Vec<String> = row.split('&').map(|s| s.into()).collect();
 			let mut i = 0;
 			while i < s.len() {
 				if s[i].ends_with('\\') {
@@ -1126,7 +1124,7 @@ fn matrix_to_typst(content: String) -> Result<String, ScannerError> {
 				.collect::<Result<Vec<_>, _>>()?
 				.join(","))
 		})
-		.collect::<Result<Vec<String>, _>>()?
+		.collect::<Result<Vec<_>, _>>()?
 		.join(";"))
 }
 

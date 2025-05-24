@@ -653,6 +653,7 @@ dependencies = [
  "reqwest",
  "serde_json",
  "sha1",
+ "thiserror",
  "url",
 ]
 
