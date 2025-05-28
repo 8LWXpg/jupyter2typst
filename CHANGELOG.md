@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Optimized for binary size.
+
 ## [1.3.1]
 
 ### Fixed

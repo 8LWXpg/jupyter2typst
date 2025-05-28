@@ -14,6 +14,12 @@ bin-dir = "{ name }-{ target }/{ bin }{ binary-ext }"
 pkg-fmt = "zip"
 disabled-strategies = ["quick-install", "compile"]
 
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+
 [features]
 rustls = ["reqwest/rustls-tls"]
 native-tls = ["reqwest/native-tls"]
