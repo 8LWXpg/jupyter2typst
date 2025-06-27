@@ -51,12 +51,12 @@ impl<'a> Scanner<'a> {
 	pub fn next_word(&mut self) -> String {
 		let mut ret: String = self.0.peeking_take_while(|&c| c.is_ascii_alphabetic()).collect();
 		// pick up `\operatorname*` specifically
-		if ret == "operatorname" {
-			if let Some('*') = self.peek() {
-				self.next(); // Consume '*'
-				ret.push('*');
-				return ret;
-			}
+		if ret == "operatorname"
+			&& let Some('*') = self.peek()
+		{
+			self.next(); // Consume '*'
+			ret.push('*');
+			return ret;
 		}
 		ret
 	}
@@ -198,9 +198,7 @@ macro_rules! matrix_opt {
 }
 
 macro_rules! single {
-	($scanner:expr, $fn:expr) => {{
-		format!("{}({})", $fn, latex_to_typst($scanner.next_param()?.into())?)
-	}};
+	($scanner:expr, $fn:expr) => {{ format!("{}({})", $fn, latex_to_typst($scanner.next_param()?.into())?) }};
 	($scanner:expr, $fn:expr, $params:expr) => {{
 		format!(
 			"{}({}, {})",
@@ -265,7 +263,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 							single!(scanner, func).into()
 						}
 						// escape characters in Typst
-						'_' | '&' | '#' => format!("\\{}", c).into(),
+						'_' | '&' | '#' => format!("\\{c}").into(),
 						'!' => "#h(-1em/6)".into(),
 						' ' => "space".into(),
 						'(' | ')' => "".into(),
@@ -274,7 +272,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 						';' => "#h(5em/18)".into(),
 						'|' => "||".into(),
 						'\\' => "\\".into(),
-						_ => format!("{}", c).into(),
+						_ => format!("{c}").into(),
 					}
 				}
 				// A
@@ -313,14 +311,14 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 						"align" | "align*" | "aligned" | "equation" | "equation*" | "gather" | "gather*"
 						| "gathered" | "split" => format!(
 							"$${}$$",
-							latex_to_typst(scanner.until_string(&format!("\\end{{{}}}", param)).into())?
+							latex_to_typst(scanner.until_string(&format!("\\end{{{param}}}")).into())?
 						)
 						.into(),
 						"alignat" | "alignat*" | "alignedat" => {
 							scanner.next_param()?;
 							format!(
 								"$${}$$",
-								latex_to_typst(scanner.until_string(&format!("\\end{{{}}}", param)).into())?
+								latex_to_typst(scanner.until_string(&format!("\\end{{{param}}}")).into())?
 							)
 							.into()
 						}
@@ -328,7 +326,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 							let _ = scanner.next_param();
 							format!(
 								"mat(delim: #none, {})",
-								matrix_to_typst(scanner.until_string(&format!("\\end{{{}}}", param)))?
+								matrix_to_typst(scanner.until_string(&format!("\\end{{{param}}}")))?
 							)
 							.into()
 						}
@@ -339,7 +337,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 						"cases" | "dcases" => format!(
 							"cases({})",
 							scanner
-								.until_string(&format!("\\end{{{}}}", param))
+								.until_string(&format!("\\end{{{param}}}"))
 								.split("\\\\")
 								.map(|s| latex_to_typst(s.into()))
 								.collect::<Result<Vec<_>, _>>()?
@@ -348,7 +346,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 						.into(),
 						"CD" => {
 							// TODO: begin{CD}
-							format!("CD({})", scanner.until_string(&format!("\\end{{{}}}", param))).into()
+							format!("CD({})", scanner.until_string(&format!("\\end{{{param}}}"))).into()
 						}
 						"matrix" => matrix!(scanner, param, "#none").into(),
 						"matrix*" => matrix_opt!(scanner, param, "#none").into(),
@@ -357,7 +355,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 						"rcases" => format!(
 							"cases(reverse: #true, {})",
 							scanner
-								.until_string(&format!("\\end{{{}}}", param))
+								.until_string(&format!("\\end{{{param}}}"))
 								.split("\\\\")
 								.map(|s| latex_to_typst(s.into()))
 								.collect::<Result<Vec<_>, _>>()?
@@ -366,7 +364,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 						.into(),
 						"smallmatrix" => format!(
 							"inline(mat(delim: #none, {}))",
-							matrix_to_typst(scanner.until_string(&format!("\\end{{{}}}", param)))?
+							matrix_to_typst(scanner.until_string(&format!("\\end{{{param}}}")))?
 						)
 						.into(),
 						"Vmatrix" => matrix!(scanner, param, "\"||\"").into(),
@@ -442,7 +440,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 						_ => format!("{:x}", scanner.until_chars_not("0123456789").parse::<u32>().unwrap()),
 					};
 					// scanner.cursor -= 1;
-					format!("\\u{{{}}}", code).into()
+					format!("\\u{{{code}}}").into()
 				}
 				"cdots" | "dots" | "dotsb" | "dotsc" | "dotsi" | "dotsm" => "dots.h.c".into(),
 				"check" | "V" | "widecheck" => single!(scanner, "caron").into(),
@@ -749,7 +747,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 							)
 							.into()
 						}
-						_ => format!("overbrace({})", param1).into(),
+						_ => format!("overbrace({param1})").into(),
 					}
 				}
 				"overgroup" => accent!(scanner, "\\u{{0311}}").into(),
@@ -940,7 +938,7 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 							)
 							.into()
 						}
-						_ => format!("underbrace({})", param1).into(),
+						_ => format!("underbrace({param1})").into(),
 					}
 				}
 				"undergroup" => accent!(scanner, "\\u{{032e}}").into(),
@@ -1016,23 +1014,23 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 				Some('{') => format!("{}({})", c, latex_to_typst(scanner.next_param()?.into())?).into(),
 				Some(&next) => {
 					scanner.next();
-					format!("{}{}", c, next).into()
+					format!("{c}{next}").into()
 				}
 				_ => unreachable!(),
 			},
 			'%' => format!("//{}\n", scanner.until_chars("\n")).into(),
 			'~' => "space.nobreak".into(),
-			'/' | '"' => format!("\\{}", c).into(),
+			'/' | '"' => format!("\\{c}").into(),
 			'{' | '}' => "".into(),
 			_ => c.to_string().into(),
 		};
 		// Insert space if current and next character is an alphabetic character
-		if let Some(first) = push.chars().next() {
-			if let Some(prev) = text.chars().last() {
-				if prev.is_alphabetic() && (first.is_alphabetic() || first.is_ascii_digit()) {
-					text.push(' ');
-				}
-			}
+		if let Some(first) = push.chars().next()
+			&& let Some(prev) = text.chars().last()
+			&& prev.is_alphabetic()
+			&& (first.is_alphabetic() || first.is_ascii_digit())
+		{
+			text.push(' ');
 		}
 		text += &push;
 	}
@@ -1040,9 +1038,9 @@ pub fn latex_to_typst(latex: Cow<str>) -> Result<Cow<str>, ScannerError> {
 	Ok(text.into())
 }
 
-fn color_to_typst(color: &str) -> Cow<str> {
+fn color_to_typst(color: &str) -> Cow<'_, str> {
 	if color.starts_with('#') {
-		format!("rgb(\"{}\")", color).into()
+		format!("rgb(\"{color}\")").into()
 	} else {
 		color.into()
 	}

@@ -62,6 +62,6 @@ fn main() {
 			.unwrap()
 			.to_string()
 	});
-	let mut file = File::create(format!("{}.typ", out_file)).expect("Failed to create/open file");
+	let mut file = File::create(format!("{out_file}.typ")).expect("Failed to create/open file");
 	file.write_all(output.as_bytes()).expect("Failed to write file");
 }

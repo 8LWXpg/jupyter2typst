@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use markdown::{mdast::Node, to_mdast, Constructs, ParseOptions};
+use markdown::{Constructs, ParseOptions, mdast::Node, to_mdast};
 use reqwest::blocking;
 use sha1::{Digest, Sha1};
 use std::borrow::Cow;
@@ -54,7 +54,7 @@ macro_rules! parse_children {
 	};
 }
 
-fn ast_parse(node: &Node) -> Cow<str> {
+fn ast_parse(node: &Node) -> Cow<'_, str> {
 	match node {
 		Node::Blockquote(node) => format!(
 			"#block-quote[\n  {}\n]\n",
@@ -72,9 +72,9 @@ fn ast_parse(node: &Node) -> Cow<str> {
 		Node::FootnoteReference(node) => {
 			let id = &node.identifier;
 			if let Some(link) = FOOTNOTE_DEFINITIONS.lock().unwrap().get(id) {
-				format!("#link(\"{}\")[^{}]", link, id)
+				format!("#link(\"{link}\")[^{id}]")
 			} else {
-				format!("[^{}]", id)
+				format!("[^{id}]")
 			}
 			.into()
 		}
@@ -87,7 +87,7 @@ fn ast_parse(node: &Node) -> Cow<str> {
 					let name = node.url.strip_prefix("attachment:").unwrap();
 					let a = ATTACHMENTS.lock().unwrap();
 					if let Some(file_path) = a.get(name) {
-						format!("#image(\"{}\")", file_path).into()
+						format!("#image(\"{file_path}\")").into()
 					} else {
 						"".into()
 					}
@@ -96,7 +96,7 @@ fn ast_parse(node: &Node) -> Cow<str> {
 			Err(_) => {
 				let name = node.url.strip_prefix("attachment:").unwrap();
 				if let Some(file_path) = ATTACHMENTS.lock().unwrap().get(name) {
-					format!("#image(\"{}\")", file_path).into()
+					format!("#image(\"{file_path}\")").into()
 				} else {
 					"".into()
 				}
@@ -192,17 +192,17 @@ pub fn sha1(s: &str) -> String {
 	let mut sha1 = Sha1::new();
 	sha1.update(s);
 	sha1.finalize().iter().fold(String::new(), |mut output, p| {
-		write!(output, "{:02x}", p).unwrap();
+		write!(output, "{p:02x}").unwrap();
 		output
 	})
 }
 
 fn download_image(url: Url) -> String {
-	println!("Downloading image from {}", url);
+	println!("Downloading image from {url}");
 	let response = match blocking::get(url.as_str()) {
 		Ok(r) => r,
 		Err(e) => {
-			println!("Download image at {} failed: {}", url, e);
+			println!("Download image at {url} failed: {e}");
 			return url.as_str().to_string();
 		}
 	};
@@ -216,7 +216,7 @@ fn download_image(url: Url) -> String {
 			"image/gif" => "gif",
 			"image/svg+xml" => "svg",
 			c => {
-				println!("Unsupported image format: {}", c);
+				println!("Unsupported image format: {c}");
 				return url.as_str().to_string();
 			}
 		},
@@ -228,12 +228,12 @@ fn download_image(url: Url) -> String {
 					image::ImageFormat::Jpeg => "jpg",
 					image::ImageFormat::Gif => "gif",
 					_ => {
-						println!("Unsupported image format: {:?}", format);
+						println!("Unsupported image format: {format:?}");
 						return url.as_str().to_string();
 					}
 				},
 				Err(e) => {
-					eprintln!("{}", e);
+					eprintln!("{e}");
 					return url.as_str().to_string();
 				}
 			}
@@ -243,7 +243,7 @@ fn download_image(url: Url) -> String {
 	let path = format!("{}/{}.{}", IMG_PATH.get().unwrap(), sha1(url.as_str()), content_type,);
 	let mut file = File::create(&path).unwrap();
 	file.write_all(&img_bytes).unwrap();
-	println!("Downloaded image to {}", path);
+	println!("Downloaded image to {path}");
 	path
 }
 

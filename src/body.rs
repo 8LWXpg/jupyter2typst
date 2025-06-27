@@ -1,5 +1,5 @@
 use crate::IMG_PATH;
-use base64::{engine::general_purpose::STANDARD, Engine as _};
+use base64::{Engine as _, engine::general_purpose::STANDARD};
 use itertools::Itertools;
 use serde_json::Value;
 use std::sync::OnceLock;
@@ -26,7 +26,7 @@ pub fn ipynb_parse(json: Value) -> String {
 		if let Some(item) = cell["attachments"].as_object() {
 			for (name, value) in item {
 				let extension = name.split('.').next_back().unwrap();
-				let content = value[format!("image/{}", extension)].as_str().unwrap();
+				let content = value[format!("image/{extension}")].as_str().unwrap();
 				let file_path = format!("{}/{}.{}", IMG_PATH.get().unwrap(), md::sha1(content), extension);
 				let mut file = File::create(&file_path).unwrap();
 				file.write_all(&STANDARD.decode(content).unwrap()).unwrap();
@@ -103,14 +103,14 @@ fn code_output_parse(outputs: &Value) -> String {
 						let file_path = format!("{}/{}.svg", img_path, md::sha1(&content));
 						let mut file = File::create(&file_path).unwrap();
 						file.write_all(content.as_bytes()).unwrap();
-						format!("#image(\"./{}\")\n", file_path)
+						format!("#image(\"./{file_path}\")\n")
 					} else if let Some(img) = data["image/png"].as_str() {
 						// base 64 image data
 						fs::create_dir_all(img_path).unwrap();
 						let file_path = format!("{}/{}.png", img_path, md::sha1(img));
 						let mut file = File::create(&file_path).unwrap();
 						file.write_all(&STANDARD.decode(img).unwrap()).unwrap();
-						format!("#image(\"./{}\")\n", file_path)
+						format!("#image(\"./{file_path}\")\n")
 					} else if let Some(text) = data["text/plain"].as_array() {
 						format!(
 							"#result-block(\"{}\")\n",
