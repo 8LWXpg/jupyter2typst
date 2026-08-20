@@ -1,11 +1,12 @@
 # Changelog
 
-## Unreleased
+## [1.4.0]
 
 ### Changed
 
 - Optimized for binary size.
 - Updated to Rust 1.88, edition 2024
+- Bumped dependencies
 
 ## [1.3.1]
 

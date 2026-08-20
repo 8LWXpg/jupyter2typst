@@ -3,9 +3,21 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/create-gh-release-action@v1
+        with:
+          title: $tag
+          changelog: CHANGELOG.md
+
   build-upload:
     name: release ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
@@ -15,67 +27,67 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - target: x86_64-unknown-linux-musl
-          os: ubuntu-latest
-          cross: true
-        - target: aarch64-unknown-linux-musl
-          os: ubuntu-latest
-          cross: true
-        - target: x86_64-unknown-linux-gnu
-          os: ubuntu-latest
-          cross: true
-        - target: aarch64-unknown-linux-gnu
-          os: ubuntu-latest
-          cross: true
-        - target: x86_64-apple-darwin
-          os: macos-latest
-          cross: false
-        - target: aarch64-apple-darwin
-          os: macos-latest
-          cross: false
-        - target: x86_64-pc-windows-msvc
-          os: windows-latest
-          cross: false
-        - target: aarch64-pc-windows-msvc
-          os: windows-latest
-          cross: false
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            cross: true
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-latest
+            cross: true
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            cross: true
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            cross: true
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            cross: false
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            cross: false
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            cross: false
+          - target: aarch64-pc-windows-msvc
+            os: windows-latest
+            cross: false
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: dtolnay/rust-toolchain@stable
-      with:
-        target: ${{ matrix.target }}
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          target: ${{ matrix.target }}
 
-    - name: Install Cross
-      if: ${{ matrix.cross }}
-      uses: taiki-e/install-action@v2
-      with:
-        tool: cross
+      - name: Install Cross
+        if: ${{ matrix.cross }}
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cross
 
-    - name: Run Cross
-      run: cross build --release --target ${{ matrix.target }} --features rustls
-      if: ${{ matrix.cross }}
+      - name: Run Cross
+        run: cross build --release --target ${{ matrix.target }} --features rustls
+        if: ${{ matrix.cross }}
 
-    - name: Run Cargo
-      if: ${{ !matrix.cross }}
-      run: cargo build --release --target ${{ matrix.target }} --features native-tls
+      - name: Run Cargo
+        if: ${{ !matrix.cross }}
+        run: cargo build --release --target ${{ matrix.target }} --features native-tls
 
-    - name: create artifact directory
-      shell: bash
-      run: |
-        directory=jupyter2typst-${{ matrix.target }}
-        mkdir $directory
-        cp README.md LICENSE $directory
-        if [ -f target/${{ matrix.target }}/release/jupyter2typst.exe ]; then
-          cp target/${{ matrix.target }}/release/jupyter2typst.exe $directory
-        else
-          cp target/${{ matrix.target }}/release/jupyter2typst $directory
-        fi
-        7z a -r $directory.zip $directory
+      - name: create artifact directory
+        shell: bash
+        run: |
+          directory=jupyter2typst-${{ matrix.target }}
+          mkdir $directory
+          cp README.md LICENSE $directory
+          if [ -f target/${{ matrix.target }}/release/jupyter2typst.exe ]; then
+            cp target/${{ matrix.target }}/release/jupyter2typst.exe $directory
+          else
+            cp target/${{ matrix.target }}/release/jupyter2typst $directory
+          fi
+          7z a -r $directory.zip $directory
 
-    - uses: ncipollo/release-action@v1.14.0
-      with:
-        artifacts: "jupyter2typst-${{ matrix.target }}.zip"
-        allowUpdates: true
-        omitNameDuringUpdate: true
-        omitBodyDuringUpdate: true
+      - uses: ncipollo/release-action@v1.14.0
+        with:
+          artifacts: "jupyter2typst-${{ matrix.target }}.zip"
+          allowUpdates: true
+          omitNameDuringUpdate: true
+          omitBodyDuringUpdate: true
